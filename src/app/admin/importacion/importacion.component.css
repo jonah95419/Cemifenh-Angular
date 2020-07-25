@@ -1,0 +1,83 @@
+button {
+    text-align: left;
+}
+
+.menu {
+    max-width: 170px;
+    min-height: 500px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    text-align: left;
+}
+
+.contenedor {
+    height: 72vh;
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+p {
+    /* width: 50%; */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+}
+
+tr.mat-footer-row {
+    font-weight: bold;
+}
+
+.mat-table-sticky {
+    border-top: 1px solid #e0e0e0;
+}
+
+.mat-column-nombre {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 28% !important;
+    width: 30% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.mat-column-adquisicion {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 28% !important;
+    width: 15% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.example-tooltip-white {
+    background: #636363;
+    color: #000;
+}
+
+.example-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+i {
+    font-size: 12px;
+}

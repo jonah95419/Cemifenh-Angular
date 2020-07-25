@@ -1,0 +1,62 @@
+<div class="col" style="width: 100%;">
+    <div class="mat-elevation-z8" style="max-height: 75vh; overflow: auto;">
+        <table mat-table [dataSource]="dataSourceD" matSort>
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header width="10%"> ID </th>
+                <td mat-cell *matCellDef="let row" class="action-link">
+                    <a style="color: #007Bff; cursor: pointer;">{{row.id}} </a>
+                </td>
+                <td mat-footer-cell *matFooterCellDef> total </td>
+            </ng-container>
+            <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> nombre </th>
+                <td mat-cell *matCellDef="let row"> {{row.nombre}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="descripcion">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> tipo </th>
+                <td mat-cell *matCellDef="let row">{{row.descripcion}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="sector">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> sector </th>
+                <td mat-cell *matCellDef="let row"> {{row.sector}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> servicio </th>
+                <td mat-cell *matCellDef="let row">{{row.tipo}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="motivo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> motivo </th>
+                <td mat-cell *matCellDef="let row">{{row.motivo}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="desde">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> desde </th>
+                <td mat-cell *matCellDef="let row">{{row.desde}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="hasta">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> hasta </th>
+                <td mat-cell *matCellDef="let row">{{row.hasta}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="deuda_total">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> cantidad </th>
+                <td mat-cell *matCellDef="let row">{{row.deuda_total}}</td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+            <ng-container matColumnDef="cantidad">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> deuda </th>
+                <td mat-cell *matCellDef="let row" [style.color]="row.cantidad == 0 ? 'green':'red' ">{{ row.cantidad == 0 ? 'pagado' : row.cantidad | currency}}</td>
+                <td mat-footer-cell *matFooterCellDef [style.color]="'red'"> {{getTotalDeudas() | currency}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsD; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsD;"></tr>
+            <tr mat-footer-row *matFooterRowDef="displayedColumnsD; sticky: true"></tr>
+
+        </table>
+    </div>
+</div>

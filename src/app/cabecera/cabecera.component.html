@@ -1,0 +1,16 @@
+<mat-toolbar style="background: #FAFAFA; color: #062639;">
+    <strong style="color: rgb(39, 39, 39); cursor: pointer;">{{title}}</strong>
+    <div class="contenedor_mensaje">
+        <label class="opcion" (click)="opcionSeleccionada = 'Representantes'" routerLink="/representantes">Representantes</label>
+        <div *ngIf="opcionSeleccionada == 'Representantes'" class="indicador"></div>
+    </div>
+    <div class="contenedor_mensaje">
+        <label class="opcion" (click)="opcionSeleccionada ='Ejemplares'" routerLink="/ejemplares">Sitios</label>
+        <div *ngIf="opcionSeleccionada == 'Ejemplares'" class="indicador"></div>
+    </div>
+    <div class="contenedor_mensaje">
+        <label class="opcion" (click)="opcionSeleccionada ='Administracion'" routerLink="/administracion">Administración</label>
+        <div *ngIf="opcionSeleccionada == 'Administracion'" class="indicador"></div>
+    </div>
+    <span class="example-spacer"></span>
+</mat-toolbar>

@@ -1,0 +1,317 @@
+<div class="mat-elevation-z8 container-fluid" style="width: 100%; ">
+    <div class="row">
+        <div class="col menu">
+            <button mat-button [disabled]="!paso1"><mat-icon>looks_one</mat-icon> elegir archivo</button>
+            <button mat-button [disabled]="!paso2"><mat-icon>looks_two</mat-icon>opciones</button>
+            <!-- <button mat-button [disabled]="!paso3"><mat-icon>looks_3</mat-icon>validación</button> -->
+            <button mat-button [disabled]="!paso3"><mat-icon>looks_3</mat-icon>pre-visualización</button>
+            <button mat-button [disabled]="!paso4"><mat-icon>beenhere</mat-icon>importar</button>
+            <button mat-button style="margin-top: 285px;"><mat-icon>help</mat-icon>ayuda</button>
+
+        </div>
+        <mat-divider [vertical]="true"></mat-divider>
+        <div class="col contenedor" *ngIf="paso1">
+            <div class="form-group" style="text-align: center;">
+                <h1>Por favor selecciona el archivo <b>Excel</b> de registros. </h1>
+                <p style="margin-top: 24px; margin-bottom: 36px; width: 50%; margin-left: auto; margin-right: auto;">No te olvides* de revisar el <i>formato de importación</i> de registros y que los datos cumplan los parametros minimos establecidos.
+                    <br> Para mayor información puedes dirigirte a la sección de <b style="cursor: pointer; text-decoration: underline;">ayuda</b> que se encuentra en la parte inferior del menú.
+                </p>
+                <div style="display: flex;">
+                    <input type="file" class="form-control" (change)="onFileChange($event);" style="width: 70%; margin-left: auto;" accept=".xlsx, .xls">
+                    <span style="margin-right: auto; margin-top: 6px; margin-left: 3px;">.xlsx</span>
+                </div>
+            </div>
+            <div style="background: #FAFAFA;">
+                <div *ngIf="indicadorImportacion && !importacion" style="text-align: center;">
+                    <mat-spinner style="margin-left: auto; margin-right: auto;"></mat-spinner>
+                    Cargando registros
+                </div>
+                <div *ngIf="!indicadorImportacion && importacion">
+                    <h3>Información archivo: <b>{{file.name}}</b></h3>
+                    <div class="row">
+                        <div class="col-2">Registros válidos:</div>
+                        <div class="col-2" style="text-align: right;">{{listaImportacion.registrosValidos.length}}</div>
+                        <div class="col-8"><a style="color: #007Bff; text-decoration: underline; cursor: pointer;">ver</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">Registros inválidos:</div>
+                        <div class="col-2" style="text-align: right;">{{listaImportacion.registrosInvalidos.length}}</div>
+                        <div class="col-8"><a style="color: #007Bff; text-decoration: underline; cursor: pointer;">ver</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">Total registros:</div>
+                        <div class="col-2" style="text-align: right;">{{listaImportacion.registrosValidos.length + listaImportacion.registrosInvalidos.length}}</div>
+                        <div class="col-8"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" (click)="Upload()" class="btn btn-success pull-right"><i class="fa fa-save fa-fw"></i> Upload File</button> -->
+
+            <button *ngIf="!indicadorImportacion && importacion" mat-raised-button type="button" style="margin-top: 36px; margin-left: auto; margin-right: 0;" (click)="paso2 = true; paso1 = false;" class="btn btn-success pull-right" matTooltip="Ver opciones generales"> Continuar <mat-icon>arrow_forward</mat-icon></button>
+        </div>
+        <!-- <div class="col contenedor" *ngIf="paso2">
+            <h3>Opciones generales</h3>
+            <div style="margin-left: 12px;">
+                <label>Periodo a importar</label>
+                <div style="display: flex;">
+                    <div class="col" style="display: flex;">
+                        <mat-form-field style="margin-right: 12px; width: 200px;">
+                            <mat-label>Fecha de inicio</mat-label>
+                            <input matInput [matDatepicker]="picker" [(ngModel)]="periodoInicio">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker startView="year" [startAt]="startDate"></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field style="margin-right: 12px; width: 200px;">
+                            <mat-label>Fecha final</mat-label>
+                            <input matInput [matDatepicker]="picker1" [(ngModel)]="periodoFinal">
+                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                            <mat-datepicker #picker1 startView="year" [startAt]="startDate"></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <p style="text-align: right;">Señala el periodo de registros a importar indicado por las <b>fechas de inicio</b> y <b>final</b>. <br><i>(El periodo encapsula la fecha de adquisición del sitio.)</i> </p>
+                    </div>
+                </div>
+                <label>Indicar tipo de servicio</label>
+                <div style="display: flex;">
+                    <div class="col" style="display: flex; flex-direction: column;">
+                        <section>
+                            <mat-checkbox [(ngModel)]="generarGastosServicio">
+                                Servicio contratado
+                            </mat-checkbox>
+                        </section>
+                        <section>
+                            <mat-checkbox [(ngModel)]="generarGastosMantenimiento">
+                                Servicio de mantenimiento
+                            </mat-checkbox>
+                        </section>
+                    </div>
+                    <div class="col">
+                        <p style="text-align: right;">Los <b>servicios contratados</b> y de <b>mantenimiento</b> se generan según la información proporcionada en la sección <u style="cursor: pointer; text-decoration: underline;">"Lista de precios"</u>.</p>
+                    </div>
+                </div>
+                <label>Registro de cobros por servicio</label>
+                <div style="display: flex;">
+                    <div class="col" style="display: flex; flex-direction: column;">
+                        <section class="example-section">
+                            <mat-slide-toggle [(ngModel)]="registrarDeudas">
+                                {{registrarDeudas? 'Proceder con el registro':'No registar'}}
+                            </mat-slide-toggle>
+                        </section>
+                        <section style="margin-top: 12px;">
+                            <mat-checkbox *ngIf="registrarDeudas" [(ngModel)]="registrarComprobante">
+                                Registrar pago
+                            </mat-checkbox>
+                        </section>
+                    </div>
+                    <div class="col">
+                        <p *ngIf="registrarDeudas" style="text-align: right;">Al <b>proceder con el registro</b>, los cobros por servicio se generan según la información proporcionada en la sección <br><u style="cursor: pointer; text-decoration: underline;">"Lista de precios"</u> <br><i>(Si existe algún valor pagado, puedes registrarlo).</i></p>
+                        <p *ngIf="!registrarDeudas" style="text-align: right;">Al <b>no registrar</b>, los cobros por servicio no son tomados en cuenta, es decir, no se generan deudas al momento de importar los registros.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; margin: 12px;">
+                <button mat-button style="margin-left: auto;" (click)="paso1 = true; paso2 = false; file = undefined;">Regresar</button>
+                <button mat-raised-button class="btn btn-success pull-right" (click)="paso3 = true; paso2 = false;">Continuar</button>
+            </div>
+        </div> -->
+        <div class="col contenedor" *ngIf="paso2">
+            <h3>Opciones generales</h3>
+            <div style="display: flex;">
+                <div class="col" style="display: flex; flex-direction: column; margin-left: 12px;">
+                    <label>Periodo a importar (fecha de adquisicion)</label>
+                    <div style="display: flex;">
+                        <mat-form-field style="margin-right: 12px; width: 200px;" class="col">
+                            <mat-label>Fecha de inicio</mat-label>
+                            <input matInput [matDatepicker]="picker" [(ngModel)]="periodoInicio" (ngModelChange)="indicarPeriodo()">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker startView="year"></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field style="margin-right: 12px; width: 200px;" class="col">
+                            <mat-label>Fecha final</mat-label>
+                            <input matInput [matDatepicker]="picker1" [(ngModel)]="periodoFinal" (ngModelChange)="indicarPeriodo()">
+                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                            <mat-datepicker #picker1 startView="year"></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <label>Registrar servicio</label>
+                    <div class="col" style="display: flex; flex-direction: column;">
+                        <section>
+                            <mat-checkbox [(ngModel)]="generarGastosServicio" [disabled]="'true'">
+                                Servicio contratado
+                            </mat-checkbox>
+                        </section>
+                        <section>
+                            <mat-checkbox [(ngModel)]="generarGastosMantenimiento" [disabled]="'true'">
+                                Mantenimiento
+                            </mat-checkbox>
+                        </section>
+                    </div>
+                    <label>Registro de cobros por servicio</label>
+                    <div class="col" style="display: flex; flex-direction: column;">
+                        <section class="example-section">
+                            <mat-checkbox [(ngModel)]="registrarDeudas" [disabled]="'true'">
+                                {{registrarDeudas? 'Registrar cobros':'No registar'}}
+                            </mat-checkbox>
+                        </section>
+                        <section>
+                            <mat-checkbox *ngIf="registrarDeudas" [(ngModel)]="registrarComprobante" [disabled]="'true'">
+                                Registrar pago
+                            </mat-checkbox>
+                        </section>
+                    </div>
+                </div>
+                <mat-divider [vertical]="true"></mat-divider>
+                <div class="col" style="background: white;">
+                    <app-line-chart1 [dataset]="dataset" [deudasS]="obtenerDeudasServicio()" [deudasM]="obtenerDeudasMantenimiento()" [pagosM]="obtenerPagosMantenimiento()" [pagosS]="obtenerPagosServicio()">
+                    </app-line-chart1>
+                    <mat-divider style="margin-bottom: 12px; margin-top: 12px;"></mat-divider>
+                    <div>
+                        <div class="row">
+                            <div class="col" style="min-width: 100px;"></div>
+                            <div class="col" style="min-width: 50px; text-align:center; font-size: 12px;  color: rgb(141, 141, 141);">Registros</div>
+                            <div class="col" style="min-width: 50px; text-align:center; font-size: 12px;  color: rgb(141, 141, 141);">Deudas</div>
+                            <div class="col" style="min-width: 50px; text-align:center; font-size: 12px;  color: rgb(141, 141, 141);">Pagos</div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="min-width: 100px;">Representantes</div>
+                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosRepresentantes()}}</div>
+                            <div class="col" style="min-width: 50px; text-align:center;"></div>
+                            <div class="col" style="min-width: 50px; text-align:center;"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="min-width: 100px; display: flex;">Sitios <i style="font-size: 12px;"> (total)</i></div>
+                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosSitio()}}</div>
+                            <div class="col" style="min-width: 50px; text-align:center;"></div>
+                            <div class="col" style="min-width: 50px; text-align:center;"></div>
+                        </div>
+                        <mat-divider style="margin-bottom: 12px; margin-top: 12px;"></mat-divider>
+                        <div class="row">
+                            <div class="col" style="min-width: 100px;">Servicio</div>
+                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosServicio()}}</div>
+                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerDeudasServicio() | currency}}</div>
+                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerPagosServicio() | currency}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="min-width: 100px;">Mantenimiento</div>
+                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosMantenimiento()}}</div>
+                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerDeudasMantenimiento() | currency}}</div>
+                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerPagosMantenimiento() | currency}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="min-width: 100px;">Total</div>
+                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosServicio() + obtenerRegistrosMantenimiento()}}</div>
+                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerDeudasServicio() + obtenerDeudasMantenimiento() | currency}}</div>
+                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerPagosServicio() + obtenerPagosMantenimiento() | currency}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; margin: 12px;">
+                <button mat-button style="margin-left: auto;" (click)="paso1 = true; paso2 = false; file = undefined;" matTooltip="Elegir archivo">Regresar</button>
+                <button mat-raised-button class="btn btn-success pull-right" (click)="paso3 = true; paso2 = false;" matTooltip="Pre-visualizar los registros a importar">Continuar</button>
+            </div>
+        </div>
+        <div class="col contenedor" *ngIf="paso3" style="padding-top: 0; padding-bottom: 0; padding-right: 0;">
+            <div style="max-height: 63vh; overflow: auto;">
+                <table mat-table [dataSource]="listaRegistros2" matSort>
+                    <ng-container matColumnDef="nombre">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> nombre </th>
+                        <td mat-cell *matCellDef="let row"> {{row.representante.nombre}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="cedula">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> cedula </th>
+                        <td mat-cell *matCellDef="let row"> {{row.representante.cedula}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="servicio">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> motivo </th>
+                        <td mat-cell *matCellDef="let row"> {{row.sitio.motivo}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="tipo">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> lugar </th>
+                        <td mat-cell *matCellDef="let row"> {{row.sitio.lugar}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="adquisicion">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> adquisicion </th>
+                        <td mat-cell *matCellDef="let row"> {{row.sitio.fechaAdquisicion | date: 'MMM d, y':undefined:locale}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="cantidad">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> cantidad </th>
+                        <td mat-cell *matCellDef="let row"> {{row.comprobante.total | currency}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                </table>
+            </div>
+            <div style="display: flex; margin: 12px; margin-top: 24px;">
+                <button mat-button style="margin-left: auto;" (click)="paso2 = true; paso3 = false;" matTooltip="Ver opciones generales">Regresar</button>
+                <button mat-raised-button class="btn btn-success pull-right" (click)="paso4 = true; paso3 = false; verCantidadRegistros();" matTooltip="Guarda los registros en la base de datos">Continuar</button>
+            </div>
+        </div>
+        <div class="col contenedor" *ngIf="paso4" style="padding-top: 0; padding-bottom: 0; padding-right: 0;">
+            <section class="example-section">
+                <mat-progress-bar [value]="progreso">
+                </mat-progress-bar>
+                <span style="min-width: 200px; text-align: center;">{{cantidadRegistros}}/{{cantidaRegistros}} Reg.</span>
+            </section>
+            <div style="max-height: 55vh; overflow: auto;" ngx-auto-scroll lock-y-offset="10" observe-attributes>
+                <table mat-table [dataSource]="listadoImporte" matSort>
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> id </th>
+                        <td mat-cell *matCellDef="let row"> {{row.id}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="representante">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> representante </th>
+                        <td mat-cell *matCellDef="let row"> {{row.representante}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="sitio">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> sitio </th>
+                        <td mat-cell *matCellDef="let row" style="text-align: center;">
+                            <mat-icon *ngIf="row.sitio" style="color: green;">check_circle</mat-icon>
+                            <mat-icon *ngIf="!row.sitio" style="color: red;">cancel</mat-icon>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="f">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> asignación </th>
+                        <td mat-cell *matCellDef="let row" style="text-align: center;">
+                            <mat-icon *ngIf="row.fallecido" style="color: green;">check_circle</mat-icon>
+                            <mat-icon *ngIf="!row.fallecido" style="color: red;">cancel</mat-icon>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="s">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> servicio </th>
+                        <td mat-cell *matCellDef="let row" style="text-align: center;"> {{row.servicio}} <i>{{row.servicio > 1 ? 'años':'año'}}</i> </td>
+                    </ng-container>
+                    <ng-container matColumnDef="m">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> mantenimiento </th>
+                        <td mat-cell *matCellDef="let row" style="text-align: center;"> {{row.mantenimiento}} <i>{{row.mantenimiento > 1 ? 'años':'año'}}</i></td>
+                    </ng-container>
+                    <ng-container matColumnDef="c">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> comprobante </th>
+                        <td mat-cell *matCellDef="let row" style="text-align: center;"> {{row.comprobante | currency}} <i>{{row.comprobanteFecha
+                          < '2001/01/01' ? '(sucres)': ''}}</i></td>
+                    </ng-container>
+                    <ng-container matColumnDef="p">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> pago </th>
+                        <td mat-cell *matCellDef="let row" [style.color]="'red'" style="text-align: center;"> {{row.pagos | currency}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="d">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> deuda </th>
+                        <td mat-cell *matCellDef="let row" [style.color]="'green'" style="text-align: center;"> {{row.deudas | currency}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="columnasImporte; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnasImporte;"></tr>
+
+                </table>
+            </div>
+            <div style="display: flex; margin: 12px; margin-top: 24px;">
+                <button mat-button style="margin-left: auto;" matTooltip="Pre-visualizar los registros a importar" (click)="paso3 = true; paso4 = false;">Regresar</button>
+                <button mat-raised-button style="margin-right: auto;" class="btn btn-success pull-right" matTooltip="Guarda los registros en la base de datos" matTooltipClass="example-tooltip-white" (click)="guardarRegistros()">Guardar registros</button>
+            </div>
+        </div>
+    </div>
+</div>

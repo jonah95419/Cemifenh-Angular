@@ -1,0 +1,15 @@
+a {
+    cursor: pointer;
+    color: #007Bff;
+}
+
+mat-card {
+    margin: 3px;
+    margin-top: 24px;
+}
+
+label {
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 6px;
+}
