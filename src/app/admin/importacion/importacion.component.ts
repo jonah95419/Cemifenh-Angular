@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, NgZone, AfterViewInit, ViewEncapsulation } from '@angular/core';
-import { SectorService } from '../../service/sector.service';
-import { ValoresService } from '../../service/valores.service';
+import { SectorService } from '../service/sector.service';
+import { ValoresService } from '../service/valores.service';
 import { MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
 import { Importacion } from '../../utilidades/importarRegistros';
 import { Limpieza } from '../../utilidades/limpiezaRegistros';
@@ -8,10 +8,10 @@ import * as XLSX from 'xlsx';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { RepresentanteService } from '../../service/representante.service';
-import { SitioService } from '../../service/sitio.service';
-import { FallecidoService } from '../../service/fallecido.service';
-import { ImportarService } from '../../service/importar.service';
+import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
+import { SitioService } from '../../cementerio/sitio/service/sitio.service';
+import { FallecidoService } from '../../cementerio/fallecido/service/fallecido.service';
+import { ImportarService } from '../service/importar.service';
 import { Socket } from 'ngx-socket-io';
 
 

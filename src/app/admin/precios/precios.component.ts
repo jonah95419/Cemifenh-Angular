@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ValoresService } from '../../service/valores.service';
+import { ValoresService } from '../service/valores.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
 
 @Component({
