@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { RepresentanteComponent } from './menu/representante/representante.component';
-import { RepresentanteInformacionComponent } from './menu/representante-informacion/representante-informacion.component';
-import { SitiosComponent } from './menu/sitios/sitios.component';
-import { PagosComponent } from './menu/pagos/pagos.component';
-import { DeudasComponent } from './menu/deudas/deudas.component';
-import { EstadoCuentaComponent } from './menu/estado-cuenta/estado-cuenta.component';
-import { FallecidosComponent } from './menu/fallecidos/fallecidos.component';
 import { AdministracionComponent } from './admin/administracion/administracion.component';
 import { PreciosComponent } from './admin/precios/precios.component';
 import { ImportacionComponent } from './admin/importacion/importacion.component';
 import { ExportacionComponent } from './admin/exportacion/exportacion.component';
 import { CopiaSeguridadComponent } from './admin/copia-seguridad/copia-seguridad.component';
+import { RepresentanteComponent } from './cementerio/representante/representante/representante.component';
+import { RepresentanteInformacionComponent } from './cementerio/representante/representante-informacion/representante-informacion.component';
+import { SitiosComponent } from './cementerio/sitio/sitios/sitios.component';
+import { PagosComponent } from './cementerio/representante/pagos/pagos.component';
+import { DeudasComponent } from './cementerio/representante/deudas/deudas.component';
+import { EstadoCuentaComponent } from './cementerio/representante/estado-cuenta/estado-cuenta.component';
+import { FallecidosComponent } from './cementerio/fallecido/fallecidos/fallecidos.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/representantes', pathMatch: 'full'},
