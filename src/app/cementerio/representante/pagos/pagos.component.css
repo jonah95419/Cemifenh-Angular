@@ -1,0 +1,36 @@
+label {
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 6px;
+}
+
+mat-card {
+    margin: 3px;
+}
+
+a {
+    cursor: pointer;
+    color: #007Bff;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    /* width: 100%; */
+}
+
+tr.mat-footer-row {
+    font-weight: bold;
+}
+
+.mat-table-sticky {
+    border-top: 1px solid #e0e0e0;
+}
+
+.example-header-image {
+    background-image: url('https://firebasestorage.googleapis.com/v0/b/aplicaciondeprueba-3b243.appspot.com/o/cementerio%2FlogoCementerio.jpg?alt=media&token=822ce360-fbb3-480a-abf7-9df3deb35b20');
+    background-size: cover;
+}
