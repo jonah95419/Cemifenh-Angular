@@ -1,16 +1,17 @@
-<mat-toolbar style="background: #FAFAFA; color: #062639;">
+<mat-toolbar>
     <strong style="color: rgb(39, 39, 39); cursor: pointer;">{{title}}</strong>
-    <div class="contenedor_mensaje">
-        <label class="opcion" (click)="opcionSeleccionada = 'Representantes'" routerLink="/representantes">Representantes</label>
-        <div *ngIf="opcionSeleccionada == 'Representantes'" class="indicador"></div>
-    </div>
-    <div class="contenedor_mensaje">
-        <label class="opcion" (click)="opcionSeleccionada ='Ejemplares'" routerLink="/ejemplares">Sitios</label>
-        <div *ngIf="opcionSeleccionada == 'Ejemplares'" class="indicador"></div>
-    </div>
-    <div class="contenedor_mensaje">
-        <label class="opcion" (click)="opcionSeleccionada ='Administracion'" routerLink="/administracion">Administración</label>
-        <div *ngIf="opcionSeleccionada == 'Administracion'" class="indicador"></div>
-    </div>
     <span class="example-spacer"></span>
+    <a class="navigation-item opcion" routerLink="/representantes" mat-list-item routerLinkActive="active" routerLinkActive #rla1="routerLinkActive">
+        <label class="navigation-item-label">Representantes</label>
+        <div [ngClass]="{'indicador': rla1.isActive}"></div>
+    </a>
+    <a class="navigation-item opcion" routerLink="/ejemplares" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
+        <label class="navigation-item-label">Sitios</label>
+        <div [ngClass]="{'indicador': rla2.isActive}"></div>
+    </a>
+    <a class="navigation-item opcion" routerLink="/administracion" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
+        <label class="navigation-item-label">Administración</label>
+        <div [ngClass]="{'indicador': rla3.isActive}"></div>
+    </a>
+    <span class="example-spacer1"></span>
 </mat-toolbar>

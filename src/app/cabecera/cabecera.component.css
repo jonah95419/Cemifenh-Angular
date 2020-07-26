@@ -3,22 +3,9 @@
     background: #FDD92A;
     width: auto;
     /* margin-top: 3px; */
-    margin-left: 6px;
 }
 
 .opcion {
-    margin-left: 6px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.contenedor_mensaje {
-    display: flex;
-    cursor: pointer;
-    margin-left: 12px;
-    flex-direction: column;
-}
-
-.example-spacer {
-    flex: 1 1 auto;
+    margin: 6px;
+    font-size: medium;
 }
