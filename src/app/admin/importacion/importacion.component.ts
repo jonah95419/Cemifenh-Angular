@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, NgZone, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { SectorService } from '../service/sector.service';
 import { ValoresService } from '../service/valores.service';
-import { MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Importacion } from '../../utilidades/importarRegistros';
 import { Limpieza } from '../../utilidades/limpiezaRegistros';
 import * as XLSX from 'xlsx';
