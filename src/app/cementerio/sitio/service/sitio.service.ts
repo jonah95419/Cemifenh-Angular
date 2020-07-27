@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { FechasI, FechasResponse } from '../model/fechas';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -12,6 +13,23 @@ const AUTH_SERVER = environment.baseUrl;
 export class SitioService {
 
   constructor(private httpClient: HttpClient) { }
+
+  private _fechas = new BehaviorSubject<FechasI[]>([]);
+  private dataStore: { fechas: FechasI[] } = { fechas: [] };
+  readonly fechas = this._fechas.asObservable();
+
+  listarFechasSitios = () => {
+    this.httpClient
+    .get<FechasResponse>(`${AUTH_SERVER}/sitio/fechas/`, this.httpOptions)
+    .subscribe((data: FechasResponse) => {
+      if(data.ok) {
+        this.dataStore.fechas = data.data;
+        this._fechas.next(Object.assign({}, this.dataStore).fechas);
+      } else {
+        console.log("mostar mensaje de error");
+      }
+    })
+  }
 
   agregarIngreso(ingreso: IngresoI): Observable<any> {
     return this.httpClient.post<any>(`${AUTH_SERVER}/api/agregar-ingreso/`, JSON.stringify(ingreso), this.httpOptions)
