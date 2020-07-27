@@ -20,6 +20,8 @@ import { FallecidoModule } from './cementerio/fallecido/fallecido.module';
 import { RepresentanteModule } from './cementerio/representante/representante.module';
 import { SitioModule } from './cementerio/sitio/sitio.module';
 import { AdminModule } from './admin/admin.module';
+import { InicioModule } from './inicio/inicio.module';
+import { DialogRegistroRepresentante } from './cementerio/representante/dialog/registro-representante/dialog-registro-representante';
 
 registerLocaleData(localeES, 'es');
 const AUTH_SERVER = environment.baseUrl
@@ -29,6 +31,7 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
   declarations: [
     AppComponent,
     CabeceraComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -41,6 +44,7 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
     RepresentanteModule,
     SitioModule,
     AdminModule,
+    InicioModule,
     SocketIoModule.forRoot(config),
     HttpClientModule,
         TranslateModule.forRoot({
@@ -52,7 +56,8 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
         }),
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+
 })
 export class AppModule {
   constructor(private translate: TranslateService){
