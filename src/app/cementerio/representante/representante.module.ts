@@ -11,6 +11,7 @@ import { DeudasComponent } from './deudas/deudas.component';
 import { EstadoCuentaComponent } from './estado-cuenta/estado-cuenta.component';
 import { PagosComponent } from './pagos/pagos.component';
 import { RepresentanteInformacionComponent } from './representante-informacion/representante-informacion.component';
+import { DialogRegistroRepresentante } from './dialog/registro-representante/dialog-registro-representante';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { RepresentanteInformacionComponent } from './representante-informacion/r
     DeudasComponent,
     EstadoCuentaComponent,
     PagosComponent,
-    RepresentanteInformacionComponent
+    RepresentanteInformacionComponent,
+    DialogRegistroRepresentante
   ],
   imports: [
     AppRoutingModule,
@@ -37,6 +39,9 @@ import { RepresentanteInformacionComponent } from './representante-informacion/r
   ],
   providers:[
     RepresentanteService
+  ],
+  entryComponents: [
+    DialogRegistroRepresentante
   ]
 })
 export class RepresentanteModule { }
