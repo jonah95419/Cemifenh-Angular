@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ValoresService } from '../service/valores.service';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ValorI } from '../model/valor';
 
 @Component({
   selector: 'app-precios',
@@ -41,7 +42,7 @@ export class PreciosComponent implements OnInit, OnDestroy {
   }
 
   private obtenerValores() {
-    this.subscribeValores = this.valoresservice.listarValores().subscribe( data => { if (data.ok ) {this.cargarValores(data.data); } else { alert( data.message); }});
+    this.subscribeValores = this.valoresservice.valores.subscribe( data => this.cargarValores(data));
   }
 
   private cargarValores( data: ValorI[]) {
@@ -50,14 +51,4 @@ export class PreciosComponent implements OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
   }
 
-}
-
-interface ValorI {
-  valor_id: number;
-  anio: string;
-  periodo: string;
-  motivo: string;
-  lugar: string;
-  valor: string;
-  estado: boolean;
 }
