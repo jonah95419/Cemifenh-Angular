@@ -1,3 +1,4 @@
+import { SectorI } from '../admin/model/sector';
 
 export class Importacion {
 
@@ -212,11 +213,6 @@ export class Importacion {
     return ingreso;
   }
 
-}
-
-interface SectorI {
-  codigo: number;
-  nombre: string;
 }
 
 interface ValorI {
