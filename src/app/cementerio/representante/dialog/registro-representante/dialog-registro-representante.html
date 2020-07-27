@@ -1,0 +1,159 @@
+<h1 mat-dialog-title>Registro representante</h1>
+<div mat-dialog-content>
+    <mat-accordion class="example-headers-align">
+        <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Representante
+                </mat-panel-title>
+                <mat-panel-description>
+                    *requerido
+                    <mat-icon>account_circle</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <form [formGroup]="representanteForm" (ngSubmit)="submit()" novalidate id="representanteForm">
+                <div class="fields-container">
+
+                    <mat-form-field appearance="legacy">
+                        <mat-label>Nombre</mat-label>
+                        <input type="text" class="form-control1" formControlName="nombre" matInput required>
+                        <mat-error *ngIf="representanteForm.controls['nombre'].hasError('required')">El nombre es requerido</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Cédula</mat-label>
+                        <input matInput type="number" min="1">
+                    </mat-form-field>
+
+                </div>
+            </form>
+
+            <mat-action-row>
+                <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Sitio
+                </mat-panel-title>
+                <mat-panel-description>
+                    opcional
+                    <mat-icon>map</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <section class="example-section">
+                <mat-checkbox class="example-margin" [(ngModel)]="registrarSitio">Registrar sitio</mat-checkbox>
+            </section>
+
+            <form [formGroup]="sitioForm" novalidate *ngIf="registrarSitio">
+                <div class="fields-container">
+
+                    <mat-form-field>
+                        <mat-label>Nombre</mat-label>
+                        <input type="text" formControlName="nombre" matInput required>
+                        <mat-error *ngIf="sitioForm.controls['nombre'].hasError('required')">El nombre es requerido</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Sector</mat-label>
+                        <mat-select formControlName="sector" required>
+                            <mat-option *ngFor="let sector of listaSectores" [value]="sector.id">
+                                {{sector.nombre}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="sitioForm.controls['nombre'].hasError('required')">Por favor selecciona un sector</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Tipo</mat-label>
+                        <mat-select formControlName="tipo" required>
+                            <mat-option *ngFor="let tipo of listaTipo" [value]="tipo">
+                                {{tipo}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="sitioForm.controls['nombre'].hasError('required')">Por favor selecciona el tipo</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Descripción</mat-label>
+                        <mat-select formControlName="descripcion" required>
+                            <mat-option *ngFor="let descripcion of listaDescripcion" [value]="descripcion">
+                                {{descripcion}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="sitioForm.controls['nombre'].hasError('required')">Por favor selecciona la descripción</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Fecha adquisición</mat-label>
+                        <input formControlName="fecha" matInput required [matDatepicker]="picker" (focus)="picker.open()" readonly>
+                        <mat-error *ngIf="representanteForm.controls['nombre'].hasError('required')">La fecha es requerida</mat-error>
+                    </mat-form-field>
+                    <mat-datepicker #picker></mat-datepicker>
+
+                </div>
+            </form>
+
+            <mat-action-row>
+                <button mat-button color="warn" (click)="prevStep()">Anterior</button>
+                <button mat-button color="primary" (click)="nextStep()">Siguiente</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Fallecido
+                </mat-panel-title>
+                <mat-panel-description>
+                    opcional
+                    <mat-icon>date_range</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <section class="example-section" *ngIf="registrarSitio">
+                <mat-checkbox class="example-margin" [(ngModel)]="registrarFallecido">Registrar fallecido</mat-checkbox>
+            </section>
+
+            <form [formGroup]="fallecidoForm" novalidate *ngIf="registrarSitio && registrarFallecido">
+                <div class="fields-container">
+
+                    <mat-form-field>
+                        <mat-label>Nombre</mat-label>
+                        <input type="text" formControlName="nombre" matInput required>
+                        <mat-error *ngIf="fallecidoForm.controls['nombre'].hasError('required')">El nombre es requerido</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Cédula</mat-label>
+                        <input matInput type="number" min="1">
+                    </mat-form-field>
+
+
+                    <mat-form-field>
+                        <mat-label>Fecha fallecimiento</mat-label>
+                        <input formControlName="fecha_fallecimiento" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
+                    </mat-form-field>
+                    <mat-datepicker #picker2></mat-datepicker>
+
+                </div>
+            </form>
+
+            <mat-action-row>
+                <button mat-button color="warn" (click)="prevStep()">Anterior</button>
+                <button mat-button color="primary" (click)="nextStep()">Terminar</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+</div>
+<div mat-dialog-actions align=end>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button type="submit" form="representanteForm">Guardar</button>
+</div>
+
+<!-- [mat-dialog-close]="data.animal" -->
