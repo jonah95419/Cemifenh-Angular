@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { ValorI, ValorResponse } from '../model/valor';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -13,11 +14,22 @@ export class ValoresService {
 
   constructor(private httpClient: HttpClient) { }
 
-  listarValores(): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/valores/`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+  private _valores = new BehaviorSubject<ValorI[]>([]);
+  private dataStore: { valores: ValorI[] } = { valores: [] };
+  readonly valores = this._valores.asObservable();
+
+  listarValores(): void {
+    this.httpClient
+    .get<ValorResponse>(`${AUTH_SERVER}/valores/`, this.httpOptions)
+    .pipe( catchError(this.handleError) )
+    .subscribe((data: ValorResponse) => {
+      if(data.ok) {
+        this.dataStore.valores = data.data;
+        this._valores.next(Object.assign({}, this.dataStore).valores);
+      } else {
+        console.log("mostar mensaje de error");
+      }
+    });
   }
 
   private handleError(error: HttpErrorResponse) {
