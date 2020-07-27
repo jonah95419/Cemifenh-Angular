@@ -12,9 +12,19 @@ import { PagosComponent } from './cementerio/representante/pagos/pagos.component
 import { DeudasComponent } from './cementerio/representante/deudas/deudas.component';
 import { EstadoCuentaComponent } from './cementerio/representante/estado-cuenta/estado-cuenta.component';
 import { FallecidosComponent } from './cementerio/fallecido/fallecidos/fallecidos.component';
+import { InicioComponent } from './inicio/inicio/inicio.component';
+import { HistorialComponent } from './inicio/historial/historial.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/representantes', pathMatch: 'full'},
+  { path: '', redirectTo: '/inicio', pathMatch: 'full'},
+  { path: 'inicio', component: InicioComponent,
+  children: [
+    { path: 'representantes/:periodo', component: RepresentanteComponent,
+      children: [
+        { path: 'historial/:id', component: HistorialComponent},
+      ]
+    },
+  ]},
   { path: 'representantes', component: RepresentanteComponent},
   { path: 'informacion-representante/:id', component: RepresentanteInformacionComponent,
     children: [
