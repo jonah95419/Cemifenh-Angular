@@ -1,10 +1,26 @@
 table {
     width: 100%;
+    min-width: 560px;
 }
 
 .mat-form-field {
     font-size: 14px;
     width: 100%;
+}
+
+.mat-paginator-sticky {
+    bottom: 0px;
+    position: sticky;
+    z-index: 10;
+}
+
+.container-historial {
+    margin: 0px 12px;
+    padding: 12px;
+}
+
+.container-representante-inicio {
+    padding: 12px;
 }
 
 td,
@@ -17,43 +33,24 @@ a {
 }
 
 .mat-column-id {
-    word-wrap: break-word !important;
-    white-space: unset !important;
-    flex: 0 0 28% !important;
     width: 10% !important;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
 }
 
 .mat-column-accion {
-    word-wrap: break-word !important;
-    white-space: unset !important;
-    flex: 0 0 28% !important;
-    width: 12% !important;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
+    width: 10% !important;
+    text-align: center;
 }
 
 .mat-column-cedula {
-    word-wrap: break-word !important;
-    white-space: unset !important;
-    flex: 0 0 28% !important;
     width: 12% !important;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
+    padding-left: 10px;
+}
+
+.mat-column-fecha {
+    width: 15% !important;
+    padding-left: 10px;
+}
+
+button {
+    background-color: white
 }
