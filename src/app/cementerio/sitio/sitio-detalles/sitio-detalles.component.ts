@@ -12,6 +12,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SitioService } from '../service/sitio.service';
 import { SectorService } from 'src/app/admin/service/sector.service';
 import { FallecidoService } from '../../fallecido/service/fallecido.service';
+import { EstadoCuentaI } from '../service/estadoCuenta';
+import { SectorI } from '../../../admin/model/sector';
 
 @Component({
   selector: 'app-sitio-detalles',
@@ -158,10 +160,8 @@ export class SitioDetallesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private obtenerValoresSectores() {
-    this.subscribeSectores = this.sectorservice.listarSectores()
-    .subscribe(data => {
-      if (data.ok) {this.cargarValoresSectores(data.data); } else {alert(data.message); }
-    });
+    this.subscribeSectores = this.sectorservice.sectores
+    .subscribe(data => this.cargarValoresSectores(data) );
   }
 
   private cargarValoresSectores(data: SectorI[]) {
@@ -247,10 +247,7 @@ export interface SitioI {
   observaciones: string;
 }
 
-export interface SectorI {
-  id: number;
-  nombre: string;
-}
+
 
 export interface FallecidoI {
   id: number;
@@ -283,11 +280,3 @@ export interface PagoDetallesI {
   hasta: string;
 }
 
-export interface EstadoCuentaI {
-  id: number;
-  tipo: string;
-  descripcion: string;
-  desde: Date;
-  hasta: Date;
-  cantidad: string;
-}
