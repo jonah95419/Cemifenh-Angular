@@ -15,6 +15,8 @@ import { SitioService } from '../../cementerio/sitio/service/sitio.service';
 import { FallecidoService } from '../../cementerio/fallecido/service/fallecido.service';
 import { ImportarService } from '../service/importar.service';
 import { Socket } from 'ngx-socket-io';
+import { SectorI } from '../model/sector';
+import { ValorI } from '../model/valor';
 
 
 @Component({
@@ -371,8 +373,8 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private obtenerValores() {
-    this.subscribeSector = this.sectorservice.listarSectores().subscribe( data => { if (data.ok ) {this.cargarValores(data.data); } else { alert(data.message); }});
-    this.subscribeValores = this.valoresservice.listarValores().subscribe( data => { if (data.ok ) {this.cargarValoresValor(data.data); } else { alert( data.message); }});
+    this.subscribeSector = this.sectorservice.sectores.subscribe( data => this.cargarValores(data) );
+    this.subscribeValores = this.valoresservice.valores.subscribe( data =>this.cargarValoresValor(data));
   }
 
   private cargarValores( data: SectorI[]) {
@@ -456,20 +458,7 @@ interface RegistroI {
   Total: string;
 }
 
-interface SectorI {
-  codigo: number;
-  nombre: string;
-}
 
-interface ValorI {
-  id: number;
-  anio: string;
-  periodo: string;
-  motivo: string;
-  lugar: string;
-  valor: string;
-  estado: boolean;
-}
 
 interface EstadoImporteI {
   id: number;
