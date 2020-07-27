@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RepresentanteService } from '../service/representante.service';
+import { RepresentanteI } from '../model/representante';
 
 @Component({
   selector: 'app-representante-informacion',
@@ -60,10 +61,3 @@ export class RepresentanteInformacionComponent implements OnInit, OnDestroy {
 
 }
 
-export class RepresentanteI {
-  id: number;
-  nombre: string;
-  cedula: string;
-  observaciones: string;
-  estado: boolean;
-}
