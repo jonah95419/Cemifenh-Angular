@@ -17,9 +17,26 @@
 }
 
 mat-form-field {
-    width: 220px;
+    margin-left: 6px;
 }
 
 .example-section {
     margin: 12px 0;
+}
+
+table {
+    width: 100%;
+}
+
+tr.mat-footer-row {
+    font-weight: bold;
+}
+
+mat-icon {
+    color: #757575;
+    font-size: large;
+}
+
+.mat-column-accion {
+    text-align: end;
 }
