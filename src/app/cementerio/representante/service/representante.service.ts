@@ -46,6 +46,12 @@ export class RepresentanteService {
     });
   }
 
+  listarRepresentantesSinSitio = (): Observable<RepresentanteResponse> => {
+    return this.httpClient
+    .get<RepresentanteResponse>(`${AUTH_SERVER}/representante/sin-sitio/`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
   obtenerEstadoCuentaRepresentante(representanteId: string): Observable<any> {
     return this.httpClient
     .get<any>(`${AUTH_SERVER}/representante/estado-cuenta/${representanteId}`, this.httpOptions)
@@ -79,10 +85,17 @@ export class RepresentanteService {
   }
 
 
-  agregarRepresentante(representante: RepresentanteI): Observable<any> {
-    return this.httpClient
+
+
+
+  agregarRepresentante(representante: any) {
+    console.log(representante);
+    this.httpClient
     .post<any>(`${AUTH_SERVER}/representante/`, JSON.stringify(representante), this.httpOptions)
-    .pipe( catchError(this.handleError) );
+    .pipe( catchError(this.handleError) )
+    .subscribe(data => {
+      console.log(data);
+    })
   }
 
 
