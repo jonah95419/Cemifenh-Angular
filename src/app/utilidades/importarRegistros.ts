@@ -1,10 +1,17 @@
 import { SectorI } from '../admin/model/sector';
+import { IngresoI, DeudaI } from '../cementerio/representante/model/deuda';
+import { RegistroI } from './model/registro';
 
 export class Importacion {
 
   cantidad: number = 0;
 
   constructor (private listaSectores: SectorI[], private listaValores: ValorI[]) {}
+
+  generarDeudasRegistro = (registros: RegistroI[]): DeudaI[] => {
+    registros = this.asignarColumnas(registros);
+    return this.generarDeudas(registros[0]);
+  }
 
   generarDatosImporte = (registros: RegistroI[]): any => {
 
@@ -87,8 +94,8 @@ export class Importacion {
     } else {
       valores = this.listaValores.filter( valor =>
         Number(valor.anio) === fecha.getFullYear() &&
-        (valor.lugar.toLowerCase() == registro.Lugar) &&
-        (valor.motivo.toLowerCase() == registro.Motivo));
+        (valor.lugar.toLowerCase() == registro.Lugar.toLowerCase()) &&
+        (valor.motivo.toLowerCase() == registro.Motivo.toLowerCase()));
     }
     return valores;
   }
@@ -115,7 +122,7 @@ export class Importacion {
     let valores = this.obtenerValoresServicio(registro);
     let inicioS = new Date(registro.FechaInicio);
 
-    while ( inicioS.getFullYear() < 2020) {
+    while ( inicioS < new Date()) {
       let servicioId = Number(valores.filter( valor => valor.motivo !== 'Mantenimiento' )[0].id);
       let cantidad = Number(valores.filter( valor => valor.motivo !== 'Mantenimiento' )[0].periodo);
       let servicio;
@@ -225,45 +232,11 @@ interface ValorI {
   estado: boolean;
 }
 
-interface RegistroI {
-  NombreRepresentante: string;
-  CedulaRepresentante: string;
-  ObservacionesRepresetante: string;
-  NombreFallecido: string;
-  CedulaFallecido: string;
-  FechaFallecimiento: Date;
-  Observaciones: string;
-  Nombre: string;
-  Motivo: string;
-  Lugar: string;
-  Sector: string;
-  FechaAdquisicion: Date;
-  FechaInicio: Date;
-  ObservacionesSitio: string;
-  Total: string;
-}
-
 interface ComprobanteI {
   nombre: string;
   fecha: Date;
   total: string;
   observaciones: string;
-}
-
-interface DeudaI {
-  valorId: number;
-  valor: string;
-  descripcion: string;
-  pagoDesde: Date;
-  pagoHasta: Date;
-  observaciones: string;
-  ingreso: IngresoI;
-}
-
-interface IngresoI {
-  codigoD: number;
-  condigoC: number;
-  cant: string;
 }
 
 interface SitioI {
