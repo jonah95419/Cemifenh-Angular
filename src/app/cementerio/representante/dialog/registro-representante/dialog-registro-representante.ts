@@ -55,7 +55,7 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
   listaDescripcion = ['Boveda', 'Piso propio', 'Piso'];
   listaSectores: SectorI[];
   listaValores: ValorI[];
-  listaDeudas: DeudaI[];
+  listaDeudas: DeudaI[] = [];
 
   representanteForm = this.fb.group({
     nombre: new FormControl('', Validators.required),
@@ -154,7 +154,9 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
 
   generarDeudasSitios(event: MatCheckboxChange) {
     if(event.checked) {
-      this.generarListaDeudas(this.sitioForm.value);
+      if(this.sitioForm.controls['tipo'].value !== "Donación") {
+        this.generarListaDeudas(this.sitioForm.value);
+      }
     } else {
       this.listaDeudas = [];
     }
@@ -234,6 +236,7 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
       if(fallecido) {
         nuevo_registro.fallecido = null;
       }
+
       this.apiRepresentante.agregarRepresentante(nuevo_registro);
     } else {
       this.apiRepresentante.agregarRepresentante(r);
