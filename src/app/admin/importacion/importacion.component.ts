@@ -267,6 +267,7 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
       new Date(registro.sitio.fechaAdquisicion) <= new Date(this.periodoFinal));
   }
 
+  // fines de visualizacion
   verCantidadRegistros() {
     this.listaRegistros2.forEach( registro => {
       this.cantidaRegistros = this.cantidaRegistros + 4;
