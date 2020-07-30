@@ -7,7 +7,7 @@
     <table mat-table [dataSource]="dataSourceEC" matSort>
         <ng-container matColumnDef="descripcion">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Motivo </th>
-            <td mat-cell *matCellDef="let row"> {{row.pago}}</td>
+            <td mat-cell *matCellDef="let row" [matTooltip]="'Servicio contratado: ' + row.descripcion"> {{row.pago}}</td>
             <td mat-footer-cell *matFooterCellDef> </td>
         </ng-container>
         <ng-container matColumnDef="desde">
@@ -17,7 +17,7 @@
         </ng-container>
         <ng-container matColumnDef="hasta">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Hasta </th>
-            <td mat-cell *matCellDef="let row"> {{row.hasta}} </td>
+            <td mat-cell *matCellDef="let row"> {{ row.tipo == 'Propio' && row.pago == 'Servicio'? "..." : row.hasta}} </td>
             <td mat-footer-cell *matFooterCellDef [style.color]="'green'" matTooltip="Cantidad pagada"> {{getPagosEstadoCuenta() | currency}} </td>
         </ng-container>
         <ng-container matColumnDef="cantidad">
