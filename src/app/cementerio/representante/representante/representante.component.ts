@@ -20,11 +20,13 @@ import { DialogRegistroRepresentante } from '../dialog/registro-representante/di
 
 export class RepresentanteComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   displayedColumns: string[] = ['id', 'nombre', 'cedula', 'fecha', 'accion'];
+  displayedColumnsSinSitios: string[] = ['id', 'nombre', 'cedula', 'accion'];
   dataSource: MatTableDataSource<RepresentanteI[]>;
+  dataSourceSinSitios: MatTableDataSource<RepresentanteI[]>;
 
   periodos: FechasI[];
 
@@ -32,9 +34,13 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
 
   locale: string;
 
+  registrosConSitio: boolean = true;
+  registroSinSitio: boolean = false;
+
   private _translate;
   private _periodo: string;
   private listaRepresentantes = [];
+  private listaRepresentantesSinSitio = [];
 
   constructor(
     private translate: TranslateService,
@@ -43,22 +49,22 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialog: MatDialog,
     private route: ActivatedRoute
-    ) {
-      route.paramMap.subscribe( (data: ParamMap) => {
-        const periodo = data.get("periodo") ? data.get("periodo") : "todos";
-        this.obtenerValoresRepresentantes(periodo);
-      })
-    }
+  ) {
+    route.paramMap.subscribe((data: ParamMap) => {
+      const periodo = data.get("periodo") ? data.get("periodo") : "todos";
+      this.obtenerValoresRepresentantes(periodo);
+    })
+  }
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
-    this._translate =  this.translate.onLangChange
-    .subscribe((langChangeEvent: LangChangeEvent) => {this.locale = langChangeEvent.lang;})
+    this._translate = this.translate.onLangChange
+      .subscribe((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
 
   }
 
   ngOnDestroy(): void {
-    if(this._translate !== undefined) {
+    if (this._translate !== undefined) {
       this._translate.unsubscribe();
     }
   }
@@ -72,15 +78,14 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
   }
 
   verHistorial = (data: RepresentanteI) => {
-    //<a [routerLink]="['./historial', element.id]">ver</a>
     this.representante = data;
     this.router.navigateByUrl(`/inicio/representantes/${this._periodo}/historial/${data.id}`);
   }
 
   nuevoRepresentante = () => {
     const dialogRef = this.dialog.open(DialogRegistroRepresentante, {
-      width: '500px',
-      data: {name: "nombre", animal: "animal"},
+      width: '600px',
+      data: { name: "nombre", animal: "animal" },
       panelClass: "my-class"
     });
 
@@ -90,26 +95,34 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
   }
 
   private obtenerValoresRepresentantes(periodo: string) {
+    this.registrosConSitio = false;
+    this.registroSinSitio = false;
     this._periodo = periodo;
-    this.cargarValoresRepresentantes([]);
-    if(periodo === "todos") {
-      this.apiRepresentantes.listarRepresentantes();
-      this.apiRepresentantes.representantes.pipe(
-        tap((data: RepresentanteI[]) => this.cargarValoresRepresentantes(data))
-      ).toPromise();
-    } else {
-      this.apiSitios.fechas.pipe(
-        map((data: FechasI[]) => data.find( f => f.title.toString() === periodo.toString())),
-        filter( Boolean ),
-        tap((data: FechasI) => {
-          this.apiRepresentantes.listarRepresentantesPeriodo(data.desde, data.hasta);
-          this.apiRepresentantes.representantes.pipe(
-            tap((data: RepresentanteI[]) => this.cargarValoresRepresentantes(data))
-          ).toPromise();
-        })
-      ).toPromise();
-    }
 
+    if(periodo !== "sinsitios") {
+      this.registrosConSitio = true;
+      this.cargarValoresRepresentantes([]);
+      if (periodo === "todos") {
+        this.apiRepresentantes.listarRepresentantes();
+        this.apiRepresentantes.representantes.pipe(
+          tap((data: RepresentanteI[]) => this.cargarValoresRepresentantes(data))
+        ).toPromise();
+      } else {
+        this.apiSitios.fechas.pipe(
+          map((data: FechasI[]) => data.find(f => f.title.toString() === periodo.toString())),
+          filter(Boolean),
+          tap((data: FechasI) => {
+            this.apiRepresentantes.listarRepresentantesPeriodo(data.desde, data.hasta);
+            this.apiRepresentantes.representantes.pipe(
+              tap((data: RepresentanteI[]) => this.cargarValoresRepresentantes(data))
+            ).toPromise();
+          })
+        ).toPromise();
+      }
+    } else {
+      this.registroSinSitio = true;
+      this.cargarValoresRepresentantesSinSitios();
+    }
   }
 
   private cargarValoresRepresentantes(datos: RepresentanteI[]) {
@@ -117,6 +130,20 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.listaRepresentantes);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  private cargarValoresRepresentantesSinSitios() {
+    this.apiRepresentantes.listarRepresentantesSinSitio().pipe(
+      tap(data => {
+        if (data.ok) {
+          this.listaRepresentantesSinSitio = data.data;
+          this.dataSourceSinSitios = new MatTableDataSource(this.listaRepresentantesSinSitio);
+          this.dataSourceSinSitios.paginator = this.paginator;
+          this.dataSourceSinSitios.sort = this.sort;
+        } else {
+          console.log("error: un error al obtener los representantes sin sitios");
+        }
+      })).toPromise();
   }
 
 }
