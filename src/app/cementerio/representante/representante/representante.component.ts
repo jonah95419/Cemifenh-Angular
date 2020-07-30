@@ -83,15 +83,13 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
   }
 
   nuevoRepresentante = () => {
-    const dialogRef = this.dialog.open(DialogRegistroRepresentante, {
-      width: '600px',
-      data: { name: "nombre", animal: "animal" },
-      panelClass: "my-class"
-    });
+    const dialogRef = this.dialog.open(DialogRegistroRepresentante, { width: '600px', panelClass: "my-class" });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed' + result);
-    });
+    dialogRef.afterClosed().subscribe();
+  }
+
+  refrescarRegistros(){
+    this.obtenerValoresRepresentantes(this._periodo);
   }
 
   private obtenerValoresRepresentantes(periodo: string) {

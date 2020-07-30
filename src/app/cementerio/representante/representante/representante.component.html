@@ -41,10 +41,14 @@
                 </ng-container>
 
                 <ng-container matColumnDef="header-row-cero-grupo">
-                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="5">Lista representantes</th>
+                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="4">Lista representantes</th>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo']; sticky: true"></tr>
+                <ng-container matColumnDef="header-row-uno-grupo">
+                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="text-align: center;"><button mat-icon-button matTooltip="Refrescar registros" (click)="refrescarRegistros();"><mat-icon>refresh</mat-icon></button></th>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo', 'header-row-uno-grupo']; sticky: true"></tr>
 
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -78,10 +82,14 @@
                 </ng-container>
 
                 <ng-container matColumnDef="header-row-cero-grupo">
-                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="5">Lista representantes</th>
+                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="3">Lista representantes</th>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo']; sticky: true"></tr>
+                <ng-container matColumnDef="header-row-uno-grupo">
+                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="text-align: center;"><button mat-icon-button matTooltip="Refrescar registros" (click)="refrescarRegistros();"><mat-icon>refresh</mat-icon></button></th>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo', 'header-row-uno-grupo']; sticky: true"></tr>
 
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumnsSinSitios; sticky: true"></tr>
