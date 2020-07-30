@@ -6,7 +6,7 @@ export class Importacion {
 
   cantidad: number = 0;
 
-  constructor (private listaSectores: SectorI[], private listaValores: ValorI[]) {}
+  constructor(private listaSectores: SectorI[], private listaValores: ValorI[]) { }
 
   generarDeudasRegistro = (registros: RegistroI[]): DeudaI[] => {
     registros = this.asignarColumnas(registros);
@@ -17,7 +17,7 @@ export class Importacion {
 
     registros = this.asignarColumnas(registros);
 
-    let nuevoDataSet= [];
+    let nuevoDataSet = [];
 
     for (let i = 0; i < registros.length; i++) {
 
@@ -67,32 +67,32 @@ export class Importacion {
 
   };
 
-  private asignarColumnas ( registros: RegistroI[]): RegistroI[] {
-    for ( let i=0; i<registros.length; i++) {
+  private asignarColumnas(registros: RegistroI[]): RegistroI[] {
+    for (let i = 0; i < registros.length; i++) {
       registros[i].FechaInicio = registros[i].FechaAdquisicion;
-      registros[i].Motivo = registros[i].Motivo.replace(/\s?$/,'');
-      registros[i].Lugar = registros[i].Lugar.replace(/\s?$/,'');
+      registros[i].Motivo = registros[i].Motivo.replace(/\s?$/, '');
+      registros[i].Lugar = registros[i].Lugar.replace(/\s?$/, '');
     }
     return registros;
   }
 
-  private asignarSector ( ): SectorI {
-    return this.listaSectores.filter ( sector => sector.nombre === 'Sin def.')[0];
+  private asignarSector(): SectorI {
+    return this.listaSectores.filter(sector => sector.nombre === 'Sin def.')[0];
   }
 
-  private obtenerValoresServicio (registro: RegistroI): ValorI[] {
+  private obtenerValoresServicio(registro: RegistroI): ValorI[] {
 
     let valores: ValorI[];
     const fecha = new Date(registro.FechaInicio);
 
-    if ( fecha.getFullYear() <= 2000) {
-      for ( let i=0; i < this.listaValores.length; i++) {
-        if (  Number(this.listaValores[i].anio) === 1999 ) {
+    if (fecha.getFullYear() <= 2000) {
+      for (let i = 0; i < this.listaValores.length; i++) {
+        if (Number(this.listaValores[i].anio) === 1999) {
           valores = [this.listaValores[i]];
         }
       }
     } else {
-      valores = this.listaValores.filter( valor =>
+      valores = this.listaValores.filter(valor =>
         Number(valor.anio) === fecha.getFullYear() &&
         (valor.lugar.toLowerCase() == registro.Lugar.toLowerCase()) &&
         (valor.motivo.toLowerCase() == registro.Motivo.toLowerCase()));
@@ -100,14 +100,14 @@ export class Importacion {
     return valores;
   }
 
-  private obtenerValoresMantenimiento (anio: number): ValorI[] {
-    return this.listaValores.filter( valor =>
+  private obtenerValoresMantenimiento(anio: number): ValorI[] {
+    return this.listaValores.filter(valor =>
       Number(valor.anio) === anio &&
       (valor.lugar === 'Cementerio') &&
       (valor.motivo === 'Mantenimiento'));
   }
 
-  private generarComprobante (nombre: string, fecha: Date, total: string, observaciones: string): ComprobanteI {
+  private generarComprobante(nombre: string, fecha: Date, total: string, observaciones: string): ComprobanteI {
     return {
       nombre,
       fecha,
@@ -116,28 +116,32 @@ export class Importacion {
     }
   }
 
-  private generarDeudas (registro: RegistroI): DeudaI[] {
+  private generarDeudas(registro: RegistroI): DeudaI[] {
 
     let listaDeudas: DeudaI[] = [];
     let valores = this.obtenerValoresServicio(registro);
     let inicioS = new Date(registro.FechaInicio);
 
-    while ( inicioS < new Date()) {
-      let servicioId = Number(valores.filter( valor => valor.motivo !== 'Mantenimiento' )[0].id);
-      let cantidad = Number(valores.filter( valor => valor.motivo !== 'Mantenimiento' )[0].periodo);
+    while (inicioS < new Date()) {
+      let servicioId = Number(valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].id);
+      let cantidad = Number(valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].periodo);
       let servicio;
       let finS;
       let i = 0;
 
-      if ( cantidad !== 0 ) {
-        servicio = valores.filter( valor => valor.motivo !== 'Mantenimiento' )[0].valor;
+      if (cantidad !== 0) {
+        servicio = valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].valor;
       } else {
         if (inicioS.getFullYear() <= 2000) {
           servicio = registro.Total;
         } else {
-          servicio = valores.filter( valor => valor.motivo !== 'Mantenimiento' )[0].valor;
+          servicio = valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].valor;
         }
-        cantidad = new Date().getFullYear() - inicioS.getFullYear();
+        if (new Date().getFullYear() === inicioS.getFullYear()) {
+          cantidad = 1;
+        } else {
+          cantidad = new Date().getFullYear() - inicioS.getFullYear();
+        }
       }
 
       if (inicioS.getFullYear() >= 2001) {
@@ -162,9 +166,9 @@ export class Importacion {
 
           let valoresM = this.obtenerValoresMantenimiento(inicioS.getFullYear() + i);
 
-          let mantenimientoId = Number(valoresM.filter( valor => valor.motivo === 'Mantenimiento' )[0].id);
-          let mantenimiento = valoresM.filter( valor => valor.motivo === 'Mantenimiento' )[0].valor;
-          let cantidadM = Number(valoresM.filter( valor => valor.motivo === 'Mantenimiento' )[0].periodo);
+          let mantenimientoId = Number(valoresM.filter(valor => valor.motivo === 'Mantenimiento')[0].id);
+          let mantenimiento = valoresM.filter(valor => valor.motivo === 'Mantenimiento')[0].valor;
+          let cantidadM = Number(valoresM.filter(valor => valor.motivo === 'Mantenimiento')[0].periodo);
 
           let inicioM = new Date((inicioS.getFullYear() + i), inicioS.getMonth(), inicioS.getDate());
           let finM = new Date((inicioS.getFullYear() + (i + cantidadM)), inicioS.getMonth(), inicioS.getDate());
@@ -184,7 +188,6 @@ export class Importacion {
             i = i + cantidad;
           }
 
-
         }
       }
 
@@ -198,9 +201,9 @@ export class Importacion {
 
   }
 
-  private generarIngreso ( cant: string): IngresoI {
+  private generarIngreso(cant: string): IngresoI {
     let ingreso: IngresoI;
-    if ( this.cantidad >= Number(cant)) {
+    if (this.cantidad >= Number(cant)) {
       ingreso = {
         codigoD: 0,
         condigoC: 0,
@@ -208,7 +211,7 @@ export class Importacion {
       }
       this.cantidad -= Number(cant);
     } else {
-      if ( this.cantidad > 0) {
+      if (this.cantidad > 0) {
         ingreso = {
           codigoD: 0,
           condigoC: 0,
