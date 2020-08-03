@@ -11,16 +11,23 @@ tr.mat-footer-row {
     border-top: 1px solid #e0e0e0;
 }
 
+.mat-column-fecha {
+    min-width: 110px;
+}
+
 .mat-column-desde {
     text-align: center;
+    min-width: 100px;
 }
 
 .mat-column-hasta {
     text-align: center;
+    min-width: 100px;
 }
 
 .mat-column-cantidad {
     text-align: center;
+    min-width: 90px;
 }
 
 .mat-column-accion {
@@ -29,6 +36,12 @@ tr.mat-footer-row {
 
 .mat-column-eliminar {
     text-align: end;
+}
+
+.mat-column-descripcion {
+    max-width: 200px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 .container-opciones {
