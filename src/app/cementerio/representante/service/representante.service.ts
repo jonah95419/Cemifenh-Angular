@@ -5,6 +5,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RepresentanteResponse, RepresentanteI } from '../model/representante';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ResponseDeudaRepresentanteI } from '../model/deuda';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -53,10 +54,16 @@ export class RepresentanteService {
       .pipe(catchError(this.handleError));
   }
 
-  obtenerEstadoCuentaRepresentante(representanteId: string): Observable<any> {
+  obtenerEstadoCuentaRepresentante(id: string): Observable<any> {
     return this.httpClient
-      .get<any>(`${AUTH_SERVER}/representante/estado-cuenta/${representanteId}`, this.httpOptions)
+      .get<any>(`${AUTH_SERVER}/representante/estado-cuenta/${id}`, this.httpOptions)
       .pipe(catchError(this.handleError));
+  }
+
+  obtenerDeudasRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
+    return this.httpClient
+    .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/deudas/${id}`, this.httpOptions)
+    .pipe(catchError(this.handleError));
   }
 
 
@@ -64,11 +71,6 @@ export class RepresentanteService {
 
 
 
-
-  obtenerDeudasRepresentante(representanteId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/representante/deudas/${representanteId}`, this.httpOptions)
-      .pipe(catchError(this.handleError));
-  }
 
   obtenerPagoDetallesRepresentante(comprobanteID: number): Observable<any> {
     return this.httpClient.get<any>(`${AUTH_SERVER}/representante/pago-detalles/${comprobanteID}`, this.httpOptions)
