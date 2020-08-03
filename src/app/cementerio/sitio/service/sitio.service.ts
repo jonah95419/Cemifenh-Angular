@@ -4,6 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { FechasI, FechasResponse } from '../model/fechas';
+import { ResponseSitioI, ResponseDeudaSitioI } from '../model/sitio';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -31,68 +32,80 @@ export class SitioService {
     })
   }
 
+  obtenerDeudas(sitioId: number): Observable<ResponseDeudaSitioI> {
+    return this.httpClient
+    .get<ResponseDeudaSitioI>(`${AUTH_SERVER}/sitio/deudas/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
+
+
+
+
+
+  agregarPagoExtra(pago: any): Observable<any> {
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/sitio/pago-extra`, JSON.stringify(pago), this.httpOptions)
+    .pipe(catchError(this.handleError));
+  }
+
   agregarIngreso(ingreso: IngresoI): Observable<any> {
-    return this.httpClient.post<any>(`${AUTH_SERVER}/api/agregar-ingreso/`, JSON.stringify(ingreso), this.httpOptions)
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/sitio/ingreso/`, JSON.stringify(ingreso), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
 
   agregarDeuda(deuda: DeudaI): Observable<any> {
-    return this.httpClient.post<any>(`${AUTH_SERVER}/api/agregar-deuda/`, JSON.stringify(deuda), this.httpOptions)
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/sitio/deuda/`, JSON.stringify(deuda), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
 
   agregarComprobante(comprobante: ComprobanteI): Observable<any> {
-    return this.httpClient.post<any>(`${AUTH_SERVER}/api/agregar-comprobante/`, JSON.stringify(comprobante), this.httpOptions)
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/sitio/comprobante/`, JSON.stringify(comprobante), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
+
+
 
 
 
   agregarSitio(sitio: SitioI): Observable<any> {
-    return this.httpClient.post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
 
-  listarSitios(representanteId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+  listarSitios(representanteId: string): Observable<ResponseSitioI> {
+    return this.httpClient
+    .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
 
+
   obtenerEstadoCuenta(sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient
+    .get<any>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
 
   obtenerPagoDetalles(codigoId: number, sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/pago-detalles/${codigoId}&${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient
+    .get<any>(`${AUTH_SERVER}/sitio/pago-detalles/${codigoId}&${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
 
   obtenerPagos(sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/pagos/${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  obtenerDeudas(sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/deudas/${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient
+    .get<any>(`${AUTH_SERVER}/sitio/pagos/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
 
   obtenerSitio(sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+    return this.httpClient
+    .get<any>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
 
   private handleError(error: HttpErrorResponse) {
