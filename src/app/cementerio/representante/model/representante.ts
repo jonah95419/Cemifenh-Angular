@@ -9,7 +9,8 @@ export interface RepresentanteI {
 }
 
 export interface RepresentanteResponse {
-  cant: number;
-  data: RepresentanteI[];
+  cant?: number;
+  data?: RepresentanteI[];
+  message?: string;
   ok: boolean;
 }
