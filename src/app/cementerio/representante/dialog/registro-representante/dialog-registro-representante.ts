@@ -19,11 +19,6 @@ import { SitioI } from '../../../sitio/sitio-detalles/sitio-detalles.component';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { MatTable } from '@angular/material/table';
 
-export interface DialogData {
-  animal: string;
-  name: string;
-}
-
 @Component({
   selector: 'dialog-registro-representante',
   templateUrl: 'dialog-registro-representante.html',
