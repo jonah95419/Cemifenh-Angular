@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { FallecidoService } from '../service/fallecido.service';
-import { DeudaI } from '../../sitio/sitio-detalles/sitio-detalles.component';
+import { DeudaI } from '../../representante/model/deuda';
 
 @Component({
   selector: 'app-fallecidos',
