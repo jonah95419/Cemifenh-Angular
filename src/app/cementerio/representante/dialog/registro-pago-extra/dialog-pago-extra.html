@@ -1,0 +1,98 @@
+<h1 mat-dialog-title>Registrar pago</h1>
+<div mat-dialog-content>
+    <p>Datos comprobante</p>
+
+    <mat-form-field>
+        <mat-label>Nombre:</mat-label>
+        <input type="text" matInput>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Sitio:</mat-label>
+        <mat-select (selectionChange)="sitioSeleccionado($event);">
+            <mat-option *ngFor="let sitio of sitios" [value]="sitio">
+                {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <form [formGroup]="pagoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
+        <div class="fields-container">
+            <div *ngIf="sitio; else sitioE;">
+                <div style="display: flex; flex-direction: row;">
+                    <div *ngIf="deudas.length != 0; else lengD">
+                        <mat-form-field>
+                            <mat-label>Deudas pendientes:</mat-label>
+                            <mat-select formControlName="deuda" [disabled]="otros">
+                                <mat-option *ngFor="let deuda of deudasAuxiliar" [value]="deuda">
+                                    <b>{{deuda.deuda_actual | currency}}</b> de {{deuda.deuda_total | currency}} ({{deuda.descripcion}})
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <section class="example-section">
+                        <mat-checkbox (change)="otroPago($event);">Otro</mat-checkbox>
+                    </section>
+                </div>
+
+                <div *ngIf="otros">
+                    <mat-form-field>
+                        <mat-label>Descripción:</mat-label>
+                        <input formControlName="descripcion" type="text" matInput>
+                    </mat-form-field>
+                </div>
+
+                <div style="display: flex; flex-direction: row;">
+                    <mat-form-field style="width: 120px;">
+                        <mat-label>Monto:</mat-label>
+                        <input matInput formControlName="cantidad" type="number" min="0" min="1">
+                    </mat-form-field>
+                    <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px;">agregar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <table #table mat-table [dataSource]="listaPagos">
+
+        <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+            <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
+            <td mat-footer-cell *matFooterCellDef> Total </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+            <td mat-cell *matCellDef="let row"> {{row.cantidad | currency }}</td>
+            <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row" style="text-align: end;" matTooltip="Eliminar">
+                <button mat-icon-button (click)="eliminarPago(row)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
+
+    </table>
+
+    <ng-template #sitioE>
+        <p style="margin-left: 6px;">Debes seleccionar un sitio para ver los detalles...</p>
+    </ng-template>
+
+    <ng-template #lengD>
+        <p style="margin: auto 6px;">Sin deudas pendientes...</p>
+    </ng-template>
+
+</div>
+<div mat-dialog-actions align=end>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button type="submit" cdkFocusInitial>Guardar</button>
+</div>
