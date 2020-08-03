@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { RepresentanteService } from '../service/representante.service';
+import { DeudaRepresentanteI } from '../model/deuda';
 
 @Component({
   selector: 'app-deudas',
@@ -19,7 +20,7 @@ export class DeudasComponent implements OnInit {
   idRepresentante: any;
 
   displayedColumnsD: string[] = ['id', 'nombre', 'sector', 'tipo', 'descripcion', 'motivo', 'deuda_total', 'desde', 'hasta', 'cantidad'];
-  dataSourceD: MatTableDataSource<DeudaI>;
+  dataSourceD: MatTableDataSource<DeudaRepresentanteI>;
 
   private state$: Observable<object>;
   private subscribeDeudas: any;
@@ -67,23 +68,10 @@ export class DeudasComponent implements OnInit {
     });
   }
 
-  private cargarValores(data:DeudaI[]) {
+  private cargarValores(data:DeudaRepresentanteI[]) {
     this.listaDeudas = data;
     this.dataSourceD = new MatTableDataSource(this.listaDeudas);
     this.dataSourceD.sort = this.sort;
   }
 
-}
-
-export interface DeudaI {
-  id: number;
-  nombre: string;
-  desde: string;
-  hasta: string;
-  deuda_total: string;
-  cantidad: string;
-  descripcion: string;
-  sector: string;
-  tipo: string;
-  motivo: string;
 }
