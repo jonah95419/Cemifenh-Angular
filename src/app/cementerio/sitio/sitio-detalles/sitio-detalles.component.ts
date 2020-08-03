@@ -12,8 +12,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SitioService } from '../service/sitio.service';
 import { SectorService } from 'src/app/admin/service/sector.service';
 import { FallecidoService } from '../../fallecido/service/fallecido.service';
-import { EstadoCuentaI } from '../service/estadoCuenta';
 import { SectorI } from '../../../admin/model/sector';
+import { EstadoCuentaI } from '../model/estadoCuenta';
+import { DeudaSitioI } from '../model/sitio';
 
 @Component({
   selector: 'app-sitio-detalles',
@@ -44,7 +45,7 @@ export class SitioDetallesComponent implements OnInit, OnDestroy, OnChanges {
   displayedColumnsPD: string[] = ['descripcion', 'cantidad', 'desde', 'hasta'];
   displayedColumnsEC: string[] = ['id', 'descripcion', 'desde', 'hasta', 'cantidad'];
   dataSource: MatTableDataSource<FallecidoI>;
-  dataSourceD: MatTableDataSource<DeudaI>;
+  dataSourceD: MatTableDataSource<DeudaSitioI>;
   dataSourceP: MatTableDataSource<PagoI>;
   dataSourcePD: MatTableDataSource<PagoDetallesI>;
   dataSourceEC: MatTableDataSource<EstadoCuentaI>;
@@ -55,7 +56,7 @@ export class SitioDetallesComponent implements OnInit, OnDestroy, OnChanges {
 
   listaSectores: SectorI[];
   listaFallecidos: FallecidoI[];
-  listaDeudas: DeudaI[];
+  listaDeudas: DeudaSitioI[];
   listaPagos: PagoI[];
   listaPagoDetalles: PagoDetallesI[];
   listaEstadoCuenta: EstadoCuentaI[];
@@ -187,7 +188,7 @@ export class SitioDetallesComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  private cargarValoresDeudas(data: DeudaI[]) {
+  private cargarValoresDeudas(data: DeudaSitioI[]) {
     this.listaDeudas = data;//data.filter(deuda => Number(deuda.deuda_actual) !== 0);
     this.dataSourceD = new MatTableDataSource(this.listaDeudas);
     this.dataSourceD.sort = this.sort;
@@ -257,14 +258,6 @@ export interface FallecidoI {
   observaciones: string;
 }
 
-export interface DeudaI {
-  id: number;
-  descripcion: string;
-  deuda_total: string;
-  deuda_actual: string;
-  desde: Date;
-  hasta: Date;
-}
 
 export interface PagoI {
   id: number;
