@@ -106,10 +106,6 @@ export class HistorialComponent implements OnInit, OnDestroy {
   private obtenerHistorial(id: string) {
     this.id = id;
     this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
-      map(data => {
-        data.data = data.data.filter(d => d.cantidad !== null);
-        return data;
-      }),
       tap(data => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
         else { console.log(data.message); }
