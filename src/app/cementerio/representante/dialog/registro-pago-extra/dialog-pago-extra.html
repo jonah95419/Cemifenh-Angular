@@ -2,10 +2,17 @@
 <div mat-dialog-content>
     <p>Datos comprobante</p>
 
-    <mat-form-field>
-        <mat-label>Nombre:</mat-label>
-        <input type="text" matInput>
-    </mat-form-field>
+    <div style="display: flex; flex-direction: row;">
+        <mat-form-field>
+            <mat-label>Nombre:</mat-label>
+            <input type="text" [(ngModel)]="nombre" matInput>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Fecha:</mat-label>
+            <input [(ngModel)]="fecha" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
+        </mat-form-field>
+        <mat-datepicker #picker2></mat-datepicker>
+    </div>
 
     <mat-form-field>
         <mat-label>Sitio:</mat-label>
@@ -25,7 +32,7 @@
                             <mat-label>Deudas pendientes:</mat-label>
                             <mat-select formControlName="deuda" [disabled]="otros">
                                 <mat-option *ngFor="let deuda of deudasAuxiliar" [value]="deuda">
-                                    <b>{{deuda.deuda_actual | currency}}</b> de {{deuda.deuda_total | currency}} ({{deuda.descripcion}})
+                                    <b>{{deuda.deuda_actual | currency}}</b> ({{deuda.descripcion}} - {{deuda.desde}})
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -93,6 +100,6 @@
 
 </div>
 <div mat-dialog-actions align=end>
-    <button mat-button (click)="onNoClick()">Cancelar</button>
-    <button mat-button type="submit" cdkFocusInitial>Guardar</button>
+    <button mat-button (click)="onNoClick();">Cancelar</button>
+    <button mat-button (click)="enviarPago();" cdkFocusInitial>Guardar</button>
 </div>

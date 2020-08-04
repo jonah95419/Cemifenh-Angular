@@ -10,6 +10,8 @@ import { ResponseSitioI, SitioI, DeudaSitioI, ResponseDeudaSitioI } from '../../
 import { MatSelectChange } from '@angular/material/select';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatTable } from '@angular/material/table';
+import { ValoresService } from '../../../../admin/service/valores.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'dialog-pago-extra',
@@ -37,6 +39,7 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
 
   locale: string;
   otros: boolean = false;
+  id_valor_extra: number = -1;
   sitio: SitioI;
 
   pagoForm = this.fb.group({
@@ -45,15 +48,22 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
     cantidad: new FormControl('', Validators.min(0)),
   })
 
+  nombre: string = "";
+  fecha: Date = new Date();
+
+
   private _translate;
 
   constructor(
     private translate: TranslateService,
     private apiSitio: SitioService,
+    private apiValores: ValoresService,
+    private _snackBar: MatSnackBar,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogPagoExtra>,
     @Inject(MAT_DIALOG_DATA) private data: any) {
       this.cargarSitios(data.id);
+      apiValores.valorExtra.pipe( tap( d => this.id_valor_extra = d)).toPromise();
   }
 
   onNoClick(): void { this.dialogRef.close(); }
@@ -76,9 +86,10 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
     if(this.otros) {
       if(value.descripcion !== "" && value.cantidad) {
         this.listaPagos.push({
-          id:-1,
+          id:this.id_valor_extra,
           descripcion: value.descripcion,
-          cantidad: value.cantidad
+          cantidad: value.cantidad,
+          extra: true
         });
         this.table.renderRows();
         this.pagoForm.reset();
@@ -87,9 +98,11 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
       if(value.deuda !== null && value.cantidad) {
         this.listaPagos.push({
           id: value.deuda.id,
-          descripcion: value.deuda.descripcion + " (" + value.deuda.desde + " - " + value.deuda.hasta + ")",
-          cantidad: value.cantidad
+          descripcion: value.deuda.descripcion + " (" + value.deuda.desde + ")",
+          cantidad: value.cantidad,
+          extra: false
         });
+        this.deudasAuxiliar = this.deudasAuxiliar.filter( d => d.id !== value.deuda.id);
         this.table.renderRows();
         this.pagoForm.reset();
       }
@@ -98,10 +111,14 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
 
   eliminarPago(row: deudaComprobante): void {
     this.listaPagos = this.listaPagos.filter( d => d !== row);
+    let nuevo = this.deudas.find( d => d.id === row.id);
+    if(nuevo) {
+      this.deudasAuxiliar.push(nuevo);
+    }
     this.table.renderRows();
   }
 
-  getTotalCost() {
+  getTotalCost(): number {
     return this.listaPagos?.map(t => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
   }
 
@@ -117,6 +134,29 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
   otroPago(event: MatCheckboxChange): void {
     const value = event.checked;
     this.otros = value;
+  }
+
+  enviarPago(): void {
+    if(this.nombre !== "" && this.fecha !== undefined && this.listaPagos.length !== 0) {
+      let registro: any = {};
+      registro.nombre = this.nombre;
+      registro.fecha = this.fecha;
+      registro.total = this.getTotalCost();
+      registro.pagos = this.listaPagos;
+      registro.sitio = this.sitio.id;
+      this.apiSitio.agregarPago(registro)
+      .subscribe( data => {
+        if(data.ok) {
+          this.openSnackBar("Pago registrado!! ", "ok");
+        } else {
+          this.openSnackBar("A ocurrido un error, por favor intentanlo nuevamente ", "ok");
+        }
+        this.dialogRef.close();
+      })
+    } else {
+      this.openSnackBar("Faltan campos por llenar", "ok");
+    }
+
   }
 
   private cargarSitios(id: string): void {
@@ -140,10 +180,15 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
     ).toPromise();
   }
 
+  private openSnackBar = (message: string, action: string) => {
+    this._snackBar.open(message, action, { duration: 5000 });
+  }
+
 }
 
 interface deudaComprobante {
   id: number;
   descripcion: string;
   cantidad: number;
+  extra: boolean;
 }
