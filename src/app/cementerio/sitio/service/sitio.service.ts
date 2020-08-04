@@ -39,15 +39,13 @@ export class SitioService {
   }
 
 
-
-
-
-
-  agregarPagoExtra(pago: any): Observable<any> {
+  agregarPago(pago: any): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/pago-extra`, JSON.stringify(pago), this.httpOptions)
+    .post<any>(`${AUTH_SERVER}/sitio/pago`, JSON.stringify(pago), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
+
+
 
   agregarIngreso(ingreso: IngresoI): Observable<any> {
     return this.httpClient
