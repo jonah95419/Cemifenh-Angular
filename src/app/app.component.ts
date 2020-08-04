@@ -19,6 +19,7 @@ export class AppComponent {
     apiSitios.listarFechasSitios();
     apiSectores.listarSectores();
     apiValores.listarValores();
+    apiValores.listarValorPagoExtra();
   }
 
 }
