@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { environment } from '../../../../environments/environment';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { RepresentanteResponse, RepresentanteI } from '../model/representante';
+import { RepresentantesResponse, RepresentanteI } from '../model/representante';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResponseDeudaRepresentanteI } from '../model/deuda';
 
@@ -22,9 +22,9 @@ export class RepresentanteService {
 
   listarRepresentantes = (): void => {
     this.httpClient
-      .get<RepresentanteResponse>(`${AUTH_SERVER}/representante/`, this.httpOptions)
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/`, this.httpOptions)
       .pipe(catchError(this.handleError))
-      .subscribe((data: RepresentanteResponse) => {
+      .subscribe((data: RepresentantesResponse) => {
         if (data.ok) {
           this.dataStore.representantes = data.data;
           this._representantes.next(Object.assign({}, this.dataStore).representantes);
@@ -36,9 +36,9 @@ export class RepresentanteService {
 
   listarRepresentantesPeriodo = (desde: string, hasta: string): void => {
     this.httpClient
-      .get<RepresentanteResponse>(`${AUTH_SERVER}/representante/periodo/${desde}&${hasta}`, this.httpOptions)
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/periodo/${desde}&${hasta}`, this.httpOptions)
       .pipe(catchError(this.handleError))
-      .subscribe((data: RepresentanteResponse) => {
+      .subscribe((data: RepresentantesResponse) => {
         if (data.ok) {
           this.dataStore.representantes = data.data;
           this._representantes.next(Object.assign({}, this.dataStore).representantes);
@@ -48,9 +48,9 @@ export class RepresentanteService {
       });
   }
 
-  listarRepresentantesSinSitio = (): Observable<RepresentanteResponse> => {
+  listarRepresentantesSinSitio = (): Observable<RepresentantesResponse> => {
     return this.httpClient
-      .get<RepresentanteResponse>(`${AUTH_SERVER}/representante/sin-sitio/`, this.httpOptions)
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/sin-sitio/`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
@@ -62,8 +62,14 @@ export class RepresentanteService {
 
   obtenerDeudasRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
     return this.httpClient
-    .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/deudas/${id}`, this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/deudas/${id}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  obtenerRepresentante(representanteId: string): Observable<RepresentantesResponse> {
+    return this.httpClient
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/${representanteId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
@@ -82,10 +88,7 @@ export class RepresentanteService {
       .pipe(catchError(this.handleError));
   }
 
-  obtenerRepresentante(representanteId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/representante/${representanteId}`, this.httpOptions)
-      .pipe(catchError(this.handleError));
-  }
+
 
 
 
