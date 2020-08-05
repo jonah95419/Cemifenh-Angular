@@ -8,7 +8,7 @@ export interface RepresentanteI {
   estado: boolean;
 }
 
-export interface RepresentanteResponse {
+export interface RepresentantesResponse {
   cant?: number;
   data?: RepresentanteI[];
   message?: string;
