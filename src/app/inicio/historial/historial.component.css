@@ -7,12 +7,20 @@ tr.mat-footer-row {
     font-weight: bold;
 }
 
+tr.mat-header-row {
+    height: 30px;
+}
+
+th.mat-header-cell {
+    border: none;
+}
+
 .mat-table-sticky {
     border-top: 1px solid #e0e0e0;
 }
 
 .mat-column-fecha {
-    min-width: 110px;
+    min-width: 115px;
 }
 
 .mat-column-desde {
@@ -20,14 +28,14 @@ tr.mat-footer-row {
     min-width: 100px;
 }
 
-.mat-column-hasta {
+.mat-column-cargos {
     text-align: center;
-    min-width: 100px;
+    min-width: 110px;
 }
 
-.mat-column-cantidad {
+.mat-column-abonos {
     text-align: center;
-    min-width: 90px;
+    min-width: 110px;
 }
 
 .mat-column-accion {
@@ -40,6 +48,7 @@ tr.mat-footer-row {
 
 .mat-column-descripcion {
     max-width: 200px;
+    min-width: 130px;
     padding-left: 6px;
     padding-right: 6px;
 }

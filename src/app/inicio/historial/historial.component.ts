@@ -11,6 +11,7 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-pago-extra/dialog-pago-extra';
 import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
+import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
 
 @Component({
   selector: 'app-historial',
@@ -22,16 +23,18 @@ export class HistorialComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['fecha', 'descripcion', 'desde', 'hasta', 'cantidad', 'accion', 'eliminar'];
+  displayedColumnsEC: string[] = ['fecha', 'descripcion', 'desde', 'cargos', 'abonos', 'accion', 'eliminar'];
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
 
   listaEstadoCuenta: EstadoCuentaH[] = [];
+  representante: RepresentanteI;
 
   sitios: number = 0;
 
   id: string;
   locale: string;
+  fecha: Date = new Date();
 
   private _translate;
 
@@ -97,25 +100,51 @@ export class HistorialComponent implements OnInit, OnDestroy {
     return suma;
   }
 
-  getPagosEstadoCuenta(): number {
+  getPagos(): number {
     let suma: number = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01'))) { suma += Number(t.cantidad); } });
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01')) ) { suma += Number(t.cantidad); } });
+    return suma;
+  }
+
+  getPagosServicios(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01')) && t.desde !== null ) { suma += Number(t.cantidad); } });
+    return suma;
+  }
+
+  getPagosExtras(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && t.desde === null) { suma += Number(t.cantidad); } });
     return suma;
   }
 
   private obtenerHistorial(id: string) {
     this.id = id;
+    this.sitios = 0;
+    this.cargarHistorial(id);
+    this.cargarSitios(id);
+    this.cargarRepresentante(id);
+  }
+
+  private cargarRepresentante(id: string) {
+    this.apiRepresentante.obtenerRepresentante(id).pipe(
+      tap((data: RepresentantesResponse) => {
+        if (data.ok) { this.representante = data.data[0]; }
+        else { console.log(data.message); }
+      })
+    ).toPromise();
+  }
+
+  private cargarHistorial(id: string) {
     this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
       tap(data => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
         else { console.log(data.message); }
       })
     ).toPromise();
-    this.cargarSitios(id);
   }
 
   private cargarSitios(id: string) {
-    this.sitios = 0;
     this.apiSitio.listarSitios(id).pipe(
       tap((data: ResponseSitioI) => {
         if (data.ok) { this.sitios = data.cant; }
