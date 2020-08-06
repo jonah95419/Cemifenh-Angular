@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-pago-extra/dialog-pago-extra';
 import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
 import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
+import { DialogRegistroDeuda } from '../../cementerio/representante/dialog/registro-deuda/dialog-registro-deuda';
 
 @Component({
   selector: 'app-historial',
@@ -63,9 +64,14 @@ export class HistorialComponent implements OnInit, OnDestroy {
     }
   }
 
-
   agregarDeuda(): void {
-    window.alert("agregar deuda");
+    const dialogRef = this.dialog.open(DialogRegistroDeuda, {
+      width: '500px',
+      panelClass: "my-class",
+      data: { id: this.id }
+    });
+
+    dialogRef.afterClosed().subscribe();
   }
 
   agregarPago(): void {
