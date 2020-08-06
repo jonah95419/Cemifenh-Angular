@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>Registro deudas</h1>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Sitio:</mat-label>
+        <mat-select (selectionChange)="sitioSeleccionado($event);">
+            <mat-option *ngFor="let sitio of sitios" [value]="sitio">
+                {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div style="display: flex; flex-direction: row;">
+        <mat-form-field>
+            <mat-label>Año:</mat-label>
+            <mat-select (selectionChange)="anioSeleccionado($event);">
+                <mat-option *ngFor="let anio of aniosDeudas()" [value]="anio">
+                    {{anio}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Motivo:</mat-label>
+            <mat-select>
+                <mat-option *ngFor="let motivo of motivos" [value]="motivo">
+                    {{motivo}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <br> ingresar tabla nuevas deudas
+</div>
+<div mat-dialog-actions align=end>
+    <button mat-button>Cancelar</button>
+    <button mat-button cdkFocusInitial>Guardar</button>
+</div>
