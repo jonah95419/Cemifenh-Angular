@@ -4,7 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { FechasI, FechasResponse } from '../model/fechas';
-import { ResponseSitioI, ResponseDeudaSitioI } from '../model/sitio';
+import { ResponseSitioI, ResponseDeudaSitioI, SitioI } from '../model/sitio';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -118,15 +118,6 @@ export class SitioService {
   };
 }
 
-interface SitioI {
-  representante: number;
-  nombre: string;
-  tipo: string;
-  descripcion: string;
-  sector: number;
-  fecha: Date;
-  observaciones: string;
-}
 
 interface ComprobanteI {
   nombre: string;
