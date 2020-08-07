@@ -6,7 +6,6 @@ import { AngularModule } from '../../angular.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { RepresentanteComponent } from './representante/representante.component';
 import { DeudasComponent } from './deudas/deudas.component';
 import { EstadoCuentaComponent } from './estado-cuenta/estado-cuenta.component';
 import { PagosComponent } from './pagos/pagos.component';
@@ -17,7 +16,6 @@ import { DialogRegistroDeuda } from './dialog/registro-deuda/dialog-registro-deu
 
 @NgModule({
   declarations: [
-    RepresentanteComponent,
     DeudasComponent,
     EstadoCuentaComponent,
     PagosComponent,
