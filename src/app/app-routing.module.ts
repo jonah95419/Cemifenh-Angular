@@ -14,33 +14,45 @@ import { FallecidosComponent } from './cementerio/fallecido/fallecidos/fallecido
 import { InicioComponent } from './inicio/inicio/inicio.component';
 import { HistorialComponent } from './inicio/historial/historial.component';
 import { RepresentanteComponent } from './inicio/representante/representante.component';
+import { RepresentantesComponent } from './cementerio/representante/representantes/representantes.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/inicio', pathMatch: 'full'},
-  { path: 'inicio', component: InicioComponent,
-  children: [
-    { path: 'representantes/:periodo', component: RepresentanteComponent,
-      children: [
-        { path: 'historial/:id', component: HistorialComponent},
-      ]
-    },
-  ]},
-  { path: 'representantes', component: RepresentanteComponent},
-  { path: 'informacion-representante/:id', component: RepresentanteInformacionComponent,
+  { path: '', redirectTo: '/inicio', pathMatch: 'full' },
+  {
+    path: 'inicio', component: InicioComponent,
     children: [
-      { path: 'sitios', component: SitiosComponent},
-      { path: 'pagos', component: PagosComponent},
-      { path: 'deudas', component: DeudasComponent},
-      { path: 'estado-cuenta', component: EstadoCuentaComponent},
-      { path: 'fallecidos', component: FallecidosComponent},
-    ]},
-  { path: 'administracion', component: AdministracionComponent,
+      {
+        path: 'representantes/:periodo', component: RepresentanteComponent,
+        children: [
+          { path: 'historial/:id', component: HistorialComponent },
+        ]
+      },
+    ]
+  },
+  {
+    path: 'representantes', component: RepresentantesComponent,
     children: [
-      { path: 'lista-precios', component: PreciosComponent},
-      { path: 'importar-datos', component: ImportacionComponent},
-      { path: 'exportar-datos', component: ExportacionComponent},
-      { path: 'copia-seguridad', component: CopiaSeguridadComponent},
-    ]},
+      {
+        path: 'registro/:id', component: RepresentanteInformacionComponent,
+        children: [
+          { path: 'sitios', component: SitiosComponent },
+          { path: 'abonos', component: PagosComponent },
+          { path: 'cargos', component: DeudasComponent },
+          { path: 'estado-cuenta', component: EstadoCuentaComponent },
+          { path: 'fallecidos', component: FallecidosComponent },
+        ]
+      },
+    ]
+  },
+  {
+    path: 'administracion', component: AdministracionComponent,
+    children: [
+      { path: 'lista-precios', component: PreciosComponent },
+      { path: 'importar-datos', component: ImportacionComponent },
+      { path: 'exportar-datos', component: ExportacionComponent },
+      { path: 'copia-seguridad', component: CopiaSeguridadComponent },
+    ]
+  },
 ];
 
 @NgModule({
