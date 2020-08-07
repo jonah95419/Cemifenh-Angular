@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { ActivatedRoute, Params } from '@angular/router';
+import { tap } from 'rxjs/operators';
 import { FallecidoService } from '../service/fallecido.service';
-import { DeudaI } from '../../representante/model/deuda';
+import { ResponseFallecidoRepresentanteI, FallecidoRepresentanteI } from '../model/fallecido';
 
 @Component({
   selector: 'app-fallecidos',
@@ -14,57 +13,34 @@ import { DeudaI } from '../../representante/model/deuda';
 })
 export class FallecidosComponent implements OnInit {
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   listaFallecidos = [];
-  idRepresentante: any;
 
-  displayedColumns: string[] = ['id', 'nombre', 'cedula', 'fecha',  'sector', 'tipo', 'descripcion', 'adquisicion'];
-  dataSource: MatTableDataSource<DeudaI>;
+  displayedColumns: string[] = ['id', 'nombre', 'cedula', 'fecha', 'sector', 'tipo', 'descripcion'];
+  dataSource: MatTableDataSource<FallecidoRepresentanteI[]>;
 
-  private state$: Observable<object>;
-  private subscribeFallecidos: any;
-
-  constructor(private activatedRoute: ActivatedRoute, private fallecidoservice: FallecidoService) { }
-
-  ngOnInit() {
-    this.state$ = this.activatedRoute.paramMap
-      .pipe(map(() => window.history.state));
-
-    this.state$.subscribe((data: any) => {
-      if (!data.id) {
-        const router = window.location.pathname;
-        this.idRepresentante = router.split('/')[2];
-      } else {
-        this.idRepresentante = data.id;
+  constructor(
+    private route: ActivatedRoute,
+    private apiFallecidos: FallecidoService) {
+    route.parent.params.pipe(tap((data: Params) => {
+      if (data.id) {
+        this.obtenerValores(data.id);
       }
-      this.obtenerValores();
-    });
+    })).toPromise();
   }
 
-  ngOnDestroy(): void {
-    if (this.subscribeFallecidos !== undefined) {
-      this.subscribeFallecidos.unsubscribe();
-    }
+  ngOnInit() { }
+
+  private obtenerValores(id: number):void {
+    this.apiFallecidos.listarFallecidosRepresentante(id).pipe(
+      tap((data: ResponseFallecidoRepresentanteI) => {
+        if (data.ok) { this.cargarValores(data.data); } else { console.log(data.message); }
+      })
+    ).toPromise();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  private obtenerValores() {
-    this.subscribeFallecidos = this.fallecidoservice.listarFallecidosRepresentante(this.idRepresentante)
-    .subscribe(data => {
-      if (data.ok) { this.cargarValores(data.data); } else {alert(data.message); }
-    });
-  }
-
-  private cargarValores(data:DeudaI[]) {
+  private cargarValores(data: FallecidoRepresentanteI[]):void {
     this.listaFallecidos = data;
     this.dataSource = new MatTableDataSource(this.listaFallecidos);
     this.dataSource.sort = this.sort;

@@ -1,5 +1,5 @@
-<div class="col" style="width: 100%;">
-    <div class="mat-elevation-z8" style="max-height: 75vh; overflow: auto;">
+<div style="width: 100%;">
+    <div class="mat-elevation-z1" style="max-height: 75vh; overflow: auto;">
         <table mat-table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header width="10%"> ID </th>
@@ -16,7 +16,7 @@
                 <td mat-cell *matCellDef="let row"> {{row.cedula}} </td>
             </ng-container>
             <ng-container matColumnDef="fecha">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> fecha fallecimiento</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> fecha</th>
                 <td mat-cell *matCellDef="let row"> {{row.fecha}} </td>
             </ng-container>
             <!-- <ng-container matColumnDef="observaciones">
@@ -39,10 +39,10 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> tipo </th>
                 <td mat-cell *matCellDef="let row">{{row.descripcion}}</td>
             </ng-container>
-            <ng-container matColumnDef="adquisicion">
+            <!-- <ng-container matColumnDef="adquisicion">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> fecha adquisición </th>
                 <td mat-cell *matCellDef="let row">{{row.adquisicion}}</td>
-            </ng-container>
+            </ng-container> -->
             <!-- <ng-container matColumnDef="hasta">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Hasta </th>
                 <td mat-cell *matCellDef="let row">{{row.hasta}}</td>
