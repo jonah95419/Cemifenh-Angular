@@ -1,71 +1,44 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { MatPaginator } from '@angular/material/paginator';
+import { ActivatedRoute, Params } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { RepresentanteService } from '../service/representante.service';
+import { PagoDetallesI, PagoI, ResponsePagosRepresentanteI, PagosRepresentanteI, ResponsePagosDetallesRepresentanteI, PagoDetallesRepresentanteI } from '../model/pagos';
 
 @Component({
   selector: 'app-pagos',
   templateUrl: './pagos.component.html',
   styleUrls: ['./pagos.component.css']
 })
-export class PagosComponent implements OnInit, OnDestroy {
+export class PagosComponent implements OnInit {
 
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  listaPagos = [];
-  listaPagoDetalles = [];
-  verDetalle = false;
-  idRepresentante: any;
+  listaPagos: PagosRepresentanteI[] = [];
+  listaPagoDetalles: PagoDetallesRepresentanteI[] = [];
+
+  verDetalle:boolean = false;
   detalle: any;
   comprobante: any;
 
   displayedColumnsP: string[] = ['id', 'fecha', 'cantidad'];
   displayedColumnsPD: string[] = ['id', 'sector', 'tipo', 'descripcion', 'pago', 'desde', 'hasta', 'cantidad'];
+
   dataSourceP: MatTableDataSource<PagoI>;
   dataSourcePD: MatTableDataSource<PagoDetallesI>;
 
-  private state$: Observable<object>;
-  private subscribePagos: any;
-  private subscribePagoDetalles: any;
-
-  constructor(private activatedRoute: ActivatedRoute, private representanteservice: RepresentanteService) { }
-
-  ngOnInit() {
-    this.state$ = this.activatedRoute.paramMap
-      .pipe(map(() => window.history.state));
-
-    this.state$.subscribe((data: any) => {
-      if (!data.id) {
-        const router = window.location.pathname;
-        this.idRepresentante = router.split('/')[2];
-      } else {
-        this.idRepresentante = data.id;
+  constructor(
+    private route: ActivatedRoute,
+    private apiRepresentante: RepresentanteService) {
+    route.parent.params.pipe(tap((data: Params) => {
+      if (data.id) {
+        this.obtenerValores(data.id);
       }
-      this.obtenerValores();
-    });
+    })).toPromise();
   }
 
-  ngOnDestroy(): void {
-    if (this.subscribePagos !== undefined) {
-      this.subscribePagos.unsubscribe();
-    }
-    if (this.subscribePagoDetalles !== undefined) {
-      this.subscribePagoDetalles.unsubscribe();
-    }
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceP.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSourceP.paginator) {
-      this.dataSourceP.paginator.firstPage();
-    }
-  }
+  ngOnInit() { }
 
   verDetalles(comprobante: PagoI) {
     this.verDetalle = true;
@@ -73,59 +46,37 @@ export class PagosComponent implements OnInit, OnDestroy {
     this.obtenerValoresPagoDetalles(this.comprobante.id);
   }
 
-  getTotalPagos() {
-    return this.listaPagos.map(t => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
+  getTotalPagos = (): number => this.listaPagos.map(t => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
+
+  getTotalPagosDetalles = (): number => this.listaPagoDetalles.map(t => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
+
+  private obtenerValores(id: string) {
+    this.apiRepresentante.obtenerPagosRepresentante(id).pipe(
+      tap((data: ResponsePagosRepresentanteI) => {
+        if (data.ok) { this.cargarValores(data.data); } else { console.log(data.message); }
+      })
+    ).toPromise();
   }
 
-  getTotalPagosDetalles() {
-    return this.listaPagoDetalles.map(t => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
-  }
-
-  private obtenerValores() {
-    this.subscribePagos = this.representanteservice.obtenerPagosRepresentante(this.idRepresentante)
-    .subscribe(data => {
-      if (data.ok) { this.cargarValores(data.data); } else {alert(data.message); }
-    });
-  }
-
-  private cargarValores(data: PagoI[]) {
+  private cargarValores(data: PagosRepresentanteI[]) {
     this.listaPagos = data;
     this.dataSourceP = new MatTableDataSource(this.listaPagos);
     this.dataSourceP.sort = this.sort;
     if (this.listaPagos.length > 0) { this.verDetalles(this.listaPagos[0]); }
   }
 
-  private obtenerValoresPagoDetalles(comprobanteId: number) {
-    this.subscribePagoDetalles = this.representanteservice.obtenerPagoDetallesRepresentante(comprobanteId)
-    .subscribe( data => {
-      if ( data.ok) {this.cargarValoresPagoDetalles(data.data); } else { alert(data.message); }
-    })
+  private obtenerValoresPagoDetalles(comprobanteId: string) {
+    this.apiRepresentante.obtenerPagoDetallesRepresentante(comprobanteId).pipe(
+      tap((data: ResponsePagosDetallesRepresentanteI) => {
+        if (data.ok) { this.cargarValoresPagoDetalles(data.data); } else { console.log(data.message); }
+      })
+    ).toPromise();
   }
 
-  private cargarValoresPagoDetalles(data: PagoDetallesI[]) {
+  private cargarValoresPagoDetalles(data: PagoDetallesRepresentanteI[]) {
     this.listaPagoDetalles = data;
     this.dataSourcePD = new MatTableDataSource(this.listaPagoDetalles);
     this.dataSourcePD.sort = this.sort;
   }
 
-}
-
-export class PagoDetallesI {
-  id: number;
-  desde: Date;
-  hasta: Date;
-  pago: string;
-  valor: string;
-  observaciones: string;
-  sector: string;
-  descripcion: string;
-}
-
-export class PagoI {
-  id: number;
-  fecha: Date;
-  cantidad: string;
-  representante: string;
-  observaciones: string;
-  usuario: string;
 }

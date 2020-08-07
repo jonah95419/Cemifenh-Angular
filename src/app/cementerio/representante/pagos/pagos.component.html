@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="mat-elevation-z8 col-4" style="max-height: 75vh; overflow: auto;">
+        <div class="mat-elevation-z1 col-4" style="max-height: 75vh; overflow: auto;">
             <table mat-table [dataSource]="dataSourceP">
 
                 <ng-container matColumnDef="id">
@@ -34,7 +34,7 @@
                 <div style="display: flex;">
                     <mat-card-header>
                         <div mat-card-avatar class="example-header-image"></div>
-                        <mat-card-title>Comprobante n°: {{comprobante.id}}</mat-card-title>
+                        <mat-card-title>Comprobante n°: {{comprobante?.id}}</mat-card-title>
                         <!-- <mat-card-subtitle></mat-card-subtitle> -->
                     </mat-card-header>
                     <button mat-raised-button style="margin-left: auto;"><mat-icon>print</mat-icon>Imprimir</button>
@@ -43,19 +43,19 @@
                 <mat-card-content>
                     <div class="row">
                         <label class="col-3" style="font-size: 12px; color: rgba(0, 0, 0, 0.54); font-weight: bold;"> Emitido por:</label>
-                        <label>{{comprobante.usuario}}</label>
+                        <label>{{comprobante?.usuario}}</label>
                     </div>
                     <div class="row">
                         <label class="col-3" style="font-size: 12px; color: rgba(0, 0, 0, 0.54); font-weight: bold;"> Fecha emisión:</label>
-                        <label>{{comprobante.fecha}}</label>
+                        <label>{{comprobante?.fecha}}</label>
                     </div>
                     <div class="row">
                         <label class="col-3" style="font-size: 12px; color: rgba(0, 0, 0, 0.54); font-weight: bold;"> Representante:</label>
-                        <label>{{comprobante.representante}}</label>
+                        <label>{{comprobante?.representante}}</label>
                     </div>
                     <div class="row">
                         <label class="col-3" style="font-size: 12px; color: rgba(0, 0, 0, 0.54); font-weight: bold;"> Observaciones:</label>
-                        <label>{{comprobante.observaciones}}</label>
+                        <label>{{comprobante?.observaciones}}</label>
                     </div>
                     <table mat-table [dataSource]="dataSourcePD">
 
