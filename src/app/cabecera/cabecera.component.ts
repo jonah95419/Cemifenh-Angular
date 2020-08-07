@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class CabeceraComponent implements OnInit {
 
   title = 'Cementerio';
+  logo: string = "assets/images/logoCementerio.jpg";
 
   constructor() { }
 
