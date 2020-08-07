@@ -2,10 +2,10 @@
 export interface RepresentanteI {
   id: number;
   nombre: string;
-  cedula: string;
+  cedula?: string;
   observaciones?: string;
   fecha?: string;
-  estado: boolean;
+  estado?: boolean;
 }
 
 export interface RepresentantesResponse {
