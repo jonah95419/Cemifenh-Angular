@@ -39,7 +39,7 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
 
   private _translate;
   private _periodo: string;
-  private listaRepresentantes = [];
+  private listaRepresentantes  = [];
   private listaRepresentantesSinSitio = [];
 
   constructor(
@@ -69,7 +69,7 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     }
   }
 
-  applyFilter(event: Event) {
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
@@ -77,22 +77,22 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     }
   }
 
-  verHistorial = (data: RepresentanteI) => {
+  verHistorial = (data: RepresentanteI): void => {
     this.representante = data;
     this.router.navigateByUrl(`/inicio/representantes/${this._periodo}/historial/${data.id}`);
   }
 
-  nuevoRepresentante = () => {
+  nuevoRepresentante = (): void => {
     const dialogRef = this.dialog.open(DialogRegistroRepresentante, { width: '600px', panelClass: "my-class" });
 
     dialogRef.afterClosed().subscribe();
   }
 
-  refrescarRegistros(){
+  refrescarRegistros(): void{
     this.obtenerValoresRepresentantes(this._periodo);
   }
 
-  private obtenerValoresRepresentantes(periodo: string) {
+  private obtenerValoresRepresentantes(periodo: string): void {
     this.registrosConSitio = false;
     this.registroSinSitio = false;
     this._periodo = periodo;
@@ -123,14 +123,14 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     }
   }
 
-  private cargarValoresRepresentantes(datos: RepresentanteI[]) {
+  private cargarValoresRepresentantes(datos: RepresentanteI[]): void {
     this.listaRepresentantes = datos;
     this.dataSource = new MatTableDataSource(this.listaRepresentantes);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  private cargarValoresRepresentantesSinSitios() {
+  private cargarValoresRepresentantesSinSitios(): void {
     this.apiRepresentantes.listarRepresentantesSinSitio().pipe(
       tap(data => {
         if (data.ok) {

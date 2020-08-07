@@ -22,11 +22,6 @@ table {
     padding: 12px 0px;
 }
 
-td,
-th {
-    width: 25%;
-}
-
 th.mat-header-cell {
     border: none;
 }
@@ -36,7 +31,6 @@ a {
 }
 
 .mat-column-id {
-    min-width: 70px;
     padding-right: 6px;
 }
 
@@ -47,6 +41,8 @@ a {
 
 .mat-column-cedula {
     min-width: 90px;
+    width: 90px;
+    max-width: 90px;
     padding-left: 6px;
 }
 
