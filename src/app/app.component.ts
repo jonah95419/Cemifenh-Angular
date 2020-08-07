@@ -15,11 +15,13 @@ export class AppComponent {
   constructor(
     private apiSitios: SitioService,
     private apiValores: ValoresService,
+    private apiRepresentantes: RepresentanteService,
     private apiSectores: SectorService) {
     apiSitios.listarFechasSitios();
     apiSectores.listarSectores();
     apiValores.listarValores();
     apiValores.listarValorPagoExtra();
+    apiRepresentantes.listarRepresentantesTodo();
   }
 
 }

@@ -44,4 +44,6 @@
 
 ::ng-deep.example-header-image {
     background-size: cover;
+    width: 42px;
+    height: 42px;
 }
