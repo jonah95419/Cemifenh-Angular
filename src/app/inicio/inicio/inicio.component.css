@@ -4,10 +4,11 @@
 }
 
 .container-filtro-representante {
-    min-width: 150px;
-    width: 150px;
-    margin: 12px 0px 12px 12px;
-    padding: 12px 0px;
+    min-width: 125px;
+    width: 125px;
+    background-color: white;
+    padding: 12px;
+    margin: 2px 12px 6px 0px;
 }
 
 .item-filtro {
@@ -25,7 +26,7 @@
 }
 
 .container-representante {
-    margin: 12px 0px;
+    margin-top: 12px;
 }
 
 button {
@@ -34,4 +35,5 @@ button {
 
 p {
     margin: 12px 0px;
+    color: rgba(0, 0, 0, 0.54);
 }
