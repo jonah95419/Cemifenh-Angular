@@ -8,7 +8,7 @@ tr.mat-footer-row {
 }
 
 tr.mat-header-row {
-    height: 30px;
+    height: 32px;
 }
 
 th.mat-header-cell {
@@ -25,17 +25,17 @@ th.mat-header-cell {
 
 .mat-column-desde {
     text-align: center;
-    min-width: 100px;
+    min-width: 85px;
 }
 
 .mat-column-cargos {
     text-align: center;
-    min-width: 110px;
+    min-width: 60px;
 }
 
 .mat-column-abonos {
     text-align: center;
-    min-width: 110px;
+    min-width: 60px;
 }
 
 .mat-column-accion {

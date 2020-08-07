@@ -60,10 +60,10 @@
             <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">{{representante?.nombre}}</th>
         </ng-container>
         <ng-container matColumnDef="header-row-dos-grupo_0">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">Abonos extras:</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Abonos extras:</th>
         </ng-container>
         <ng-container matColumnDef="header-row-tres-grupo_0">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="3" style="color: 'green';">{{getPagosExtras() | currency}}</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'green';">{{getPagosExtras() | currency}}</th>
         </ng-container>
 
         <ng-container matColumnDef="header-row-cero-grupo_1">
@@ -73,20 +73,20 @@
             <th mat-header-cell *matHeaderCellDef [attr.colspan]="2"></th>
         </ng-container>
         <ng-container matColumnDef="header-row-dos-grupo_1">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">Abonos servicios:</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Abonos servicios:</th>
         </ng-container>
         <ng-container matColumnDef="header-row-tres-grupo_1">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="3" style="color: 'green';">{{getPagosServicios() | currency}}</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'green';">{{getPagosServicios() | currency}}</th>
         </ng-container>
 
         <ng-container matColumnDef="header-row-cero-grupo_2">
             <th mat-header-cell *matHeaderCellDef [attr.colspan]="3"></th>
         </ng-container>
         <ng-container matColumnDef="header-row-uno-grupo_2">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">Saldo servicios:</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Saldo servicios:</th>
         </ng-container>
         <ng-container matColumnDef="header-row-dos-grupo_2">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="3" style="color: 'red';">{{getTotalEstadoCuenta() | currency}}</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'red';">{{getTotalEstadoCuenta() | currency}}</th>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="['header-row']; sticky: true"></tr>
