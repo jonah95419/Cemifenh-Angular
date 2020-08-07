@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { FallecidoI, ResponseFallecidoRepresentanteI } from '../model/fallecido';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -14,16 +15,21 @@ export class FallecidoService {
   constructor(private httpClient: HttpClient) { }
 
   agregarFallecido(fallecido: FallecidoI): Observable<any> {
-    return this.httpClient.post<any>(`${AUTH_SERVER}/fallecido/`, JSON.stringify(fallecido), this.httpOptions)
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/fallecido/`, JSON.stringify(fallecido), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
 
-  listarFallecidosRepresentante(representanteId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/representante/listar-fallecidos/${representanteId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+
+
+  listarFallecidosRepresentante(representanteId: number): Observable<ResponseFallecidoRepresentanteI> {
+    return this.httpClient
+    .get<ResponseFallecidoRepresentanteI>(`${AUTH_SERVER}/representante/listar-fallecidos/${representanteId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
+
+
+
 
   listarFallecidos(sitioId: number): Observable<any> {
     return this.httpClient.get<any>(`${AUTH_SERVER}/fallecido/${sitioId}`, this.httpOptions)
@@ -40,8 +46,7 @@ export class FallecidoService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError(
-      'Algo a salido mal, puedes intentarlo nuevamente!');
+    return throwError( 'Algo a salido mal, puedes intentarlo nuevamente!');
   }
 
   private httpOptions = {
@@ -52,10 +57,3 @@ export class FallecidoService {
   };
 }
 
-interface FallecidoI {
-  sitio: number;
-  nombre: string;
-  cedula: string;
-  fecha: Date;
-  observaciones: string;
-}
