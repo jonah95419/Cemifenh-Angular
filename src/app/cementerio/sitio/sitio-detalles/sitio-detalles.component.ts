@@ -15,6 +15,7 @@ import { FallecidoService } from '../../fallecido/service/fallecido.service';
 import { SectorI } from '../../../admin/model/sector';
 import { EstadoCuentaI } from '../model/estadoCuenta';
 import { DeudaSitioI } from '../model/sitio';
+import { FallecidoI } from '../../fallecido/model/fallecido';
 
 @Component({
   selector: 'app-sitio-detalles',
@@ -247,17 +248,6 @@ export interface SitioI {
   adquisicion: string;
   observaciones: string;
 }
-
-
-
-export interface FallecidoI {
-  id: number;
-  nombre: string;
-  cedula: string;
-  fecha: Date;
-  observaciones: string;
-}
-
 
 export interface PagoI {
   id: number;

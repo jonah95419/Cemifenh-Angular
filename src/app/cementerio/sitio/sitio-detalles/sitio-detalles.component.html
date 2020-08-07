@@ -10,7 +10,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">
-            <mat-card style="background: #FAFAFA;">
+            <mat-card>
                 <!-- <mat-card-header> -->
                 <mat-card-subtitle>Detalles del sitio</mat-card-subtitle>
                 <!-- </mat-card-header> -->
@@ -25,7 +25,7 @@
                 </mat-card-content>
             </mat-card>
         </div>
-        <div class="col-9">
+        <div class="col">
             <mat-card *ngIf="informacionSitio && detalles == 'Información'">
                 <div style="display: flex;">
                     <mat-card-content>
@@ -42,6 +42,7 @@
                     </mat-card-content>
                     <!-- <button mat-raised-button style="height: 40px; margin-left: 12px;">ver cambios</button> -->
                 </div>
+
                 <div style="display: flex;">
                     <mat-form-field style="margin-right: 12px; width: 220px;">
                         <mat-label>Sector</mat-label>
@@ -87,7 +88,8 @@
                     </mat-form-field>
                 </div>
             </mat-card>
-            <div class="mat-elevation-z8" *ngIf="informacionSitio && detalles == 'Registro de fallecidos'" style="max-height: 45vh; overflow: auto;">
+
+            <div class="mat-elevation-z1" *ngIf="informacionSitio && detalles == 'Registro de fallecidos'" style="max-height: 45vh; overflow: auto;">
                 <table mat-table [dataSource]="dataSource">
 
                     <ng-container matColumnDef="nombre">
@@ -119,7 +121,9 @@
                 </table>
                 <!-- <mat-paginator [pageSizeOptions]="[ 5, 10, 25, 100]"></mat-paginator> -->
             </div>
-            <div class="mat-elevation-z8" *ngIf="informacionSitio && detalles == 'Deudas pendientes'" style="max-height: 45vh; overflow: auto;">
+
+
+            <div class="mat-elevation-z1" *ngIf="informacionSitio && detalles == 'Deudas pendientes'" style="max-height: 45vh; overflow: auto;">
                 <table mat-table #sort="matSort" [dataSource]="dataSourceD" matSort>
                     <ng-container matColumnDef="descripcion">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> motivo </th>
@@ -162,7 +166,9 @@
                 </table>
             </div>
             <div class="row" *ngIf="informacionSitio && detalles == 'Pagos realizados'">
-                <div class="mat-elevation-z8 col-5" style="max-height: 45vh; overflow: auto; margin-right: 6px;">
+
+
+                <div class="mat-elevation-z1 col-5" style="max-height: 45vh; overflow: auto; margin-right: 6px;">
                     <table mat-table [dataSource]="dataSourceP">
 
                         <ng-container matColumnDef="id">
@@ -190,7 +196,10 @@
 
                     </table>
                 </div>
-                <div class="mat-elevation-z8 col-6" style="max-height: 45vh; overflow: auto; margin-left: 6px;">
+
+
+
+                <div class="mat-elevation-z1 col-6" style="max-height: 45vh; overflow: auto; margin-left: 6px;">
                     <table mat-table [dataSource]="dataSourcePD">
 
                         <ng-container matColumnDef="descripcion">
@@ -223,7 +232,10 @@
                     </table>
                 </div>
             </div>
-            <div class="mat-elevation-z8" *ngIf="informacionSitio && detalles == 'Estado de cuenta'" style="max-height: 45vh; overflow: auto;">
+
+
+
+            <div class="mat-elevation-z1" *ngIf="informacionSitio && detalles == 'Estado de cuenta'" style="max-height: 45vh; overflow: auto;">
                 <table mat-table [dataSource]="dataSourceEC">
                     <ng-container matColumnDef="id">
                         <th mat-header-cell *matHeaderCellDef> id </th>
