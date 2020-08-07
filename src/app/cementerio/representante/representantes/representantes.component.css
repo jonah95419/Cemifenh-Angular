@@ -1,0 +1,73 @@
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.mat-paginator-sticky {
+    bottom: 0px;
+    position: sticky;
+    z-index: 10;
+}
+
+.container-detalles {
+    margin: 0px 12px;
+    padding: 12px 0px;
+}
+
+.container-representante {
+    padding: 12px 0px;
+    margin: 6px 12px;
+    max-width: 460px;
+}
+
+th.mat-header-cell {
+    border: none;
+}
+
+.mat-column-accion {
+    min-width: 30px;
+    width: 30px;
+    padding-left: 6px;
+}
+
+.mat-column-cedula {
+    min-width: 90px;
+    width: 90px;
+    max-width: 90px;
+    padding-left: 6px;
+}
+
+.mat-column-nombre {
+    min-width: 220px;
+}
+
+button {
+    background-color: white
+}
+
+.example-container {
+    position: absolute;
+    top: 66px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: whitesmoke;
+}
+
+.indicador {
+    width: 8px;
+    height: 8px;
+    margin: 6px;
+}
+
+.indicador-filtro {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 6px;
+    background-color: gray;
+}
