@@ -6,6 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { RepresentantesResponse, RepresentanteI } from '../model/representante';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResponseDeudaRepresentanteI } from '../model/deuda';
+import { ResponsePagosRepresentanteI, ResponsePagosDetallesRepresentanteI } from '../model/pagos';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -19,6 +20,20 @@ export class RepresentanteService {
   private _representantes = new BehaviorSubject<RepresentanteI[]>([]);
   private dataStore: { representantes: RepresentanteI[] } = { representantes: [] };
   readonly representantes = this._representantes.asObservable();
+
+  listarRepresentantesTodo = (): void => {
+    this.httpClient
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/todo`, this.httpOptions)
+      .pipe(catchError(this.handleError))
+      .subscribe((data: RepresentantesResponse) => {
+        if (data.ok) {
+          this.dataStore.representantes = data.data;
+          this._representantes.next(Object.assign({}, this.dataStore).representantes);
+        } else {
+          console.log("mostar mensaje de error");
+        }
+      });
+  }
 
   listarRepresentantes = (): void => {
     this.httpClient
@@ -54,9 +69,9 @@ export class RepresentanteService {
       .pipe(catchError(this.handleError));
   }
 
-  obtenerEstadoCuentaRepresentante(id: string): Observable<any> {
+  obtenerEstadoCuentaRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
     return this.httpClient
-      .get<any>(`${AUTH_SERVER}/representante/estado-cuenta/${id}`, this.httpOptions)
+      .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/estado-cuenta/${id}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
@@ -72,19 +87,15 @@ export class RepresentanteService {
       .pipe(catchError(this.handleError));
   }
 
-
-
-
-
-
-
-  obtenerPagoDetallesRepresentante(comprobanteID: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/representante/pago-detalles/${comprobanteID}`, this.httpOptions)
+  obtenerPagoDetallesRepresentante(comprobanteID: string): Observable<ResponsePagosDetallesRepresentanteI> {
+    return this.httpClient
+    .get<ResponsePagosDetallesRepresentanteI>(`${AUTH_SERVER}/representante/pago-detalles/${comprobanteID}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
-  obtenerPagosRepresentante(representanteId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/representante/pagos/${representanteId}`, this.httpOptions)
+  obtenerPagosRepresentante(representanteId: string): Observable<ResponsePagosRepresentanteI> {
+    return this.httpClient
+      .get<ResponsePagosRepresentanteI>(`${AUTH_SERVER}/representante/pagos/${representanteId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
