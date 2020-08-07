@@ -13,6 +13,7 @@ import { RepresentanteInformacionComponent } from './representante-informacion/r
 import { DialogRegistroRepresentante } from './dialog/registro-representante/dialog-registro-representante';
 import { DialogPagoExtra } from './dialog/registro-pago-extra/dialog-pago-extra';
 import { DialogRegistroDeuda } from './dialog/registro-deuda/dialog-registro-deuda';
+import { RepresentantesComponent } from './representantes/representantes.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DialogRegistroDeuda } from './dialog/registro-deuda/dialog-registro-deu
     RepresentanteInformacionComponent,
     DialogRegistroRepresentante,
     DialogPagoExtra,
-    DialogRegistroDeuda
+    DialogRegistroDeuda,
+    RepresentantesComponent
   ],
   imports: [
     AppRoutingModule,
