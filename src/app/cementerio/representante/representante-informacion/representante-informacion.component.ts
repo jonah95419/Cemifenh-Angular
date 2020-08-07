@@ -1,62 +1,39 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RepresentanteService } from '../service/representante.service';
 import { RepresentanteI } from '../model/representante';
+import { map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-representante-informacion',
   templateUrl: './representante-informacion.component.html',
   styleUrls: ['./representante-informacion.component.css']
 })
-export class RepresentanteInformacionComponent implements OnInit, OnDestroy {
+export class RepresentanteInformacionComponent implements OnInit {
 
-  informacionRepresentante: RepresentanteI;
-  detalle = 'sitios';
-  private idRepresentante: any;
-  private subscribeRepresentante: any;
+  representante: Observable<RepresentanteI>;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private representanteservice: RepresentanteService) {
-    this.idRepresentante = activatedRoute.snapshot.params['id'];
+  detalle: string = 'sitios';
+
+  constructor(
+    private route: ActivatedRoute,
+    private apiRepresentantes: RepresentanteService) {
+    route.paramMap.pipe( tap((data: ParamMap) => {
+      if(data.get("id")) {
+        this.obtenerValores(Number(data.get("id")))
+      }
+    })).toPromise();
   }
 
-  ngOnInit() {
-    this.obtenerValores();
-    const router = window.location.pathname;
-    this.cargarDetalles(router.split('/')[3]);
-  }
+  ngOnInit() { }
 
-  ngOnDestroy(): void {
-    if (this.subscribeRepresentante !== undefined) {
-      this.subscribeRepresentante.unsubscribe();
+  private obtenerValores(id: number) {
+    if (id) {
+      this.representante = this.apiRepresentantes.representantes.pipe(
+        map((data: RepresentanteI[]) => data.find((d: RepresentanteI) => d.id == id)),
+      );
     }
-
-  }
-
-  cargarDetalles(detalle) {
-    if (detalle === undefined) {
-      detalle = 'sitios';
-    }
-    this.detalle = detalle;
-    this.router.navigateByUrl('/informacion-representante/' + this.idRepresentante + '/' + detalle, { state: {
-      id: this.idRepresentante,
-    }}).then(e => {});
-  }
-
-  listarRepresentantes(): void {
-    this.router.navigateByUrl('/representantes').then(e => {});
-  }
-
-  private obtenerValores() {
-    if (this.idRepresentante !== undefined || this.idRepresentante) {
-      this.subscribeRepresentante = this.representanteservice.obtenerRepresentante(this.idRepresentante)
-      .subscribe(data => {
-        if (data.ok) {this.cargarValores(data.data[0]); } else {alert(data.message); }
-      });
-    }
-  }
-
-  private cargarValores(data: RepresentanteI) {
-    this.informacionRepresentante = data;
   }
 
 }

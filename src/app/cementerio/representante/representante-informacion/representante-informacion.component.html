@@ -1,28 +1,21 @@
 <!-- <p>representante-informacion works! {{id_representante}}</p> -->
-<div *ngIf="informacionRepresentante" style="display: flex; padding-left: 12px; padding-top: 6px; background: #FAFAFA;">
-    <button (click)="listarRepresentantes()" mat-mini-fab style="background: whitesmoke; margin-right: 12px;"><mat-icon style="color: black;">close</mat-icon></button>
+<!-- <div *ngIf="informacionRepresentante" style="display: flex; padding-left: 12px; padding-top: 6px;">
     <label>{{informacionRepresentante.id}}-{{informacionRepresentante.nombre}}</label>
     <label>/</label>
     <label>{{detalle}}</label>
-    <button mat-raised-button style="margin-left: auto; margin-top: 3px; margin-right: 24px; height: 40px;">Registrar sitio</button>
+</div> -->
+<div class="container">
+    <div class="col">
+        {{representante | async | json}}
+    </div>
+    <div class="col" style="margin-top: 24px;">
+        <router-outlet></router-outlet>
+    </div>
 </div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3" style="display: flex; flex-direction: column;">
-            <mat-card style="background: #FAFAFA;">
-                <mat-card-header>
-                    <mat-card-title>Detalles</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div style="display: flex; flex-direction: column;">
-                        <a (click)="cargarDetalles('sitios')" routerLinkActive="active" style="color: #007Bff;">Sitios asignados</a>
-                        <a (click)="cargarDetalles('fallecidos')" routerLinkActive="active" style="color: #007Bff;">Lista fallecidos</a>
-                        <a (click)="cargarDetalles('pagos')" routerLinkActive="active" style="color: #007Bff;">Pagos generales realizados</a>
-                        <a (click)="cargarDetalles('deudas')" routerLinkActive="active" style="color: #007Bff;">Deudas generales pendientes</a>
-                        <a (click)="cargarDetalles('estado-cuenta')" routerLinkActive="active" style="color: #007Bff;">Estado de cuenta</a>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+        <!-- <div class="col-3" style="display: flex; flex-direction: column;">
+
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>Información</mat-card-title>
@@ -46,10 +39,8 @@
                     </mat-form-field>
                 </mat-card-content>
             </mat-card>
-        </div>
-        <div class="col-9" style="margin-top: 24px;">
-            <router-outlet></router-outlet>
-        </div>
+        </div> -->
+
     </div>
 
 </div>
