@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { ActivatedRoute, Params } from '@angular/router';
 import { RepresentanteService } from '../service/representante.service';
+import { tap } from 'rxjs/operators';
+import { ResponseDeudaRepresentanteI, DeudaRepresentanteI } from '../model/deuda';
 
 @Component({
   selector: 'app-estado-cuenta',
@@ -16,72 +16,50 @@ export class EstadoCuentaComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   listaEstadoCuenta = [];
-  idRepresentante: any;
 
   displayedColumns: string[] = ['id', 'nombre', 'sector', 'tipo', 'descripcion', 'pago', 'desde', 'hasta', 'cantidad'];
-  dataSource: MatTableDataSource<DeudaI>;
+  dataSource: MatTableDataSource<DeudaRepresentanteI>;
 
-  private state$: Observable<object>;
-  private subscribeEstadoCuenta: any;
+  constructor(
+    private route: ActivatedRoute,
+    private apiRepresentante: RepresentanteService,
+    ) {
+      route.parent.params.pipe( tap((data: Params) => {
+        if(data.id) {
+          this.obtenerValores(data.id);
+        }
+      })).toPromise();
+     }
 
-  constructor(private activatedRoute: ActivatedRoute, private representanteservice: RepresentanteService) { }
+  ngOnInit() { }
 
-  ngOnInit() {
-    this.state$ = this.activatedRoute.paramMap
-      .pipe(map(() => window.history.state));
-
-    this.state$.subscribe((data: any) => {
-      if (!data.id) {
-        const router = window.location.pathname;
-        this.idRepresentante = router.split('/')[2];
-      } else {
-        this.idRepresentante = data.id;
-      }
-      this.obtenerValores();
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscribeEstadoCuenta !== undefined) {
-      this.subscribeEstadoCuenta.unsubscribe();
-    }
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  getTotalEstadoCuenta() {
+  getTotalEstadoCuenta(): number {
     let suma = 0;
     this.listaEstadoCuenta.forEach( t => { if(new Date(t.desde) > new Date('2001/01/01') ) {if ( t.estado_cuenta === 'deuda' ) { suma += Number(t.cantidad); } else { suma -= Number(t.cantidad); }}});
     return suma;
   }
 
-  getDeudasEstadoCuenta() {
+  getDeudasEstadoCuenta(): number {
     let suma = 0;
     this.listaEstadoCuenta.forEach( t => { if ( t.estado_cuenta === 'deuda' && (new Date(t.desde) > new Date('2001/01/01'))) { suma += Number(t.cantidad); }});
     return suma;
   }
 
-  getPagosEstadoCuenta() {
+  getPagosEstadoCuenta(): number {
     let suma = 0;
     this.listaEstadoCuenta.forEach( t => { if ( t.estado_cuenta !== 'deuda' && (new Date(t.desde) > new Date('2001/01/01'))) { suma += Number(t.cantidad); }});
     return suma;
   }
 
-  private obtenerValores() {
-    this.subscribeEstadoCuenta = this.representanteservice.obtenerEstadoCuentaRepresentante(this.idRepresentante)
-    .subscribe(data => {
-      if (data.ok) { this.cargarValores(data.data); } else {alert(data.message); }
-    });
+  private obtenerValores(id: string): void {
+    this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
+      tap((data: ResponseDeudaRepresentanteI) => {
+        if (data.ok) { this.cargarValores(data.data); } else {alert(data.message); }
+      })
+    ).toPromise();
   }
 
-  private cargarValores(data:DeudaI[]) {
+  private cargarValores(data: DeudaRepresentanteI[]): void {
     this.listaEstadoCuenta = data;
     this.dataSource = new MatTableDataSource(this.listaEstadoCuenta);
     this.dataSource.sort = this.sort;
@@ -89,15 +67,3 @@ export class EstadoCuentaComponent implements OnInit {
 
 }
 
-export interface DeudaI {
-  id: number;
-  nombre: string;
-  desde: Date;
-  hasta: Date;
-  pago: string;
-  cantidad: string;
-  descripcion: string;
-  sector: string;
-  tipo: string;
-  estado_cuenta: string;
-}
