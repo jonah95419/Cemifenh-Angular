@@ -1,5 +1,5 @@
 <div class="container-opciones ">
-    <a [routerLink]="[ '/informacion-representante', id ]" style="margin: auto 12px auto auto;">ver registro</a>
+    <a [routerLink]="[ '/representantes/registro', id ]" style="margin: auto 12px auto auto;">ver registro</a>
     <button mat-stroked-button (click)="agregarDeuda();" [disabled]="sitios == 0">Agregar deuda</button>
     <button mat-stroked-button (click)="agregarPago();" [disabled]="sitios == 0">Agregar pago</button>
 </div>
