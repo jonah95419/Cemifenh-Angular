@@ -7,9 +7,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { HistorialComponent } from './historial/historial.component';
+import { RepresentanteComponent } from './representante/representante.component';
 
 @NgModule({
-  declarations: [InicioComponent, HistorialComponent],
+  declarations: [InicioComponent, RepresentanteComponent, HistorialComponent],
   imports: [
     AppRoutingModule,
     CommonModule,
