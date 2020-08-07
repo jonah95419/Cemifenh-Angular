@@ -17,3 +17,31 @@
     margin-top: 6px;
     margin-right: 3px;
 }
+
+::ng-deep a:link {
+    color: #000000;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+::ng-deep a:visited {
+    color: #222222;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+::ng-deep a:hover {
+    color: #222222;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+::ng-deep a:active {
+    color: #222222;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+::ng-deep.example-header-image {
+    background-size: cover;
+}
