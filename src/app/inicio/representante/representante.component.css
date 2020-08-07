@@ -46,7 +46,7 @@ a {
 }
 
 .mat-column-cedula {
-    min-width: 100px;
+    min-width: 90px;
     padding-left: 6px;
 }
 
@@ -56,7 +56,7 @@ a {
 }
 
 .mat-column-nombre {
-    min-width: 250px;
+    min-width: 220px;
 }
 
 button {
