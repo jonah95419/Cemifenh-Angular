@@ -6,8 +6,8 @@
 .container-filtro-representante {
     min-width: 150px;
     width: 150px;
-    margin: 12px 0px;
-    padding: 12px;
+    margin: 12px 0px 12px 12px;
+    padding: 12px 0px;
 }
 
 .item-filtro {
@@ -20,12 +20,12 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    margin: 6px 6px 0 auto;
+    margin: 6px 12px 0 auto;
     background-color: gray;
 }
 
 .container-representante {
-    margin: 12px;
+    margin: 12px 0px;
 }
 
 button {
