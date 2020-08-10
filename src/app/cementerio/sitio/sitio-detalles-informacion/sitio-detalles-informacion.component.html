@@ -1,0 +1,65 @@
+<h4>
+    Información - Sitio N° {{informacionSitio?.id}}
+</h4>
+<form [formGroup]="sitioForm" novalidate>
+    <div class="fields-container container-informacion mat-elevation-z1">
+        <div>
+            <!-- <p>
+                <mat-form-field>
+                    <mat-label>Nombre</mat-label>
+                    <input matInput placeholder="Nombre" formControlName="nombre">
+                </mat-form-field>
+            </p> -->
+            <p>
+                <mat-form-field>
+                    <mat-label>Sector</mat-label>
+                    <mat-select formControlName="sector" required>
+                        <!-- <mat-option>--</mat-option> -->
+                        <mat-option *ngFor="let sector of listaSectores" [value]="sector.id">
+                            {{sector.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field>
+                    <mat-label>Tipo</mat-label>
+                    <mat-select required formControlName="tipo">
+                        <mat-option *ngFor="let tipo of listaTipo" [value]="tipo">
+                            {{tipo}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field>
+                    <mat-label>Descripción</mat-label>
+                    <mat-select formControlName="descripcion">
+                        <mat-option *ngFor="let descripcion of listaDescripcion" [value]="descripcion">
+                            {{descripcion}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </p>
+        </div>
+        <div style="margin-left: 24px;">
+            <p>
+                <mat-form-field>
+                    <mat-label>Fecha adquisición</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="adquisicion">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field>
+                    <mat-label>Observaciones</mat-label>
+                    <textarea matInput placeholder="Observaciones" formControlName="observaciones"> </textarea>
+                </mat-form-field>
+            </p>
+            <p>
+                <button mat-stroked-button>Guardar</button>
+            </p>
+        </div>
+    </div>
+</form>
