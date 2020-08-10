@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { FallecidoI, ResponseFallecidoRepresentanteI } from '../model/fallecido';
+import { FallecidoI, ResponseFallecidoRepresentanteI, ResponseFallecidoI } from '../model/fallecido';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -20,23 +20,18 @@ export class FallecidoService {
     .pipe(catchError(this.handleError));
   }
 
-
-
   listarFallecidosRepresentante(representanteId: number): Observable<ResponseFallecidoRepresentanteI> {
     return this.httpClient
     .get<ResponseFallecidoRepresentanteI>(`${AUTH_SERVER}/representante/listar-fallecidos/${representanteId}`, this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
 
-
-
-
-  listarFallecidos(sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/fallecido/${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
+  listarFallecidos(sitioId: string): Observable<ResponseFallecidoI> {
+    return this.httpClient
+    .get<ResponseFallecidoI>(`${AUTH_SERVER}/fallecido/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
   }
+
 
   obtenerSitio(sitioId: number): Observable<any> {
     return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
