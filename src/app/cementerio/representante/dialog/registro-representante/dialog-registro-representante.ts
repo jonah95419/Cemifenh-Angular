@@ -15,9 +15,9 @@ import { RegistroI } from '../../../../utilidades/model/registro';
 import { MatSelectChange } from '@angular/material/select';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { DeudaI } from '../../model/deuda';
-import { SitioI } from '../../../sitio/sitio-detalles/sitio-detalles.component';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { MatTable } from '@angular/material/table';
+import { SitioI } from '../../../sitio/model/sitio';
 
 @Component({
   selector: 'dialog-registro-representante',
