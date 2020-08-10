@@ -6,6 +6,13 @@ export interface FallecidoI {
   observaciones: string;
 }
 
+export interface ResponseFallecidoI {
+  ok: boolean;
+  data?: FallecidoI[];
+  cant?: number;
+  message?: string;
+}
+
 export interface FallecidoRepresentanteI {
   id: number;
   nombre: string;
