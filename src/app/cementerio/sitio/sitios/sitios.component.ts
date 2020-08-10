@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SitioService } from '../service/sitio.service';
 import { ResponseSitioI, SitioI } from '../model/sitio';
+import { ServiceC } from '../service-c/sitio-serviceC';
 
 @Component({
   selector: 'app-sitios',
@@ -27,6 +28,7 @@ export class SitiosComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private sc: ServiceC,
     private apiSitios: SitioService) {
       route.parent.params.pipe( tap((data: Params) => {
         if(data.id) {
@@ -40,6 +42,7 @@ export class SitiosComponent implements OnInit {
   verDetalles(sitio: any): void {
     this.verDetalle = true;
     this.sitioId = sitio.id;
+    this.sc.emitIdSitioDetalleChange(this.sitioId);
   }
 
   private obtenerValores(id: string): void {
@@ -55,7 +58,6 @@ export class SitiosComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.listaSitios);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    if (this.listaSitios.length != 0) {this.verDetalles(this.listaSitios[0]); }
   }
 
 }
