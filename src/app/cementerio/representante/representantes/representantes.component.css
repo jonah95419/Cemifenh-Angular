@@ -22,6 +22,7 @@ table {
     padding: 12px 0px;
     margin: 6px 12px;
     max-width: 460px;
+    min-width: 460px;
 }
 
 th.mat-header-cell {
@@ -70,4 +71,8 @@ button {
     border-radius: 50%;
     margin: 6px;
     background-color: gray;
+}
+
+mat-icon {
+    font-size: medium;
 }

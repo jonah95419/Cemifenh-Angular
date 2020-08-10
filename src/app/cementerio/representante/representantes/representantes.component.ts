@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { RepresentanteService } from '../service/representante.service';
 import { tap } from 'rxjs/operators';
 import { RepresentanteI } from '../model/representante';
@@ -8,33 +8,47 @@ import { MatPaginator } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRegistroRepresentante } from '../dialog/registro-representante/dialog-registro-representante';
+import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
 
 @Component({
   selector: 'app-representantes',
   templateUrl: './representantes.component.html',
   styleUrls: ['./representantes.component.css']
 })
-export class RepresentantesComponent implements OnInit {
+export class RepresentantesComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   displayedColumns: string[] = [ 'nombre', 'cedula', 'accion'];
 
-  dataSource: MatTableDataSource<RepresentanteI[]>;
+  dataSource: MatTableDataSource<RepresentanteI>;
 
   representante: RepresentanteI;
 
-  private listaRepresentantes = [];
+  sitio_id: number;
+
+  private listaRepresentantes: RepresentanteI[] = [];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private apiRepresentantes: RepresentanteService,
     private dialog: MatDialog,
-  ) { this.obtenerValoresRepresentantes(); }
+    private sc: ServiceC,
+    private cdRef:ChangeDetectorRef
+  ) {
+    this.representante = null;
+    sc.sitioDetalle$.pipe( tap((sitio: number) => this.sitio_id = sitio) ).toPromise();
+   }
 
   ngOnInit(): void {
+    this.dataSource =  new MatTableDataSource(this.listaRepresentantes);
+  }
+
+  ngAfterViewInit() {
+    this.obtenerValoresRepresentantes();
+    this.cdRef.detectChanges();
   }
 
   applyFilter(event: Event): void {
@@ -47,7 +61,8 @@ export class RepresentantesComponent implements OnInit {
 
   verDetalles = (data: RepresentanteI): void => {
     this.representante = data;
-    this.router.navigateByUrl(`/representantes/registro/${data.id}/sitios`);
+    this.router.navigateByUrl(`/representantes/registro/${data.id}`);
+    this.sc.emitIdSitioDetalleChange(null);
   }
 
   nuevoRepresentante = (): void => {
