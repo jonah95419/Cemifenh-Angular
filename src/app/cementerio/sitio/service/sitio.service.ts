@@ -4,7 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { FechasI, FechasResponse } from '../model/fechas';
-import { ResponseSitioI, ResponseDeudaSitioI, SitioI } from '../model/sitio';
+import { ResponseSitioI, ResponseDeudaSitioI, SitioI, ResponseEstadoCuentaSitioI } from '../model/sitio';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -32,11 +32,30 @@ export class SitioService {
     })
   }
 
+  listarSitios(representanteId: string): Observable<ResponseSitioI> {
+    return this.httpClient
+    .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
   obtenerDeudas(sitioId: number): Observable<ResponseDeudaSitioI> {
     return this.httpClient
     .get<ResponseDeudaSitioI>(`${AUTH_SERVER}/sitio/deudas/${sitioId}`, this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
+
+  obtenerSitio(sitioId: string): Observable<ResponseSitioI> {
+    return this.httpClient
+    .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
+  obtenerEstadoCuenta(sitioId: string): Observable<ResponseEstadoCuentaSitioI> {
+    return this.httpClient
+    .get<ResponseEstadoCuentaSitioI>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
 
 
   agregarPago(pago: any): Observable<any> {
@@ -44,6 +63,13 @@ export class SitioService {
     .post<any>(`${AUTH_SERVER}/sitio/pago`, JSON.stringify(pago), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
+
+  agregarSitio(sitio: SitioI): Observable<any> {
+    return this.httpClient
+    .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+    .pipe(catchError(this.handleError));
+  }
+
 
 
 
@@ -67,27 +93,6 @@ export class SitioService {
 
 
 
-
-
-  agregarSitio(sitio: SitioI): Observable<any> {
-    return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
-    .pipe(catchError(this.handleError));
-  }
-
-  listarSitios(representanteId: string): Observable<ResponseSitioI> {
-    return this.httpClient
-    .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
-  }
-
-
-  obtenerEstadoCuenta(sitioId: number): Observable<any> {
-    return this.httpClient
-    .get<any>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
-  }
-
   obtenerPagoDetalles(codigoId: number, sitioId: number): Observable<any> {
     return this.httpClient
     .get<any>(`${AUTH_SERVER}/sitio/pago-detalles/${codigoId}&${sitioId}`, this.httpOptions)
@@ -100,11 +105,7 @@ export class SitioService {
     .pipe( catchError(this.handleError) );
   }
 
-  obtenerSitio(sitioId: number): Observable<any> {
-    return this.httpClient
-    .get<any>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
-  }
+
 
   private handleError(error: HttpErrorResponse) {
     return throwError('Algo a salido mal, puedes intentarlo nuevamente!');
