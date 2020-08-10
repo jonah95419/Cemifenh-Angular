@@ -64,14 +64,21 @@ export class SitioService {
     .pipe(catchError(this.handleError));
   }
 
+
+
+  actualizarSitio(sitio: any): Observable<any> {
+    return this.httpClient
+    .put<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
+
+
   agregarSitio(sitio: SitioI): Observable<any> {
     return this.httpClient
     .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
-
-
-
 
   agregarIngreso(ingreso: IngresoI): Observable<any> {
     return this.httpClient
