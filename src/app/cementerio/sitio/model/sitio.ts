@@ -31,3 +31,19 @@ export interface ResponseDeudaSitioI {
   cant?: number;
   message?: string;
 }
+
+export interface EstadoCuentaI {
+  id: number;
+  tipo: string;
+  descripcion: string;
+  desde: Date;
+  hasta: Date;
+  cantidad: string;
+}
+
+export interface ResponseEstadoCuentaSitioI {
+  ok: boolean;
+  data?: EstadoCuentaI[];
+  cant?: number;
+  message?: string;
+}
