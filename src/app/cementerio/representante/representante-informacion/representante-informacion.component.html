@@ -1,46 +1,30 @@
-<!-- <p>representante-informacion works! {{id_representante}}</p> -->
-<!-- <div *ngIf="informacionRepresentante" style="display: flex; padding-left: 12px; padding-top: 6px;">
-    <label>{{informacionRepresentante.id}}-{{informacionRepresentante.nombre}}</label>
-    <label>/</label>
-    <label>{{detalle}}</label>
-</div> -->
-<div class="container">
-    <div class="col">
-        {{representante | async | json}}
-    </div>
-    <div class="col" style="margin-top: 24px;">
-        <router-outlet></router-outlet>
-    </div>
+<div>
+    <form [formGroup]="representanteForm" novalidate>
+        <div class="fields-container">
+            <div style="display: flex; flex-direction: row;">
+                <p>
+                    <mat-form-field style="width: 100px;">
+                        <mat-label>Código:</mat-label>
+                        <input formControlName="id" type="text" matInput>
+                    </mat-form-field>
+                </p>
+                <p>
+                    <mat-form-field style="width: 280px;">
+                        <mat-label>Nombre representante:</mat-label>
+                        <input formControlName="nombre" type="text" matInput>
+                    </mat-form-field>
+                </p>
+                <p>
+                    <mat-form-field style="width: 150px;">
+                        <mat-label>Cédula:</mat-label>
+                        <input formControlName="cedula" type="text" matInput>
+                    </mat-form-field>
+                </p>
+                <button style="height: max-content;" mat-stroked-button class="btn-submit" matTooltip="guardar cambios">Guardar</button>
+            </div>
+        </div>
+    </form>
 </div>
-<div class="container-fluid">
-    <div class="row">
-        <!-- <div class="col-3" style="display: flex; flex-direction: column;">
-
-            <mat-card>
-                <mat-card-header>
-                    <mat-card-title>Información</mat-card-title>
-                </mat-card-header>
-                <mat-card-content *ngIf="informacionRepresentante">
-                    <mat-form-field style="width: 100%;">
-                        <mat-label>Nombre</mat-label>
-                        <input matInput placeholder="Nombre" [(ngModel)]="informacionRepresentante.nombre">
-                    </mat-form-field>
-                    <mat-form-field style="width: 100%;">
-                        <mat-label>Cédula</mat-label>
-                        <input matInput placeholder="Cédula" [(ngModel)]="informacionRepresentante.cedula">
-                    </mat-form-field>
-                    <mat-form-field style="width: 100%;">
-                        <mat-label>Estado</mat-label>
-                        <input matInput placeholder="Estado" [(ngModel)]="informacionRepresentante.estado">
-                    </mat-form-field>
-                    <mat-form-field style="width: 100%;">
-                        <mat-label>Observaciones</mat-label>
-                        <input matInput placeholder="Observaciones" [(ngModel)]="informacionRepresentante.observaciones">
-                    </mat-form-field>
-                </mat-card-content>
-            </mat-card>
-        </div> -->
-
-    </div>
-
+<div>
+    <router-outlet></router-outlet>
 </div>

@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RepresentanteService } from '../service/representante.service';
 import { RepresentanteI } from '../model/representante';
 import { map, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-representante-informacion',
@@ -12,15 +12,20 @@ import { Observable } from 'rxjs';
 })
 export class RepresentanteInformacionComponent implements OnInit {
 
-  representante: Observable<RepresentanteI>;
-
   detalle: string = 'sitios';
+
+  representanteForm = this.fb.group({
+    id: new FormControl({ value: '', disabled: true }),
+    nombre: new FormControl(''),
+    cedula: new FormControl('', Validators.min(0)),
+  })
 
   constructor(
     private route: ActivatedRoute,
+    private fb: FormBuilder,
     private apiRepresentantes: RepresentanteService) {
-    route.paramMap.pipe( tap((data: ParamMap) => {
-      if(data.get("id")) {
+    route.paramMap.pipe(tap((data: ParamMap) => {
+      if (data.get("id")) {
         this.obtenerValores(Number(data.get("id")))
       }
     })).toPromise();
@@ -30,9 +35,16 @@ export class RepresentanteInformacionComponent implements OnInit {
 
   private obtenerValores(id: number) {
     if (id) {
-      this.representante = this.apiRepresentantes.representantes.pipe(
+      this.apiRepresentantes.representantes.pipe(
         map((data: RepresentanteI[]) => data.find((d: RepresentanteI) => d.id == id)),
-      );
+        tap((data: RepresentanteI) => this.cargarRepresentante(data))
+      ).toPromise();
+    }
+  }
+
+  private cargarRepresentante(r: RepresentanteI): void {
+    if (r) {
+      this.representanteForm.patchValue(r);
     }
   }
 

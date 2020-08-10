@@ -13,3 +13,11 @@ label {
     margin-top: 10px;
     margin-left: 6px;
 }
+
+.mat-form-field {
+    margin-left: 6px;
+}
+
+.btn-submit {
+    margin: 6px;
+}
