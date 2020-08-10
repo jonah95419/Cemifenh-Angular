@@ -159,7 +159,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     ).toPromise();
   }
 
-  private cargarValoresEstadoCuenta(data: EstadoCuentaH[]) {
+  private cargarValoresEstadoCuenta(data: any) {
     this.listaEstadoCuenta = data;
     this.dataSourceEC = new MatTableDataSource(this.listaEstadoCuenta);
     this.dataSourceEC.paginator = this.paginator;
