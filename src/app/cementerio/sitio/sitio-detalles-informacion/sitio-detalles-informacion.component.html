@@ -1,20 +1,13 @@
 <h4>
-    Información - Sitio N° {{informacionSitio?.id}}
+    Información - Sitio N° {{id_sitio}}
 </h4>
-<form [formGroup]="sitioForm" novalidate>
+<form [formGroup]="sitioForm" (ngSubmit)="submit()" novalidate>
     <div class="fields-container container-informacion mat-elevation-z1">
         <div>
-            <!-- <p>
-                <mat-form-field>
-                    <mat-label>Nombre</mat-label>
-                    <input matInput placeholder="Nombre" formControlName="nombre">
-                </mat-form-field>
-            </p> -->
             <p>
                 <mat-form-field>
                     <mat-label>Sector</mat-label>
                     <mat-select formControlName="sector" required>
-                        <!-- <mat-option>--</mat-option> -->
                         <mat-option *ngFor="let sector of listaSectores" [value]="sector.id">
                             {{sector.nombre}}
                         </mat-option>
@@ -58,7 +51,7 @@
                 </mat-form-field>
             </p>
             <p>
-                <button mat-stroked-button>Guardar</button>
+                <button type="submit" mat-stroked-button>Guardar</button>
             </p>
         </div>
     </div>
