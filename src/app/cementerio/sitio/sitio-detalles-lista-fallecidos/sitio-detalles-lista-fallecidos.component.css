@@ -1,31 +1,67 @@
-label {
-    font-size: 16px;
-    margin-top: 10px;
-    margin-left: 6px;
-}
-
-mat-card {
-    margin: 3px;
-}
-
-a {
-    cursor: pointer;
-    color: #007Bff;
-}
-
 table {
     width: 100%;
-}
-
-.mat-form-field {
-    font-size: 14px;
-    /* width: 100%; */
 }
 
 tr.mat-footer-row {
     font-weight: bold;
 }
 
+h4 {
+    margin: 0px;
+}
+
 .mat-table-sticky {
     border-top: 1px solid #e0e0e0;
+}
+
+mat-icon {
+    font-size: small;
+    color: gray;
+}
+
+.mat-column-acciones {
+    width: 150px;
+    text-align: center;
+}
+
+.example-action-buttons {
+    padding-bottom: 20px;
+}
+
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+    background-color: whitesmoke;
+}
+
+.example-headers-align .mat-form-field+.mat-form-field {
+    margin-left: 8px;
+}
+
+mat-form-field {
+    margin-left: 6px;
+    padding-top: 12px;
+}
+
+.mat-column-fecha {
+    min-width: 100px;
+    padding: 0px 6px;
+}
+
+.mat-column-cedula {
+    padding: 0px 6px;
+}
+
+.mat-column-nombre {
+    padding: 0px 6px;
+    min-width: 200px;
+}
+
+.mat-column-acciones {
+    width: 105px;
 }
