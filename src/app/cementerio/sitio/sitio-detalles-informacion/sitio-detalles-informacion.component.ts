@@ -55,9 +55,9 @@ export class SitioDetallesInformacionComponent implements OnInit {
     this.apiSitios.actualizarSitio(this.sitioForm.value).pipe(
       tap( result => {
         if(result.ok) {
-          this.openSnackBar("Registro actualizado", "Ok");
+          this.openSnackBar("Registro actualizado", "ok");
         } else {
-          this.openSnackBar("Error al actualizar, puedes intentarlo nuevamente", "Ok");
+          this.openSnackBar("Error al actualizar, puedes intentarlo nuevamente", "ok");
         }
       })
     ).toPromise();
