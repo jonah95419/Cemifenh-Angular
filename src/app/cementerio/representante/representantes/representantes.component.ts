@@ -20,7 +20,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  displayedColumns: string[] = [ 'nombre', 'cedula', 'accion'];
+  displayedColumns: string[] = [ 'nombre', 'cedula'];
 
   dataSource: MatTableDataSource<RepresentanteI>;
 

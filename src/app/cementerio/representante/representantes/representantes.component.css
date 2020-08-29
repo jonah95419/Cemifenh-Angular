@@ -29,17 +29,10 @@ th.mat-header-cell {
     border: none;
 }
 
-.mat-column-accion {
-    min-width: 30px;
-    width: 30px;
-    padding-left: 6px;
-}
-
 .mat-column-cedula {
-    min-width: 90px;
-    width: 90px;
-    max-width: 90px;
-    padding-left: 6px;
+    min-width: 100px;
+    width: 100px;
+    padding: 0px 6px;
 }
 
 .mat-column-nombre {
