@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SitioService } from '../service/sitio.service';
 import { ResponseSitioI, SitioI } from '../model/sitio';
 import { ServiceC } from '../service-c/sitio-serviceC';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sitios',
@@ -23,10 +24,12 @@ export class SitiosComponent implements OnInit {
   detalle: any;
   sitioId: number;
 
-  displayedColumns: string[] = ['id', 'sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
+  locale: string;
+  displayedColumns: string[] = [ 'sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
   dataSource: MatTableDataSource<any>;
 
   constructor(
+    private translate: TranslateService,
     private route: ActivatedRoute,
     private sc: ServiceC,
     private apiSitios: SitioService) {
@@ -35,9 +38,19 @@ export class SitiosComponent implements OnInit {
           this.obtenerValores(data.id);
         }
       })).toPromise();
+      route.firstChild?.queryParams.pipe( tap((data: Params) => {
+        if(data.id) {
+          this.sitioId = data.id;
+        }
+      })).toPromise();
     }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.locale = this.translate.currentLang;
+    this.translate.onLangChange.pipe(
+      tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
+    ).toPromise();
+  }
 
   verDetalles(sitio: any): void {
     this.verDetalle = true;
