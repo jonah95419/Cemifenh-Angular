@@ -5,6 +5,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { RepresentanteService } from '../service/representante.service';
 import { tap } from 'rxjs/operators';
 import { ResponseDeudaRepresentanteI, DeudaRepresentanteI } from '../model/deuda';
+import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
 
 @Component({
   selector: 'app-estado-cuenta',
@@ -21,6 +22,7 @@ export class EstadoCuentaComponent implements OnInit {
   dataSource: MatTableDataSource<DeudaRepresentanteI>;
 
   constructor(
+    private sc: ServiceC,
     private route: ActivatedRoute,
     private apiRepresentante: RepresentanteService,
     ) {
@@ -52,6 +54,7 @@ export class EstadoCuentaComponent implements OnInit {
   }
 
   private obtenerValores(id: string): void {
+    this.sc.emitIdSitioDetalleChange(null);
     this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
       tap((data: ResponseDeudaRepresentanteI) => {
         if (data.ok) { this.cargarValores(data.data); } else {alert(data.message); }
