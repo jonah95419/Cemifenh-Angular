@@ -6,6 +6,7 @@ export interface EstadoCuentaH {
   hasta: Date;
   fecha: Date;
   cantidad: string;
+  sector?: string;
   estado_cuenta?: string;
   pago?: string;
 }
