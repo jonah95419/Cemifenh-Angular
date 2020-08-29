@@ -1,4 +1,5 @@
 export interface FallecidoI {
+  id: number;
   sitio: number;
   nombre: string;
   cedula: string;
