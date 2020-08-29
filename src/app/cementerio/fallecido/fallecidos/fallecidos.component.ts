@@ -5,6 +5,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { FallecidoService } from '../service/fallecido.service';
 import { ResponseFallecidoRepresentanteI, FallecidoRepresentanteI } from '../model/fallecido';
+import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
 
 @Component({
   selector: 'app-fallecidos',
@@ -22,6 +23,7 @@ export class FallecidosComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private sc: ServiceC,
     private apiFallecidos: FallecidoService) {
     route.parent.params.pipe(tap((data: Params) => {
       if (data.id) {
@@ -33,6 +35,7 @@ export class FallecidosComponent implements OnInit {
   ngOnInit() { }
 
   private obtenerValores(id: number):void {
+    this.sc.emitIdSitioDetalleChange(null);
     this.apiFallecidos.listarFallecidosRepresentante(id).pipe(
       tap((data: ResponseFallecidoRepresentanteI) => {
         if (data.ok) { this.cargarValores(data.data); } else { console.log(data.message); }
