@@ -1,7 +1,3 @@
-table {
-    width: 100%;
-}
-
 .mat-form-field {
     font-size: 14px;
     width: 100%;
@@ -30,8 +26,12 @@ a {
     cursor: pointer;
 }
 
-.mat-column-id {
-    padding-right: 6px;
+tr.mat-header-row {
+    height: 32px !important;
+}
+
+th.mat-header-cell {
+    border: none !important;
 }
 
 .mat-column-accion {
@@ -40,9 +40,9 @@ a {
 }
 
 .mat-column-cedula {
-    min-width: 90px;
-    width: 90px;
-    max-width: 90px;
+    min-width: 100px;
+    width: 100px;
+    max-width: 100px;
     padding-left: 6px;
 }
 

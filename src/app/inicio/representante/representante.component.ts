@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, Params } from '@angular/router';
 import { tap, map, filter } from 'rxjs/operators';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,14 +23,14 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumns: string[] = ['id', 'nombre', 'cedula', 'fecha', 'accion'];
-  displayedColumnsSinSitios: string[] = ['id', 'nombre', 'cedula', 'accion'];
+  displayedColumns: string[] = ['nombre', 'cedula', 'fecha'];
+  displayedColumnsSinSitios: string[] = ['nombre', 'cedula'];
   dataSource: MatTableDataSource<RepresentanteI[]>;
   dataSourceSinSitios: MatTableDataSource<RepresentanteI[]>;
 
   periodos: FechasI[];
 
-  representante: RepresentanteI;
+  representante: number = null;
 
   locale: string;
 
@@ -39,7 +39,7 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
 
   private _translate;
   private _periodo: string;
-  private listaRepresentantes  = [];
+  private listaRepresentantes = [];
   private listaRepresentantesSinSitio = [];
 
   constructor(
@@ -48,25 +48,28 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     private apiSitios: SitioService,
     private router: Router,
     private dialog: MatDialog,
-    private route: ActivatedRoute
-  ) {
-    route.paramMap.subscribe((data: ParamMap) => {
-      const periodo = data.get("periodo") ? data.get("periodo") : "todos";
-      this.obtenerValoresRepresentantes(periodo);
-    })
-  }
+    private route: ActivatedRoute,
+    private cdRef:ChangeDetectorRef) {  }
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
     this._translate = this.translate.onLangChange
       .subscribe((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
-
   }
 
   ngOnDestroy(): void {
     if (this._translate !== undefined) {
       this._translate.unsubscribe();
     }
+  }
+
+  ngAfterViewInit() {
+    this.route.paramMap.subscribe((data: ParamMap) => {
+      const periodo = data.get("periodo") ? data.get("periodo") : "todos";
+      this.obtenerValoresRepresentantes(periodo);
+    });
+
+    this.cdRef.detectChanges();
   }
 
   applyFilter(event: Event): void {
@@ -77,18 +80,17 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     }
   }
 
-  verHistorial = (data: RepresentanteI): void => {
+  verHistorial = (data: number): void => {
     this.representante = data;
-    this.router.navigateByUrl(`/inicio/representantes/${this._periodo}/historial/${data.id}`);
+    this.router.navigateByUrl(`/inicio/representantes/${this._periodo}/historial/${this.representante}`);
   }
 
   nuevoRepresentante = (): void => {
     const dialogRef = this.dialog.open(DialogRegistroRepresentante, { width: '600px', panelClass: "my-class" });
-
     dialogRef.afterClosed().subscribe();
   }
 
-  refrescarRegistros(): void{
+  refrescarRegistros(): void {
     this.obtenerValoresRepresentantes(this._periodo);
   }
 
@@ -97,7 +99,15 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     this.registroSinSitio = false;
     this._periodo = periodo;
 
-    if(periodo !== "sinsitios") {
+    if(this.route.firstChild) {
+      this.route.firstChild.paramMap.pipe(tap((data: Params) => {
+        if (data.params.id && this.representante === null) {
+          this.representante = data.params.id;
+        }
+      })).toPromise();
+    }
+
+    if (periodo !== "sinsitios") {
       this.registrosConSitio = true;
       this.cargarValoresRepresentantes([]);
       if (periodo === "todos") {
@@ -128,6 +138,8 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.listaRepresentantes);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+
   }
 
   private cargarValoresRepresentantesSinSitios(): void {
