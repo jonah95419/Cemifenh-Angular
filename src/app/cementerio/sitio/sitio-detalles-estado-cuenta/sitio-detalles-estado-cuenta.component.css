@@ -6,6 +6,25 @@ tr.mat-footer-row {
     font-weight: bold;
 }
 
+tr:hover {
+    background-color: whitesmoke;
+    cursor: pointer;
+}
+
 .mat-table-sticky {
     border-top: 1px solid #e0e0e0;
+}
+
+.mat-column-acciones {
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
+}
+
+mat-icon :hover {
+    color: #222222;
+}
+
+h4 {
+    margin: 0px;
 }

@@ -7,6 +7,7 @@ import { SitioService } from '../service/sitio.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sitio-detalles-estado-cuenta',
@@ -18,14 +19,16 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['id', 'descripcion', 'desde', 'hasta', 'cantidad'];
+  displayedColumnsEC: string[] = ['fecha', 'descripcion', 'desde',  'cargos', 'abonos', 'acciones'];
   dataSource: MatTableDataSource<EstadoCuentaI>;
 
   id_sitio: string = "";
+  locale: string;
 
   listaEstadoCuenta: EstadoCuentaI[] = [];
 
   constructor(
+    private translate: TranslateService,
     private route: ActivatedRoute,
     private sc: ServiceC,
     private apiSitios: SitioService,) {
@@ -39,23 +42,50 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.locale = this.translate.currentLang;
+    this.translate.onLangChange.pipe(
+      tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
+    ).toPromise();
+
   }
 
-  getTotalEstadoCuenta() {
-    let suma = 0;
-    this.listaEstadoCuenta.forEach(t => { if (new Date(t.desde) > new Date('2001/01/01')) { if (t.tipo === 'deuda') { suma += Number(t.cantidad); } else { suma -= Number(t.cantidad); } } });
+  getTotalEstadoCuenta(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => {
+      if (new Date(t.fecha) > new Date('2001/01/01')) {
+        if (t.estado_cuenta === 'deuda') {
+          suma += Number(t.cantidad);
+        } else {
+          if(t.descripcion === "Servicio" || t.descripcion === "Mantenimiento") {
+            suma -= Number(t.cantidad);
+          }
+        }
+      }
+    });
     return suma;
   }
 
-  getDeudasEstadoCuenta() {
-    let suma = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.tipo === 'deuda' && (new Date(t.desde) > new Date('2001/01/01'))) { suma += Number(t.cantidad); } });
+  getDeudasEstadoCuenta(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta === 'deuda' && (new Date(t.fecha) > new Date('2001/01/01'))) { suma += Number(t.cantidad); } });
     return suma;
   }
 
-  getPagosEstadoCuenta() {
-    let suma = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.tipo !== 'deuda' && (new Date(t.desde) > new Date('2001/01/01'))) { suma += Number(t.cantidad); } });
+  getPagos(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01')) ) { suma += Number(t.cantidad); } });
+    return suma;
+  }
+
+  getPagosServicios(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01')) && t.desde !== null ) { suma += Number(t.cantidad); } });
+    return suma;
+  }
+
+  getPagosExtras(): number {
+    let suma: number = 0;
+    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && t.desde === null) { suma += Number(t.cantidad); } });
     return suma;
   }
 
@@ -74,7 +104,12 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
 
   private cargarValoresEstadoCuenta(data: EstadoCuentaI[]) {
     console.log(data);
-    this.listaEstadoCuenta = data;
+    this.listaEstadoCuenta = data.map((d: EstadoCuentaI) => {
+      let nuevo: any = {};
+      nuevo = d;
+      nuevo.hovered = false;
+      return nuevo;
+    });
     this.dataSource = new MatTableDataSource(this.listaEstadoCuenta);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
