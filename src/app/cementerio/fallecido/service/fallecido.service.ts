@@ -20,6 +20,18 @@ export class FallecidoService {
     .pipe(catchError(this.handleError));
   }
 
+  actualizarFallecido(id: number, fallecido: any): Observable<any> {
+    return this.httpClient
+    .put<any>(`${AUTH_SERVER}/fallecido/${id}`, JSON.stringify(fallecido), this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
+  eliminarFallecido(id: number): Observable<any> {
+    return this.httpClient
+    .delete<any>(`${AUTH_SERVER}/fallecido/${id}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
   listarFallecidosRepresentante(representanteId: number): Observable<ResponseFallecidoRepresentanteI> {
     return this.httpClient
     .get<ResponseFallecidoRepresentanteI>(`${AUTH_SERVER}/representante/listar-fallecidos/${representanteId}`, this.httpOptions)
@@ -30,14 +42,6 @@ export class FallecidoService {
     return this.httpClient
     .get<ResponseFallecidoI>(`${AUTH_SERVER}/fallecido/${sitioId}`, this.httpOptions)
     .pipe( catchError(this.handleError) );
-  }
-
-
-  obtenerSitio(sitioId: number): Observable<any> {
-    return this.httpClient.get<any>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
-    .pipe(
-      catchError(this.handleError)
-    );
   }
 
   private handleError(error: HttpErrorResponse) {
