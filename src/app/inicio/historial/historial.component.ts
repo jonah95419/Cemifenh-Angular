@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
 import { EstadoCuentaH } from '../../cementerio/representante/model/estadoCuentaR';
-import { tap, filter, map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { SitioService } from '../../cementerio/sitio/service/sitio.service';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,7 +24,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['fecha', 'descripcion', 'desde', 'cargos', 'abonos', 'accion', 'eliminar'];
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'desde', 'cargos', 'abonos', 'accion', 'eliminar'];
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
 
@@ -143,7 +143,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
 
   private cargarHistorial(id: string) {
     this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
-      tap(data => {
+      tap((data: any) => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
         else { console.log(data.message); }
       })
@@ -159,7 +159,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     ).toPromise();
   }
 
-  private cargarValoresEstadoCuenta(data: any) {
+  private cargarValoresEstadoCuenta(data: EstadoCuentaH[]) {
     this.listaEstadoCuenta = data;
     this.dataSourceEC = new MatTableDataSource(this.listaEstadoCuenta);
     this.dataSourceEC.paginator = this.paginator;
