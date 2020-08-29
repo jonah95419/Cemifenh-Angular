@@ -47,3 +47,28 @@
     width: 42px;
     height: 42px;
 }
+
+::ng-deep button {
+    outline: none !important;
+}
+
+::ng-deep table {
+    width: 100% !important;
+}
+
+::ng-deep tr.mat-footer-row {
+    font-weight: bold !important;
+}
+
+::ng-deep tr:hover {
+    background-color: whitesmoke !important;
+    cursor: pointer !important;
+}
+
+::ng-deep tr.mat-header-row {
+    height: 32px !important;
+}
+
+::ng-deep th.mat-header-cell {
+    border: none !important;
+}
