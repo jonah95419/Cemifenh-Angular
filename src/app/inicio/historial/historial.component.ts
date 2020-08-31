@@ -24,7 +24,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'desde', 'cargos', 'abonos', 'accion', 'eliminar'];
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'accion', 'eliminar'];
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
 
@@ -91,7 +91,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
         if (t.estado_cuenta === 'deuda') {
           suma += Number(t.cantidad);
         } else {
-          if(t.pago === "Servicio" || t.pago === "Mantenimiento") {
+          if (t.pago.toLowerCase() !== "otros") {
             suma -= Number(t.cantidad);
           }
         }
@@ -100,29 +100,37 @@ export class HistorialComponent implements OnInit, OnDestroy {
     return suma;
   }
 
-  getDeudasEstadoCuenta(): number {
-    let suma: number = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta === 'deuda' && (new Date(t.fecha) > new Date('2001/01/01'))) { suma += Number(t.cantidad); } });
-    return suma;
-  }
+  getDeudasServicios = (): number => this.listaEstadoCuenta
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'deuda' &&
+      (new Date(t.fecha) > new Date('2001/01/01')) &&
+      (t.pago.toLowerCase() === 'mantenimiento' ||
+        t.pago.toLowerCase() === 'servicio'))
+    .reduce((a, b) => a + Number(b.cantidad), 0);
 
-  getPagos(): number {
-    let suma: number = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01')) ) { suma += Number(t.cantidad); } });
-    return suma;
-  }
+  getDeudasExtras = (): number => this.listaEstadoCuenta
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'deuda' &&
+      (new Date(t.fecha) > new Date('2001/01/01')) &&
+      t.pago.toLowerCase() !== 'mantenimiento' &&
+      t.pago.toLowerCase() !== 'servicio')
+    .reduce((a, b) => a + Number(b.cantidad), 0);
 
-  getPagosServicios(): number {
-    let suma: number = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && (new Date(t.fecha) > new Date('2001/01/01')) && t.desde !== null ) { suma += Number(t.cantidad); } });
-    return suma;
-  }
+  getPagosServicios = (): number => this.listaEstadoCuenta
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() !== 'deuda' &&
+      (new Date(t.fecha) > new Date('2001/01/01')) &&
+      (t.pago.toLowerCase() === 'mantenimiento' ||
+      t.pago.toLowerCase() === 'servicio'))
+    .reduce((a, b) => a + Number(b.cantidad), 0);
 
-  getPagosExtras(): number {
-    let suma: number = 0;
-    this.listaEstadoCuenta.forEach(t => { if (t.estado_cuenta !== 'deuda' && t.desde === null) { suma += Number(t.cantidad); } });
-    return suma;
-  }
+  getPagosExtras = (): number => this.listaEstadoCuenta
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() !== 'deuda' &&
+      (new Date(t.fecha) > new Date('2001/01/01')) &&
+      t.pago.toLowerCase() !== 'mantenimiento' &&
+      t.pago.toLowerCase() !== 'servicio')
+    .reduce((a, b) => a + Number(b.cantidad), 0);
 
   private obtenerHistorial(id: string) {
     this.id = id;
