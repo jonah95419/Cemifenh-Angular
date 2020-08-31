@@ -1,34 +1,114 @@
-<h1 mat-dialog-title>Registro deudas</h1>
+<h1 mat-dialog-title>Registro cargo</h1>
 <div mat-dialog-content>
-    <mat-form-field>
-        <mat-label>Sitio:</mat-label>
-        <mat-select (selectionChange)="sitioSeleccionado($event);">
-            <mat-option *ngFor="let sitio of sitios" [value]="sitio">
-                {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
+
     <div style="display: flex; flex-direction: row;">
         <mat-form-field>
+            <mat-label>Sitio:</mat-label>
+            <mat-select (selectionChange)="sitioSeleccionado($event);">
+                <mat-option *ngFor="let sitio of sitios" [value]="sitio">
+                    {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field style="width: 80px;">
             <mat-label>Año:</mat-label>
             <mat-select (selectionChange)="anioSeleccionado($event);">
-                <mat-option *ngFor="let anio of aniosDeudas()" [value]="anio">
+                <mat-option *ngFor="let anio of anios" [value]="anio">
                     {{anio}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field style="width: 120px;">
             <mat-label>Motivo:</mat-label>
-            <mat-select>
-                <mat-option *ngFor="let motivo of motivos" [value]="motivo">
-                    {{motivo}}
+            <mat-select [(ngModel)]="motivo">
+                <mat-option *ngFor="let m of motivos" [value]="m">
+                    {{m.motivo}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
-    <br> ingresar tabla nuevas deudas
+
+    <div *ngIf="motivo !== undefined" style="display: flex; flex-direction: row;">
+        <div class="tabla-precios">
+            <div *ngIf="motivo?.motivo !== 'Otros'">
+                <div class="tabla-titulo">servicio:</div>
+                <div style="margin: 0px auto;">
+                    {{motivo?.motivo}}
+                </div>
+            </div>
+            <div *ngIf="motivo?.motivo === 'Otros'">
+                <mat-form-field style="width: 80px;">
+                    <mat-label>descripcion:</mat-label>
+                    <input type="text" #input maxlength="250" matInput [(ngModel)]="descripcion">
+                    <mat-hint align="end">{{input.value?.length || 0}}/250</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <mat-divider [vertical]="true">
+        </mat-divider>
+        <div class="tabla-precios">
+            <div class="tabla-titulo">años:</div>
+            <div style="margin: 0px auto;">{{motivo?.periodo == '0'? '...': motivo?.periodo }}</div>
+        </div>
+        <mat-divider [vertical]="true">
+        </mat-divider>
+        <div class="tabla-precios">
+            <div class="tabla-titulo">valor total:</div>
+            <div style="margin: 0px auto;">{{motivo?.valor | currency}}</div>
+        </div>
+        <mat-divider [vertical]="true">
+        </mat-divider>
+        <div class="tabla-precios">
+            <mat-form-field style="width: 80px;">
+                <mat-label>cant. deuda:</mat-label>
+                <input type="number" min="0" matInput [(ngModel)]="cantidad">
+            </mat-form-field>
+        </div>
+
+        <button mat-stroked-button style="margin: 0px 12px; height: max-content;" (click)="agregarDeuda();" [disabled]="cantidad == undefined">Agregar</button>
+    </div>
+
+    <table #table mat-table [dataSource]="listaDeudas" style="margin-top: 12px;">
+        <ng-container matColumnDef="sitio">
+            <th mat-header-cell *matHeaderCellDef> Sitio </th>
+            <td mat-cell *matCellDef="let row"> {{row.sitio_id}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="motivo">
+            <th mat-header-cell *matHeaderCellDef> Motivo </th>
+            <td mat-cell *matCellDef="let row"> {{row.motivo}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+            <td mat-cell *matCellDef="let row"> {{row.descripcion}}, {{row.anio}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+            <td mat-cell *matCellDef="let row"> {{row.cantidad | currency }}</td>
+            <td mat-footer-cell *matFooterCellDef> {{obtenerTotalDeudas() | currency}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row" style="text-align: end;" matTooltip="Eliminar">
+                <button mat-icon-button (click)="eliminarDeuda(row);">
+              <mat-icon>delete</mat-icon>
+            </button>
+            </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
+    </table>
 </div>
 <div mat-dialog-actions align=end>
-    <button mat-button>Cancelar</button>
-    <button mat-button cdkFocusInitial>Guardar</button>
+    <button mat-button (click)="onNoClick();">Cancelar</button>
+    <button mat-button cdkFocusInitial [disabled]="listaDeudas.length === 0" (click)="guardarDeudas();">Guardar</button>
 </div>
