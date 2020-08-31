@@ -27,7 +27,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class DialogPagoExtra implements OnInit, OnDestroy {
+export class DialogPagoExtra implements OnInit {
 
   @ViewChild(MatTable) table: MatTable<any>;
 
@@ -51,9 +51,6 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
   nombre: string = "";
   fecha: Date = new Date();
 
-
-  private _translate;
-
   constructor(
     private translate: TranslateService,
     private apiSitio: SitioService,
@@ -70,15 +67,9 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
-    this._translate = this.translate.onLangChange
-      .subscribe((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
-
-  }
-
-  ngOnDestroy(): void {
-    if (this._translate !== undefined) {
-      this._translate.unsubscribe();
-    }
+    this.translate.onLangChange.pipe(
+      tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
+    ).toPromise();
   }
 
   submit (): void {
@@ -98,7 +89,7 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
       if(value.deuda !== null && value.cantidad) {
         this.listaPagos.push({
           id: value.deuda.id,
-          descripcion: value.deuda.descripcion + " (" + value.deuda.desde + ")",
+          descripcion: value.deuda.descripcion + ", " + new Date(value.deuda.desde).getFullYear(),
           cantidad: value.cantidad,
           extra: false
         });
@@ -147,9 +138,9 @@ export class DialogPagoExtra implements OnInit, OnDestroy {
       this.apiSitio.agregarPago(registro)
       .subscribe( data => {
         if(data.ok) {
-          this.openSnackBar("Pago registrado!! ", "ok");
+          this.openSnackBar("Abono registrado!! ", "ok");
         } else {
-          this.openSnackBar("A ocurrido un error, por favor intentanlo nuevamente ", "ok");
+          this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente ", "ok");
         }
         this.dialogRef.close();
       })

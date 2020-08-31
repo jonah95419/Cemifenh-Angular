@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Registrar pago</h1>
+<h1 mat-dialog-title>Registrar abono</h1>
 <div mat-dialog-content>
     <p>Datos comprobante</p>
 
@@ -32,7 +32,7 @@
                             <mat-label>Deudas pendientes:</mat-label>
                             <mat-select formControlName="deuda" [disabled]="otros">
                                 <mat-option *ngFor="let deuda of deudasAuxiliar" [value]="deuda">
-                                    <b>{{deuda.deuda_actual | currency}}</b> ({{deuda.descripcion}} - {{deuda.desde}})
+                                    <b>{{deuda.deuda_actual | currency}}</b> ({{deuda.descripcion}} - {{deuda.desde | date : 'y':undefined:locale}})
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -61,7 +61,6 @@
     </form>
 
     <table #table mat-table [dataSource]="listaPagos">
-
         <ng-container matColumnDef="descripcion">
             <th mat-header-cell *matHeaderCellDef> Descripción </th>
             <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
@@ -87,7 +86,6 @@
         <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
         <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
-
     </table>
 
     <ng-template #sitioE>
