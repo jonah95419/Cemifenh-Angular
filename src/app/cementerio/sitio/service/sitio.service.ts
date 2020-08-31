@@ -86,7 +86,7 @@ export class SitioService {
     .pipe(catchError(this.handleError));
   }
 
-  agregarDeuda(deuda: DeudaI): Observable<any> {
+  agregarDeuda(deuda: any): Observable<any> {
     return this.httpClient
     .post<any>(`${AUTH_SERVER}/sitio/deuda/`, JSON.stringify(deuda), this.httpOptions)
     .pipe(catchError(this.handleError));
