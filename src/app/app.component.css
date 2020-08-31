@@ -72,3 +72,7 @@
 ::ng-deep th.mat-header-cell {
     border: none !important;
 }
+
+::ng-deep mat-icon {
+    font-size: medium !important;
+}
