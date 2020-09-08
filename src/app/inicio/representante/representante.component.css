@@ -10,6 +10,7 @@
 }
 
 .container-historial {
+    width: 100%;
     margin: 0px 12px;
     padding: 12px 0px;
 }
@@ -34,11 +35,6 @@ th.mat-header-cell {
     border: none !important;
 }
 
-.mat-column-accion {
-    min-width: 50px;
-    padding-left: 6px;
-}
-
 .mat-column-cedula {
     min-width: 100px;
     width: 100px;
@@ -47,7 +43,8 @@ th.mat-header-cell {
 }
 
 .mat-column-fecha {
-    min-width: 100px;
+    min-width: 115px;
+    width: 115px;
     padding-left: 6px;
 }
 

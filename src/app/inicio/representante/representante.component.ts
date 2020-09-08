@@ -30,7 +30,7 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
 
   periodos: FechasI[];
 
-  representante: number = null;
+  representante: string = null;
 
   locale: string;
 
@@ -80,9 +80,9 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     }
   }
 
-  verHistorial = (data: number): void => {
+  verHistorial = (data: string): void => {
     this.representante = data;
-    this.router.navigateByUrl(`/inicio/representantes/${this._periodo}/historial/${this.representante}`);
+    this.router.navigateByUrl(`/inicio/representantes/${this._periodo}/historial/${btoa(String(this.representante))}`);
   }
 
   nuevoRepresentante = (): void => {
@@ -102,7 +102,7 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     if(this.route.firstChild) {
       this.route.firstChild.paramMap.pipe(tap((data: Params) => {
         if (data.params.id && this.representante === null) {
-          this.representante = data.params.id;
+          this.representante = atob(data.params.id);
         }
       })).toPromise();
     }
@@ -138,8 +138,6 @@ export class RepresentanteComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.listaRepresentantes);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
-
   }
 
   private cargarValoresRepresentantesSinSitios(): void {

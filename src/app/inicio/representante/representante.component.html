@@ -2,7 +2,7 @@
     <div class="container-representante-inicio">
 
         <div style="display: flex; flex-direction: row;">
-            <mat-form-field style="width: 350px;">
+            <mat-form-field style="width: 250px;">
                 <mat-label>Filtar búsqueda</mat-label>
                 <input matInput (keyup)="applyFilter($event)" placeholder="Id, nombre o número de cédula del representante">
             </mat-form-field>
@@ -22,7 +22,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="fecha">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha adquisición </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Adquisición </th>
                     <td mat-cell *matCellDef="let row"> {{row.fecha | date : 'MMM d, y':undefined:locale}} </td>
                 </ng-container>
 
