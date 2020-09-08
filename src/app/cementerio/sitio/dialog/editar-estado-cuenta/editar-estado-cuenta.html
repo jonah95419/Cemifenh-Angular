@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>Editar {{data.estado_cuenta == 'ingreso' ? 'abono':'cargo'}}</h1>
+<div mat-dialog-content>
+
+    <p>
+        Descripción:
+        <mat-icon style="font-size: small !important; margin-top: 10px;" matTooltip="Palabras clave: mantenimiento y servicio; movimientos ajenos a las palabras clave se consideran como otros.">help</mat-icon>
+
+        <mat-form-field>
+            <input [disabled]="data.pago == 'mantenimiento' || data.pago == 'servicio'" [(ngModel)]="data.pago" type="text" matInput>
+        </mat-form-field>
+    </p>
+    <p>
+        Fecha:
+        <mat-icon style="font-size: small !important; margin-top: 10px;" matTooltip="Fecha en la que se realizó {{data.estado_cuenta == 'ingreso' ? 'abono':'cargo'}}">help</mat-icon>
+
+        <mat-form-field style="width: 75px;">
+            <input [(ngModel)]="data.fecha" matInput [matDatepicker]="picker" (focus)="picker.open()" readonly>
+        </mat-form-field>
+        <mat-datepicker #picker></mat-datepicker>
+    </p>
+    <p>
+        Monto:
+
+        <mat-form-field style="width: 60px;">
+            <input [(ngModel)]="data.cantidad" type="number" matInput>
+        </mat-form-field>
+    </p>
+</div>
+<div mat-dialog-actions align=end>
+    <button mat-button (click)="onNoClick();">Cancelar</button>
+    <button mat-button cdkFocusInitial (click)="guardarCambios()">Guardar</button>
+</div>
