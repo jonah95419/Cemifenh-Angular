@@ -7,10 +7,6 @@ tr.mat-footer-row {
     font-weight: bold;
 }
 
-tr.mat-header-row {
-    height: 32px;
-}
-
 th.mat-header-cell {
     border: none;
 }
@@ -19,36 +15,29 @@ th.mat-header-cell {
     border-top: 1px solid #e0e0e0;
 }
 
+.mat-column-select {
+    width: 55px;
+}
+
 .mat-column-fecha {
-    min-width: 115px;
+    min-width: 95px;
+    width: 95px;
+    max-width: 95px;
 }
 
-.mat-column-desde {
-    text-align: center;
-    min-width: 85px;
-}
-
+.mat-column-abonos,
 .mat-column-cargos {
     text-align: center;
     min-width: 60px;
 }
 
-.mat-column-abonos {
-    text-align: center;
-    min-width: 60px;
-}
-
-.mat-column-accion {
+.mat-column-acciones {
     text-align: end;
-}
-
-.mat-column-eliminar {
-    text-align: end;
+    justify-content: right;
 }
 
 .mat-column-descripcion {
-    max-width: 200px;
-    min-width: 130px;
+    min-width: 200px;
     padding-left: 6px;
     padding-right: 6px;
 }
@@ -63,8 +52,4 @@ th.mat-header-cell {
 mat-icon {
     color: #757575;
     font-size: large;
-}
-
-button {
-    background-color: white
 }
