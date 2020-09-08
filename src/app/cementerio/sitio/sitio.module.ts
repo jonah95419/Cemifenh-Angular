@@ -10,10 +10,12 @@ import { MatInputModule } from '@angular/material/input';
 import { SitioDetallesInformacionComponent } from './sitio-detalles-informacion/sitio-detalles-informacion.component';
 import { SitioDetallesEstadoCuentaComponent } from './sitio-detalles-estado-cuenta/sitio-detalles-estado-cuenta.component';
 import { SitioDetallesListaFallecidosComponent } from './sitio-detalles-lista-fallecidos/sitio-detalles-lista-fallecidos.component';
+import { DialogEstadoCuenta } from './dialog/editar-estado-cuenta/editar-estado-cuenta';
 
 
 @NgModule({
   declarations: [
+    DialogEstadoCuenta,
     SitiosComponent,
     SitioDetallesListaFallecidosComponent,
     SitioDetallesInformacionComponent,
@@ -36,6 +38,9 @@ import { SitioDetallesListaFallecidosComponent } from './sitio-detalles-lista-fa
   ],
   providers:[
     SitioService
+  ],
+  entryComponents: [
+    DialogEstadoCuenta
   ]
 })
 export class SitioModule { }
