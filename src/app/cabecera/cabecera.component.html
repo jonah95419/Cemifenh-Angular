@@ -1,5 +1,6 @@
 <mat-toolbar class="mat-elevation-z1" style="background-color: white;">
     <div mat-card-avatar [style.background-image]=" 'url('+ logo + ')' " class="example-header-image "></div>
+    GAD San Pablo del Lago
     <!-- <strong class="navigation-item" style="color: rgb(39, 39, 39); cursor: pointer;" routerLink="/inicio">{{title}}</strong> -->
     <span class="example-spacer"></span>
     <a class="navigation-item opcion" routerLink="/inicio" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
@@ -10,13 +11,13 @@
         <label class="navigation-item-label">Representantes</label>
         <div [ngClass]="{'indicador': rla1.isActive}"></div>
     </a>
-    <a class="navigation-item opcion" routerLink="/ejemplares" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
+    <!-- <a class="navigation-item opcion" routerLink="/ejemplares" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
         <label class="navigation-item-label">Sitios</label>
         <div [ngClass]="{'indicador': rla2.isActive}"></div>
-    </a>
+    </a> -->
     <a class="navigation-item opcion" routerLink="/administracion" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
         <label class="navigation-item-label">Administración</label>
         <div [ngClass]="{'indicador': rla3.isActive}"></div>
     </a>
-    <span class="example-spacer"></span>
+    <!-- <span class="example-spacer"></span> -->
 </mat-toolbar>
