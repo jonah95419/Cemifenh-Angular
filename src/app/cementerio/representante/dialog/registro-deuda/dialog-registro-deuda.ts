@@ -11,6 +11,8 @@ import { ValorI } from '../../../../admin/model/valor';
 import { MatSelectChange } from '@angular/material/select';
 import { MatTable } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ServiceC } from '../../../sitio/service-c/sitio-serviceC';
+import { FormControl, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'dialog-registro-deuda',
@@ -30,28 +32,30 @@ export class DialogRegistroDeuda implements OnInit {
 
   @ViewChild(MatTable) table: MatTable<any>;
 
-  columnsToDisplay: string[] = ['sitio', 'motivo', 'descripcion', 'cantidad', 'accion'];
-  listaDeudas: deudaComprobante[] = [];
   sitios: SitioI[] = [];
-  valores: ValorI[] = [];
-  motivos: ValorI[] = [];
-  anios: string[] = [];
+  listaDeudas: deudaComprobante[] = [];
+  columnsToDisplay: string[] = ['sitio', 'descripcion', 'cantidad', 'accion'];
 
-  sitio: SitioI;
   locale: string;
-  descripcion: string = "";
-  motivo: ValorI;
+  otros: boolean = false;
+  sitio: SitioI;
+  fecha: Date = new Date();
 
-  cantidad: number;
+  pagoForm = this.fb.group({
+    deuda: new FormControl(''),
+    descripcion: new FormControl(''),
+    cantidad: new FormControl('', Validators.min(0)),
+  })
 
   constructor(
     private _snackBar: MatSnackBar,
     private apiSitio: SitioService,
-    private apiValores: ValoresService,
+    private notSitio: ServiceC,
+    private fb: FormBuilder,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<DialogRegistroDeuda>,
     @Inject(MAT_DIALOG_DATA) private data: any) {
-    this.cargarValores(data.id);
+    this.cargarSitios(data.id);
   }
 
   onNoClick = (): void => this.dialogRef.close();
@@ -61,42 +65,30 @@ export class DialogRegistroDeuda implements OnInit {
     this.translate.onLangChange.pipe(tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })).toPromise();
   }
 
-  sitioSeleccionado(event: MatSelectChange): void {
-    const sitio = event.source.value;
-    this.sitio = sitio;
-    this.aniosDeudas();
-  }
-
-  anioSeleccionado(event: MatSelectChange): void {
-    const value = event.source.value;
-    if (value) {
-      this.cargarMotivos(value);
-    }
-  }
-
-  agregarDeuda = (): void => {
-    let descripcion = "";
-    if (this.motivo.motivo === "Otros") {
-      if (this.descripcion === "") {
-        this.openSnackBar("Faltan campos de llenar", "ok");
+  submit = (): void => {
+    const value = this.pagoForm.value;
+    let descripcion: string = value.deuda;
+    if (this.otros) {
+      if (value.descripcion === "") {
+        this.openSnackBar("Faltan campos por llenar", "ok");
         return;
       } else {
-        descripcion = this.descripcion;
+        descripcion = value.descripcion;
       }
-    } else {
-      descripcion = this.motivo.motivo;
     }
+
     this.listaDeudas.push({
-      valor_id: this.motivo.id,
-      sitio_id: this.sitio.id,
-      cantidad: this.cantidad,
       descripcion,
-      motivo: this.sitio.descripcion,
-      anio: this.motivo.anio,
+      cantidad: value.cantidad,
+      sitio: this.sitio.id
     });
-    this.cantidad = undefined;
-    this.descripcion = "";
+
     this.table.renderRows();
+    this.pagoForm.reset();
+  }
+
+  motivoAbono = (event: MatSelectChange): void => {
+    this.otros = event.value == 'otro' ? true : false;
   }
 
   eliminarDeuda = (deuda: deudaComprobante): void => {
@@ -104,67 +96,36 @@ export class DialogRegistroDeuda implements OnInit {
     this.table.renderRows();
   }
 
-  obtenerTotalDeudas = (): number => this.listaDeudas.map((d: deudaComprobante) => d.cantidad).reduce((a, b) => a + b, 0);
+  obtenerTotalDeudas = (): number => this.listaDeudas?.map((d: deudaComprobante) => d.cantidad).reduce((a, b) => a + b, 0);
+
+  sitioSeleccionado(event: MatSelectChange): void {
+    const sitio = event.source.value;
+    if (sitio !== null) {
+      this.sitio = sitio;
+    }
+  }
 
   guardarDeudas = (): void => {
-    let registros = this.listaDeudas.map((value: deudaComprobante) => {
-      let fecha = new Date(this.sitio.adquisicion);
-      let desde = value.anio + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
-      return {
-        sitio: value.sitio_id,
-        cantidad: value.cantidad,
-        descripcion: value.descripcion,
-        desde,
-        observaciones: ''
-      };
-    })
-    this.apiSitio.agregarDeuda(registros).pipe(
-      tap((x: any) => {
-        if (x.ok) {
-          this.openSnackBar("Cargo registrado!!", "ok");
-        } else {
-          this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
-        }
-        this.dialogRef.close();
+    if (this.fecha !== undefined && this.listaDeudas.length !== 0) {
+      let registros = this.listaDeudas.map((value: deudaComprobante) => {
+        let nuevo: any = value;
+        nuevo.desde = this.fecha;
+        nuevo.renovacion = value.descripcion.toLowerCase() === 'servicio' || value.descripcion.toLowerCase() === 'mantenimiento' ? 1 : 0
+        return nuevo;
       })
-    ).toPromise();
-  }
 
-  private aniosDeudas(): void {
-    const anio = new Date(this.sitio.adquisicion).getUTCFullYear();
-    this.valores.forEach(v => { if (!this.anios.includes(v.anio) && v.anio && anio <= Number(v.anio)) this.anios.push(v.anio) });
-  }
-
-  private cargarMotivos(anio: string): void {
-    this.motivos = [];
-    this.valores.forEach(v => {
-      if (
-        v.motivo &&
-        v.anio === anio && (
-          v.lugar.toLowerCase() === this.sitio.descripcion.toLowerCase() ||
-          v.lugar === 'Cementerio')
-      ) this.motivos.push(v)
-    });
-    this.motivos = this.motivos.map((value: ValorI) => {
-      if (value.motivo.toLowerCase() === "arriendo" || value.motivo.toLowerCase() === "propio") {
-        value.motivo = "Servicio";
-      }
-      return value;
-    })
-    this.motivos.push({
-      anio: anio,
-      estado: true,
-      id: 1,
-      lugar: '',
-      motivo: 'Otros',
-      periodo: '',
-      valor: ''
-    });
-  }
-
-  private cargarValores(id: string): void {
-    this.cargarSitios(id);
-    this.cargarListaValores(id);
+      this.apiSitio.agregarDeuda(registros).pipe(
+        tap((x: any) => {
+          if (x.ok) {
+            this.notSitio.emitActualizarHistorialChange();
+            this.openSnackBar("Cargo registrado!!", "ok");
+          } else {
+            this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
+          }
+          this.dialogRef.close();
+        })
+      ).toPromise();
+    }
   }
 
   private cargarSitios(id: string): void {
@@ -176,12 +137,6 @@ export class DialogRegistroDeuda implements OnInit {
     ).toPromise();
   }
 
-  private cargarListaValores(id: string): void {
-    this.apiValores.valores.pipe(
-      tap((data: ValorI[]) => this.valores = data)
-    ).toPromise();
-  }
-
   private openSnackBar = (message: string, action: string) => {
     this._snackBar.open(message, action, { duration: 5000 });
   }
@@ -189,10 +144,7 @@ export class DialogRegistroDeuda implements OnInit {
 }
 
 interface deudaComprobante {
-  sitio_id: number;
-  valor_id: number;
-  motivo: string;
   descripcion: string;
   cantidad: number;
-  anio: string;
+  sitio: number;
 }

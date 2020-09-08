@@ -2,6 +2,12 @@
 <div mat-dialog-content>
 
     <div style="display: flex; flex-direction: row;">
+        <mat-form-field style="width: 120px;">
+            <mat-label>Fecha:</mat-label>
+            <input [(ngModel)]="fecha" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
+        </mat-form-field>
+        <mat-datepicker #picker2></mat-datepicker>
+
         <mat-form-field>
             <mat-label>Sitio:</mat-label>
             <mat-select (selectionChange)="sitioSeleccionado($event);">
@@ -10,80 +16,46 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field style="width: 80px;">
-            <mat-label>Año:</mat-label>
-            <mat-select (selectionChange)="anioSeleccionado($event);">
-                <mat-option *ngFor="let anio of anios" [value]="anio">
-                    {{anio}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field style="width: 120px;">
-            <mat-label>Motivo:</mat-label>
-            <mat-select [(ngModel)]="motivo">
-                <mat-option *ngFor="let m of motivos" [value]="m">
-                    {{m.motivo}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
     </div>
 
-    <div *ngIf="motivo !== undefined" style="display: flex; flex-direction: row;">
-        <div class="tabla-precios">
-            <div *ngIf="motivo?.motivo !== 'Otros'">
-                <div class="tabla-titulo">servicio:</div>
-                <div style="margin: 0px auto;">
-                    {{motivo?.motivo}}
+    <form [formGroup]="pagoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
+        <div class="fields-container">
+            <div *ngIf="sitio; else sitioE;">
+                <mat-form-field style="width: 120px;">
+                    <mat-label>Motivo:</mat-label>
+                    <mat-select formControlName="deuda" (selectionChange)="motivoAbono($event);">
+                        <mat-option value="servicio"> Servicio </mat-option>
+                        <mat-option value="mantenimiento"> Mantenimiento </mat-option>
+                        <mat-option value="otro"> Otro </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="otros">
+                    <mat-label>Descripción:</mat-label>
+                    <input formControlName="descripcion" type="text" matInput>
+                </mat-form-field>
+
+                <div style="display: flex; flex-direction: row;">
+                    <mat-form-field style="width: 120px;">
+                        <mat-label>Monto:</mat-label>
+                        <input matInput formControlName="cantidad" type="number" min="0" min="1">
+                    </mat-form-field>
+                    <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px; background: white;">agregar</button>
                 </div>
             </div>
-            <div *ngIf="motivo?.motivo === 'Otros'">
-                <mat-form-field style="width: 80px;">
-                    <mat-label>descripcion:</mat-label>
-                    <input type="text" #input maxlength="250" matInput [(ngModel)]="descripcion">
-                    <mat-hint align="end">{{input.value?.length || 0}}/250</mat-hint>
-                </mat-form-field>
-            </div>
         </div>
-        <mat-divider [vertical]="true">
-        </mat-divider>
-        <div class="tabla-precios">
-            <div class="tabla-titulo">años:</div>
-            <div style="margin: 0px auto;">{{motivo?.periodo == '0'? '...': motivo?.periodo }}</div>
-        </div>
-        <mat-divider [vertical]="true">
-        </mat-divider>
-        <div class="tabla-precios">
-            <div class="tabla-titulo">valor total:</div>
-            <div style="margin: 0px auto;">{{motivo?.valor | currency}}</div>
-        </div>
-        <mat-divider [vertical]="true">
-        </mat-divider>
-        <div class="tabla-precios">
-            <mat-form-field style="width: 80px;">
-                <mat-label>cant. deuda:</mat-label>
-                <input type="number" min="0" matInput [(ngModel)]="cantidad">
-            </mat-form-field>
-        </div>
-
-        <button mat-stroked-button style="margin: 0px 12px; height: max-content;" (click)="agregarDeuda();" [disabled]="cantidad == undefined">Agregar</button>
-    </div>
+    </form>
 
     <table #table mat-table [dataSource]="listaDeudas" style="margin-top: 12px;">
         <ng-container matColumnDef="sitio">
             <th mat-header-cell *matHeaderCellDef> Sitio </th>
-            <td mat-cell *matCellDef="let row"> {{row.sitio_id}} </td>
-            <td mat-footer-cell *matFooterCellDef> </td>
-        </ng-container>
-
-        <ng-container matColumnDef="motivo">
-            <th mat-header-cell *matHeaderCellDef> Motivo </th>
-            <td mat-cell *matCellDef="let row"> {{row.motivo}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.sitio}} </td>
             <td mat-footer-cell *matFooterCellDef> </td>
         </ng-container>
 
         <ng-container matColumnDef="descripcion">
             <th mat-header-cell *matHeaderCellDef> Descripción </th>
-            <td mat-cell *matCellDef="let row"> {{row.descripcion}}, {{row.anio}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
             <td mat-footer-cell *matFooterCellDef> </td>
         </ng-container>
 
@@ -107,6 +79,10 @@
         <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
         <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
     </table>
+
+    <ng-template #sitioE>
+        <p style="margin-left: 6px;">Debes seleccionar un sitio para ver los detalles...</p>
+    </ng-template>
 </div>
 <div mat-dialog-actions align=end>
     <button mat-button (click)="onNoClick();">Cancelar</button>
