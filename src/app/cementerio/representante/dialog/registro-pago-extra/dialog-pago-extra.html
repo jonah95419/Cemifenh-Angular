@@ -1,70 +1,63 @@
 <h1 mat-dialog-title>Registrar abono</h1>
 <div mat-dialog-content>
-    <p>Datos comprobante</p>
 
     <div style="display: flex; flex-direction: row;">
-        <mat-form-field>
-            <mat-label>Nombre:</mat-label>
-            <input type="text" [(ngModel)]="nombre" matInput>
-        </mat-form-field>
-        <mat-form-field>
+        <mat-form-field style="width: 120px;">
             <mat-label>Fecha:</mat-label>
             <input [(ngModel)]="fecha" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
         </mat-form-field>
         <mat-datepicker #picker2></mat-datepicker>
-    </div>
 
-    <mat-form-field>
-        <mat-label>Sitio:</mat-label>
-        <mat-select (selectionChange)="sitioSeleccionado($event);">
-            <mat-option *ngFor="let sitio of sitios" [value]="sitio">
-                {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
+        <mat-form-field>
+            <mat-label>Sitio:</mat-label>
+            <mat-select (selectionChange)="sitioSeleccionado($event);">
+                <mat-option *ngFor="let sitio of sitios" [value]="sitio">
+                    {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
 
     <form [formGroup]="pagoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
         <div class="fields-container">
             <div *ngIf="sitio; else sitioE;">
-                <div style="display: flex; flex-direction: row;">
-                    <div *ngIf="deudas.length != 0; else lengD">
-                        <mat-form-field>
-                            <mat-label>Deudas pendientes:</mat-label>
-                            <mat-select formControlName="deuda" [disabled]="otros">
-                                <mat-option *ngFor="let deuda of deudasAuxiliar" [value]="deuda">
-                                    <b>{{deuda.deuda_actual | currency}}</b> ({{deuda.descripcion}} - {{deuda.desde | date : 'y':undefined:locale}})
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <section class="example-section">
-                        <mat-checkbox (change)="otroPago($event);">Otro</mat-checkbox>
-                    </section>
-                </div>
+                <mat-form-field style="width: 120px;">
+                    <mat-label>Motivo:</mat-label>
+                    <mat-select formControlName="deuda" (selectionChange)="motivoAbono($event);">
+                        <mat-option value="servicio"> Servicio </mat-option>
+                        <mat-option value="mantenimiento"> Mantenimiento </mat-option>
+                        <mat-option value="otro"> Otro </mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-                <div *ngIf="otros">
-                    <mat-form-field>
-                        <mat-label>Descripción:</mat-label>
-                        <input formControlName="descripcion" type="text" matInput>
-                    </mat-form-field>
-                </div>
+                <mat-form-field *ngIf="otros">
+                    <mat-label>Descripción:</mat-label>
+                    <input formControlName="descripcion" type="text" matInput>
+                </mat-form-field>
 
                 <div style="display: flex; flex-direction: row;">
                     <mat-form-field style="width: 120px;">
                         <mat-label>Monto:</mat-label>
                         <input matInput formControlName="cantidad" type="number" min="0" min="1">
                     </mat-form-field>
-                    <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px;">agregar</button>
+                    <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px; background: white;">agregar</button>
                 </div>
             </div>
         </div>
     </form>
 
     <table #table mat-table [dataSource]="listaPagos">
+
+        <ng-container matColumnDef="sitio">
+            <th mat-header-cell *matHeaderCellDef> Sitio </th>
+            <td mat-cell *matCellDef="let row"> {{row.sitio}} </td>
+            <td mat-footer-cell *matFooterCellDef> Total </td>
+        </ng-container>
+
         <ng-container matColumnDef="descripcion">
             <th mat-header-cell *matHeaderCellDef> Descripción </th>
             <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
-            <td mat-footer-cell *matFooterCellDef> Total </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
         </ng-container>
 
         <ng-container matColumnDef="cantidad">
@@ -92,12 +85,8 @@
         <p style="margin-left: 6px;">Debes seleccionar un sitio para ver los detalles...</p>
     </ng-template>
 
-    <ng-template #lengD>
-        <p style="margin: auto 6px;">Sin deudas pendientes...</p>
-    </ng-template>
-
 </div>
 <div mat-dialog-actions align=end>
     <button mat-button (click)="onNoClick();">Cancelar</button>
-    <button mat-button (click)="enviarPago();" cdkFocusInitial>Guardar</button>
+    <button mat-button [disabled]="listaPagos.length === 0" (click)="enviarPago();" cdkFocusInitial>Guardar</button>
 </div>

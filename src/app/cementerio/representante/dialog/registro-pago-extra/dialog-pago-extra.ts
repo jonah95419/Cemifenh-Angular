@@ -12,6 +12,8 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatTable } from '@angular/material/table';
 import { ValoresService } from '../../../../admin/service/valores.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ServiceC } from '../../../sitio/service-c/sitio-serviceC';
+import { SelectionChange } from '@angular/cdk/collections';
 
 @Component({
   selector: 'dialog-pago-extra',
@@ -32,15 +34,13 @@ export class DialogPagoExtra implements OnInit {
   @ViewChild(MatTable) table: MatTable<any>;
 
   sitios: SitioI[] = [];
-  deudas: DeudaSitioI[] = [];
-  deudasAuxiliar: DeudaSitioI[] = [];
   listaPagos: deudaComprobante[] = [];
-  columnsToDisplay: string[] = ['descripcion', 'cantidad', 'accion'];
+  columnsToDisplay: string[] = ['sitio','descripcion', 'cantidad', 'accion'];
 
   locale: string;
   otros: boolean = false;
-  id_valor_extra: number = -1;
   sitio: SitioI;
+  fecha: Date = new Date();
 
   pagoForm = this.fb.group({
     deuda: new FormControl(''),
@@ -48,102 +48,82 @@ export class DialogPagoExtra implements OnInit {
     cantidad: new FormControl('', Validators.min(0)),
   })
 
-  nombre: string = "";
-  fecha: Date = new Date();
-
   constructor(
     private translate: TranslateService,
     private apiSitio: SitioService,
-    private apiValores: ValoresService,
+    private notSitio: ServiceC,
     private _snackBar: MatSnackBar,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogPagoExtra>,
     @Inject(MAT_DIALOG_DATA) private data: any) {
-      this.cargarSitios(data.id);
-      apiValores.valorExtra.pipe( tap( d => this.id_valor_extra = d)).toPromise();
+    this.cargarSitios(data.id);
   }
 
   onNoClick(): void { this.dialogRef.close(); }
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
-    this.translate.onLangChange.pipe(
-      tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
-    ).toPromise();
+    this.translate.onLangChange.pipe( tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })).toPromise();
   }
 
-  submit (): void {
+  submit(): void {
     const value = this.pagoForm.value;
+    let descripcion: string = value.deuda;
     if(this.otros) {
-      if(value.descripcion !== "" && value.cantidad) {
-        this.listaPagos.push({
-          id:this.id_valor_extra,
-          descripcion: value.descripcion,
-          cantidad: value.cantidad,
-          extra: true
-        });
-        this.table.renderRows();
-        this.pagoForm.reset();
-      }
-    } else {
-      if(value.deuda !== null && value.cantidad) {
-        this.listaPagos.push({
-          id: value.deuda.id,
-          descripcion: value.deuda.descripcion + ", " + new Date(value.deuda.desde).getFullYear(),
-          cantidad: value.cantidad,
-          extra: false
-        });
-        this.deudasAuxiliar = this.deudasAuxiliar.filter( d => d.id !== value.deuda.id);
-        this.table.renderRows();
-        this.pagoForm.reset();
+      if(value.descripcion === "") {
+        this.openSnackBar("Faltan campos por llenar", "ok");
+        return;
+      } else {
+        descripcion = value.descripcion;
       }
     }
+
+    this.listaPagos.push({
+      descripcion,
+      cantidad: value.cantidad,
+      sitio: this.sitio.id
+    });
+
+    this.table.renderRows();
+    this.pagoForm.reset();
+  }
+
+  motivoAbono = (event: MatSelectChange): void => {
+    this.otros = event.value == 'otro' ? true : false;
   }
 
   eliminarPago(row: deudaComprobante): void {
-    this.listaPagos = this.listaPagos.filter( d => d !== row);
-    let nuevo = this.deudas.find( d => d.id === row.id);
-    if(nuevo) {
-      this.deudasAuxiliar.push(nuevo);
-    }
+    this.listaPagos = this.listaPagos.filter((d: deudaComprobante) => d !== row);
     this.table.renderRows();
   }
 
-  getTotalCost(): number {
-    return this.listaPagos?.map(t => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
-  }
+  getTotalCost = (): number => this.listaPagos?.map((t: deudaComprobante) => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
 
   sitioSeleccionado(event: MatSelectChange): void {
     const value = event.source.value;
-    if(value !== null) {
-      this.deudas = [];
-      this.deudasAuxiliar = [];
-      this.cargarDeudasSitio(value);
+    if (value !== null) {
+      this.sitio = value;
     }
   }
 
-  otroPago(event: MatCheckboxChange): void {
-    const value = event.checked;
-    this.otros = value;
-  }
-
   enviarPago(): void {
-    if(this.nombre !== "" && this.fecha !== undefined && this.listaPagos.length !== 0) {
-      let registro: any = {};
-      registro.nombre = this.nombre;
-      registro.fecha = this.fecha;
-      registro.total = this.getTotalCost();
-      registro.pagos = this.listaPagos;
-      registro.sitio = this.sitio.id;
-      this.apiSitio.agregarPago(registro)
-      .subscribe( data => {
-        if(data.ok) {
-          this.openSnackBar("Abono registrado!! ", "ok");
-        } else {
-          this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente ", "ok");
-        }
-        this.dialogRef.close();
-      })
+    if (this.fecha !== undefined && this.listaPagos.length !== 0) {
+      let registros = this.listaPagos.map((v: deudaComprobante) => {
+        let nuevo: any = v;
+        nuevo.fecha = this.fecha;
+        return nuevo;
+      });
+
+      this.apiSitio.agregarPago(registros)
+        .pipe( tap(data => {
+            if (data.ok) {
+              this.notSitio.emitActualizarHistorialChange();
+              this.openSnackBar("Abono registrado!! ", "ok");
+            } else {
+              this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente ", "ok");
+            }
+            this.dialogRef.close();
+          })).toPromise();
     } else {
       this.openSnackBar("Faltan campos por llenar", "ok");
     }
@@ -152,21 +132,9 @@ export class DialogPagoExtra implements OnInit {
 
   private cargarSitios(id: string): void {
     this.apiSitio.listarSitios(id).pipe(
-      tap( (data: ResponseSitioI) => {
-        if(data.ok) { this.sitios = data.data; }
+      tap((data: ResponseSitioI) => {
+        if (data.ok) { this.sitios = data.data; }
         else { console.log(data.message); }
-      })
-    ).toPromise();
-  }
-
-  private cargarDeudasSitio(sitio: SitioI): void {
-    this.sitio = sitio;
-    this.apiSitio.obtenerDeudas(sitio.id).pipe(
-      tap((data: ResponseDeudaSitioI) => {
-        if(data.ok) {
-          this.deudas = data.data;
-          this.deudasAuxiliar = this.deudas;
-        } else { console.log(data.message);}
       })
     ).toPromise();
   }
@@ -178,8 +146,7 @@ export class DialogPagoExtra implements OnInit {
 }
 
 interface deudaComprobante {
-  id: number;
   descripcion: string;
   cantidad: number;
-  extra: boolean;
+  sitio: number;
 }
