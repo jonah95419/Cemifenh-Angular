@@ -12,4 +12,8 @@ export class ServiceC {
   sitioDetalle$ = this.idSitioDetalle$.asObservable();
   emitIdSitioDetalleChange(id_sitio: number) {this.idSitioDetalle$.next(id_sitio);}
 
+  private historialActualizar$ = new Subject<number>();
+  actualizarHistorial$ = this.historialActualizar$.asObservable();
+  emitActualizarHistorialChange() {this.historialActualizar$.next();}
+
 }

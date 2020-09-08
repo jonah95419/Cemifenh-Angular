@@ -72,6 +72,12 @@ export class SitioService {
     .pipe( catchError(this.handleError) );
   }
 
+  actualizarSitioEstadoCuenta(sitio: any): Observable<any> {
+    return this.httpClient
+    .put<any>(`${AUTH_SERVER}/sitio/estado-cuenta`, JSON.stringify(sitio), this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
 
 
   agregarSitio(sitio: SitioI): Observable<any> {
@@ -109,6 +115,13 @@ export class SitioService {
   obtenerPagos(sitioId: number): Observable<any> {
     return this.httpClient
     .get<any>(`${AUTH_SERVER}/sitio/pagos/${sitioId}`, this.httpOptions)
+    .pipe( catchError(this.handleError) );
+  }
+
+
+  eliminarEstadoCuenta(data: any): Observable<any> {
+    return this.httpClient
+    .patch<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(data), this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
 
