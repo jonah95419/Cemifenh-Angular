@@ -11,8 +11,26 @@ tr:hover {
     cursor: pointer;
 }
 
+.mat-column-select {
+    width: 55px;
+}
+
 .mat-table-sticky {
     border-top: 1px solid #e0e0e0;
+}
+
+.mat-column-fecha {
+    min-width: 120px;
+    width: 120px;
+    max-width: 120px;
+}
+
+.mat-column-abonos,
+.mat-column-cargos {
+    text-align: center;
+    min-width: 80px;
+    max-width: 80px;
+    width: 80px;
 }
 
 .mat-column-acciones {
@@ -21,10 +39,26 @@ tr:hover {
     min-width: 80px;
 }
 
-mat-icon :hover {
-    color: #222222;
-}
-
 h4 {
     margin: 0px;
+}
+
+mat-icon {
+    font-size: small;
+    color: gray;
+}
+
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+    background-color: whitesmoke;
+}
+
+.example-headers-align .mat-form-field+.mat-form-field {
+    margin-left: 8px;
 }
