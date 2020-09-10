@@ -44,7 +44,7 @@ export class DialogRegistroDeuda implements OnInit {
   pagoForm = this.fb.group({
     deuda: new FormControl(''),
     descripcion: new FormControl(''),
-    cantidad: new FormControl('', Validators.min(0)),
+    cantidad: new FormControl('', [Validators.required, Validators.min(0)]),
   })
 
   constructor(
@@ -66,10 +66,14 @@ export class DialogRegistroDeuda implements OnInit {
   }
 
   submit = (): void => {
+    if(!this.pagoForm.valid) {
+      this.openSnackBar("Faltan campos por llenar", "ok");
+      return;
+    }
     const value = this.pagoForm.value;
     let descripcion: string = value.deuda;
     if (this.otros) {
-      if (value.descripcion === "") {
+      if (value.descripcion === "" || value.cantidad === '') {
         this.openSnackBar("Faltan campos por llenar", "ok");
         return;
       } else {
