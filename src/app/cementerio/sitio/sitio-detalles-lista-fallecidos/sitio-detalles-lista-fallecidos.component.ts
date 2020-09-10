@@ -48,7 +48,7 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
     sitio: this.id_sitio,
     nombre: new FormControl(''),
     cedula: new FormControl(''),
-    fecha: new FormControl(new Date()),
+    fecha: new FormControl(),
     observaciones: new FormControl(''),
   })
 
@@ -57,7 +57,7 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
     sitio: new FormControl(''),
     nombre: new FormControl(''),
     cedula: new FormControl(''),
-    fecha: new FormControl(new Date()),
+    fecha: new FormControl(),
     observaciones: new FormControl(''),
   })
 
@@ -113,7 +113,6 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
     this.nuevo = false;
     this.fallecidoForm.reset();
     this.fallecidoForm.controls.sitio.setValue(this.id_sitio);
-    this.fallecidoForm.controls.fecha.setValue(new Date());
   }
 
   editarInformacion(row: FallecidoI): void {
@@ -127,6 +126,7 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
 
   submitEdit(): void {
     let row: FallecidoI = this.fallecidoForm2.value;
+    row.sitio = Number(this.id_sitio);
     this.apiFallecido.actualizarFallecido(row.id, row).pipe(
       tap(data => {
         if (data.ok) {
