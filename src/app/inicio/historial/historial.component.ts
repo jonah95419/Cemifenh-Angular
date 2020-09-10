@@ -137,22 +137,6 @@ export class HistorialComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe();
   }
 
-  getTotalEstadoCuenta(): number {
-    let suma: number = 0;
-    this.listaEstadoCuenta.forEach(t => {
-      if (new Date(t.fecha) > new Date('2001/01/01')) {
-        if (t.estado_cuenta === 'deuda') {
-          suma += Number(t.cantidad);
-        } else {
-          if (t.pago.toLowerCase() !== "otros") {
-            suma -= Number(t.cantidad);
-          }
-        }
-      }
-    });
-    return suma;
-  }
-
   getDeudas = (): number => this.listaEstadoCuenta
     .filter(t =>
       t.estado_cuenta.toLowerCase() === 'deuda' &&

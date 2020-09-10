@@ -32,8 +32,9 @@ th.mat-header-cell {
 }
 
 .mat-column-acciones {
-    text-align: end;
-    justify-content: right;
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
 }
 
 .mat-column-descripcion {
