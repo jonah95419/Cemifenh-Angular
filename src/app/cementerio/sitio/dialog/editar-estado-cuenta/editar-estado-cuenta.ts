@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SectorService } from '../../../../admin/service/sector.service';
 import { SitioService } from '../../service/sitio.service';
 import { ServiceC } from '../../service-c/sitio-serviceC';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'editar-estado-cuenta',
@@ -25,16 +26,23 @@ import { ServiceC } from '../../service-c/sitio-serviceC';
 })
 export class DialogEstadoCuenta implements OnInit {
 
-
   locale: any;
+
+  estadoForm = this.fb.group({
+    pago: new FormControl(''),
+    fecha: new FormControl(''),
+    cantidad: new FormControl('', Validators.min(0)),
+  })
 
   constructor(
     private _snackBar: MatSnackBar,
     private translate: TranslateService,
     private apiSitio: SitioService,
     private notSitio: ServiceC,
+    private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogEstadoCuenta>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
+      this.estadoForm.patchValue(data);
   }
 
   onNoClick = (): void => this.dialogRef.close();
@@ -44,15 +52,16 @@ export class DialogEstadoCuenta implements OnInit {
     this.translate.onLangChange.pipe(tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })).toPromise();
   }
 
-  guardarCambios = () => {
+  submit = () => {
+    const value = this.estadoForm.value;
     let data: any = {
       id: this.data.id,
       transaccion: this.data.transaccion,
       tipo: this.data.estado_cuenta,
       sitio: this.data.sitio,
-      cantidad: this.data.cantidad,
-      fecha: this.data.fecha,
-      descripcion: this.data.pago
+      cantidad: value.cantidad,
+      fecha: value.fecha,
+      descripcion: value.pago
     }
     this.apiSitio.actualizarSitioEstadoCuenta(data).pipe(
       tap(r => {
