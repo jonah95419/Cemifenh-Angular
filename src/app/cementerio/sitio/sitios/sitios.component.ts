@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -23,6 +23,7 @@ export class SitiosComponent implements OnInit {
   verDetalle = false;
   detalle: any;
   sitioId: number;
+  representante: number;
 
   locale: string;
   displayedColumns: string[] = [ 'sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
@@ -30,11 +31,13 @@ export class SitiosComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
+    private router: Router,
     private route: ActivatedRoute,
     private sc: ServiceC,
     private apiSitios: SitioService) {
       route.parent.params.pipe( tap((data: Params) => {
         if(data.id) {
+          this.representante = data.id;
           this.obtenerValores(data.id);
         }
       })).toPromise();
@@ -56,6 +59,7 @@ export class SitiosComponent implements OnInit {
     this.verDetalle = true;
     this.sitioId = sitio.id;
     this.sc.emitIdSitioDetalleChange(this.sitioId);
+    this.router.navigate([`./representantes/registro/${this.representante}/sitios/informacion`], {queryParams: {id: this.sitioId}});
   }
 
   private obtenerValores(id: string): void {
