@@ -14,3 +14,10 @@ table {
 h4 {
     margin: 0px;
 }
+
+.container-opciones {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    width: 100%;
+}
