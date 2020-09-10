@@ -6,8 +6,6 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { SitioService } from '../../../sitio/service/sitio.service';
 import { ResponseSitioI, SitioI } from '../../../sitio/model/sitio';
 import { tap } from 'rxjs/operators';
-import { ValoresService } from '../../../../admin/service/valores.service';
-import { ValorI } from '../../../../admin/model/valor';
 import { MatSelectChange } from '@angular/material/select';
 import { MatTable } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
