@@ -1,27 +1,62 @@
-label {
-    font-size: 16px;
-    margin-top: 10px;
-    margin-left: 6px;
-}
-
-a {
-    cursor: pointer;
-    color: #007Bff;
-}
-
 table {
     width: 100%;
-}
-
-.mat-form-field {
-    font-size: 14px;
-    /* width: 100%; */
+    min-width: 520px;
 }
 
 tr.mat-footer-row {
     font-weight: bold;
 }
 
+th.mat-header-cell {
+    border: none;
+}
+
 .mat-table-sticky {
     border-top: 1px solid #e0e0e0;
+}
+
+.mat-column-select {
+    width: 55px;
+    min-width: 55px;
+    max-width: 55px;
+}
+
+.mat-column-fecha {
+    min-width: 95px;
+    width: 95px;
+    max-width: 95px;
+}
+
+.mat-column-abonos,
+.mat-column-cargos {
+    text-align: center;
+    min-width: 60px;
+}
+
+.mat-column-acciones {
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
+}
+
+.mat-column-descripcion {
+    min-width: 200px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.container-opciones {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+mat-icon {
+    color: #757575;
+    font-size: large;
+}
+
+h4 {
+    margin: 0px;
 }

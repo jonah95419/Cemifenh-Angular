@@ -1,63 +1,127 @@
-<h3>
-    Estao de cuenta
-</h3>
-<div style="width: 100%;">
-    <div class="mat-elevation-z1" style="max-height: 75vh; overflow: auto;">
-        <table mat-table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header width="10%"> ID </th>
-                <td mat-cell *matCellDef="let row" class="action-link">
-                    <a style="color: #007Bff; cursor: pointer;">{{row.id}} </a>
-                </td>
-                <td mat-footer-cell *matFooterCellDef> Total </td>
-            </ng-container>
-            <ng-container matColumnDef="nombre">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-                <td mat-cell *matCellDef="let row"> {{row.nombre}}</td>
-                <td mat-footer-cell *matFooterCellDef> </td>
-            </ng-container>
-            <ng-container matColumnDef="sector">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Sector </th>
-                <td mat-cell *matCellDef="let row"> {{row.sector}} </td>
-                <td mat-footer-cell *matFooterCellDef> </td>
-            </ng-container>
-            <ng-container matColumnDef="tipo">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Servicio </th>
-                <td mat-cell *matCellDef="let row">{{row.tipo}}</td>
-                <td mat-footer-cell *matFooterCellDef> </td>
-            </ng-container>
-            <ng-container matColumnDef="descripcion">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
-                <td mat-cell *matCellDef="let row">{{row.descripcion}}</td>
-                <td mat-footer-cell *matFooterCellDef> </td>
-            </ng-container>
-            <ng-container matColumnDef="pago">
-                <th mat-header-cell *matHeaderCellDef> Motivo </th>
-                <td mat-cell *matCellDef="let row"> {{row.pago}}</td>
-                <td mat-footer-cell *matFooterCellDef> </td>
-            </ng-container>
-            <ng-container matColumnDef="desde">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Desde </th>
-                <td mat-cell *matCellDef="let row">{{row.desde}}</td>
-                <td mat-footer-cell *matFooterCellDef [style.color]="'red'"> {{getDeudasEstadoCuenta() | currency}} </td>
-            </ng-container>
-            <ng-container matColumnDef="hasta">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Hasta </th>
-                <td mat-cell *matCellDef="let row">{{row.hasta}}</td>
-                <td mat-footer-cell *matFooterCellDef [style.color]="'green'"> {{getPagosEstadoCuenta() | currency}} </td>
-            </ng-container>
-            <ng-container matColumnDef="cantidad">
-                <th mat-header-cell *matHeaderCellDef> Cantidad </th>
-                <td mat-cell *matCellDef="let row" [style.color]="row.desde
-                < '2001/01/01' ? 'blue': row.estado_cuenta == 'deuda' ? 'red':'green' ">{{row.estado_cuenta == 'deuda' ? '+':'-' }} {{row.cantidad | currency}} {{row.desde
-                    < '2001/01/01' ? '(sucres)': ''}}</td>
-                        <td mat-footer-cell *matFooterCellDef>{{getTotalEstadoCuenta()
-                            < 0 ? '$0.00' : getTotalEstadoCuenta() | currency}} </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+<h4>
+    Estado de cuenta
+</h4>
+<div class="container-opciones ">
+    <button *ngIf="selection.hasValue()" mat-stroked-button (click)="imprimirLista();" style="background-color: white;" matTooltip="Imprimir seleccionados">Imprimir</button>
+    <button *ngIf="selection.hasValue()" mat-stroked-button (click)="eliminarLista();" style="background-color: white;" matTooltip="Eliminar seleccionados">Eliminar</button>
 
-        </table>
-    </div>
+    <button mat-stroked-button (click)="agregarDeuda();" style="background-color: white; margin-left: auto;">Agregar cargo</button>
+    <button mat-stroked-button (click)="agregarPago();" style="background-color: white;">Agregar abono</button>
+</div>
+<div class="mat-elevation-z1">
+
+    <table mat-table [dataSource]="dataSourceEC" matSort>
+
+        <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <mat-checkbox [style.opacity]="row.hovered? '1':'0.8'" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+            <td mat-cell *matCellDef="let row">{{row.fecha | date : 'MMM d, y':undefined:locale}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="sector">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Sector </th>
+            <td mat-cell *matCellDef="let row" [matTooltip]="'Servicio contratado: ' + row.descripcion"> {{row.sector}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción
+            </th>
+            <td mat-cell *matCellDef="let row">
+                {{row.pago}}
+
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cargos">
+            <th mat-header-cell *matHeaderCellDef> Cargos </th>
+            <td mat-cell *matCellDef="let row" [style.color]="row.desde
+        < '2001/01/01' ? 'blue': 'red'">
+                {{ row.estado_cuenta !='deuda' ? '' : row.cantidad | currency}} {{row.desde
+                < '2001/01/01' ? '(sucres)': ''}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="abonos">
+            <th mat-header-cell *matHeaderCellDef> Abonos </th>
+            <td mat-cell *matCellDef="let row" [style.color]="row.desde
+      < '2001/01/01' ? 'blue': 'green'">
+                {{ row.estado_cuenta =='deuda' ? '' : row.cantidad | currency}} {{row.desde
+                < '2001/01/01' ? '(sucres)': ''}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let row">
+                <div style="display: flex; flex-direction: row; width: max-content;">
+                    <button mat-icon-button matTooltip="Editar" (click)="editar(row);">
+                  <mat-icon [style.opacity]="row.hovered? '1':'0'">edit</mat-icon>
+                  </button>
+                    <button mat-icon-button matTooltip="Eliminar" (click)="eliminarEstadoCuenta(row);">
+                  <mat-icon [style.opacity]="row.hovered? '1':'0'">delete</mat-icon>
+                  </button>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="header-row">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="7" style="text-align: center; font-weight: bold;">Estado de cuenta</th>
+      </ng-container> -->
+
+        <ng-container matColumnDef="header-row-cero-grupo_0">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Representante:</th>
+        </ng-container>
+        <ng-container matColumnDef="header-row-uno-grupo_0">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">{{representante?.nombre}}</th>
+        </ng-container>
+        <ng-container matColumnDef="header-row-dos-grupo_0">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Cargos</th>
+        </ng-container>
+        <ng-container matColumnDef="header-row-tres-grupo_0">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'red';">{{getDeudas() | currency}}</th>
+        </ng-container>
+
+
+        <ng-container matColumnDef="header-row-cero-grupo_1">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="4"></th>
+        </ng-container>
+        <ng-container matColumnDef="header-row-uno-grupo_1">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Abonos:</th>
+        </ng-container>
+        <ng-container matColumnDef="header-row-dos-grupo_1">
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="color: 'green';">{{getPagos() | currency}}</th>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="header-row-cero-grupo_2">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Cargos otros:</th>
+      </ng-container>
+      <ng-container matColumnDef="header-row-uno-grupo_2">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'red';">{{getDeudas() | currency}}</th>
+      </ng-container>
+      <ng-container matColumnDef="header-row-dos-grupo_2">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Abonos otros:</th>
+      </ng-container>
+      <ng-container matColumnDef="header-row-tres-grupo_2">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="color: 'green';">{{getPagos() | currency}}</th>
+      </ng-container> -->
+
+        <!-- <tr mat-header-row *matHeaderRowDef="['header-row']; sticky: true"></tr> -->
+        <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo_0', 'header-row-uno-grupo_0', 'header-row-dos-grupo_0' , 'header-row-tres-grupo_0']; sticky: true"></tr>
+        <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo_1', 'header-row-uno-grupo_1', 'header-row-dos-grupo_1']; sticky: true"></tr>
+        <!-- <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo_2', 'header-row-uno-grupo_2', 'header-row-dos-grupo_2', 'header-row-tres-grupo_2']; sticky: true"></tr> -->
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsEC; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsEC;" (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></tr>
+        <!-- (click)="selection.toggle(row)" -->
+    </table>
+    <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="[ 5, 10, 25]" showFirstLastButtons></mat-paginator>
 </div>
