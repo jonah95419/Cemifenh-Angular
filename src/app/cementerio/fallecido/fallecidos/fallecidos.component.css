@@ -4,11 +4,6 @@ label {
     margin-left: 6px;
 }
 
-a {
-    cursor: pointer;
-    color: #007Bff;
-}
-
 table {
     width: 100%;
 }
@@ -24,4 +19,45 @@ tr.mat-footer-row {
 
 .mat-table-sticky {
     border-top: 1px solid #e0e0e0;
+}
+
+h4 {
+    margin: 0px;
+}
+
+.mat-column-cedula,
+.mat-column-fecha,
+.mat-column-sector,
+.mat-column-tipo,
+.mat-column-descripcion {
+    padding: 6px;
+}
+
+.mat-column-acciones {
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
+}
+
+.mat-column-fecha {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+}
+
+.container-opciones {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+mat-icon {
+    color: #757575;
+    font-size: large;
+}
+
+mat-form-field {
+    margin-left: 6px;
+    padding-top: 12px;
 }
