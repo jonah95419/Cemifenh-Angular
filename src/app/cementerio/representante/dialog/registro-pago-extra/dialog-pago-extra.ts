@@ -45,7 +45,7 @@ export class DialogPagoExtra implements OnInit {
   pagoForm = this.fb.group({
     deuda: new FormControl(''),
     descripcion: new FormControl(''),
-    cantidad: new FormControl('', Validators.min(0)),
+    cantidad: new FormControl('', [Validators.required, Validators.min(0)]),
   })
 
   constructor(
@@ -67,10 +67,13 @@ export class DialogPagoExtra implements OnInit {
   }
 
   submit(): void {
+    if(!this.pagoForm.valid) {
+      return
+    }
     const value = this.pagoForm.value;
     let descripcion: string = value.deuda;
     if(this.otros) {
-      if(value.descripcion === "") {
+      if(value.descripcion === "" || value.cantidad === "") {
         this.openSnackBar("Faltan campos por llenar", "ok");
         return;
       } else {
