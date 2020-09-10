@@ -113,6 +113,7 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
     this.nuevo = false;
     this.fallecidoForm.reset();
     this.fallecidoForm.controls.sitio.setValue(this.id_sitio);
+    this.fallecidoForm.controls.fecha.setValue(new Date());
   }
 
   editarInformacion(row: FallecidoI): void {
@@ -191,7 +192,11 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
   }
 
   private cargarValoresFallecidos(data: FallecidoI[]): void {
-    this.listaFallecidos = data;
+    this.listaFallecidos = data.map((value: FallecidoI) => {
+      let nuevo: any = value;
+      nuevo.hovered = false;
+      return nuevo;
+    });
     this.dataSource = new MatTableDataSource(this.listaFallecidos);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;

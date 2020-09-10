@@ -20,8 +20,9 @@ mat-icon {
 }
 
 .mat-column-acciones {
-    width: 150px;
-    text-align: center;
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
 }
 
 .example-action-buttons {
@@ -60,8 +61,4 @@ mat-form-field {
 .mat-column-nombre {
     padding: 0px 6px;
     min-width: 200px;
-}
-
-.mat-column-acciones {
-    width: 105px;
 }
