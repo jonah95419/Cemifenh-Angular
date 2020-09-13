@@ -9,6 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRegistroRepresentante } from '../dialog/registro-representante/dialog-registro-representante';
 import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-representantes',
@@ -20,7 +21,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  displayedColumns: string[] = [ 'nombre', 'cedula'];
+  displayedColumns: string[] = ['nombre', 'cedula'];
 
   dataSource: MatTableDataSource<RepresentanteI>;
 
@@ -36,14 +37,15 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
     private apiRepresentantes: RepresentanteService,
     private dialog: MatDialog,
     private sc: ServiceC,
-    private cdRef:ChangeDetectorRef
+    private _snackBar: MatSnackBar,
+    private cdRef: ChangeDetectorRef
   ) {
     this.representante = null;
-    sc.sitioDetalle$.pipe( tap((sitio: number) => this.sitio_id = sitio) ).toPromise();
-   }
+    sc.sitioDetalle$.pipe(tap((sitio: number) => this.sitio_id = sitio)).toPromise();
+  }
 
   ngOnInit(): void {
-    this.dataSource =  new MatTableDataSource(this.listaRepresentantes);
+    this.dataSource = new MatTableDataSource(this.listaRepresentantes);
   }
 
   ngAfterViewInit() {
@@ -70,12 +72,27 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe();
   }
 
-  refrescarRegistros(): void { this.obtenerValoresRepresentantes(); }
+
+  eliminarRepresentante = () => {
+    this.apiRepresentantes.eliminarRepresentante(this.representante.id).pipe(
+      tap((x: any) => {
+        if(x.ok) {
+          this.openSnackBar('Representante eliminado.', 'ok');
+          this.router.navigate(['/representantes']).then(e => window.location.reload());
+        }
+        else { this.openSnackBar('A ocurrido un error, puedes intentarlo nuevamente en unos instantes.', 'ok'); }
+      })
+    ).toPromise()
+  }
+
+  refrescarRegistros = (): void => this.obtenerValoresRepresentantes();
 
   cargarDetalles(detalle: string) {
-    this.router.navigateByUrl(`/representantes/registro/${this.representante.id}/` + detalle, { state: {
-      id: this.representante.id,
-    }}).then(e => {});
+    this.router.navigateByUrl(`/representantes/registro/${this.representante.id}/` + detalle, {
+      state: {
+        id: this.representante.id,
+      }
+    }).then(e => { });
   }
 
   private obtenerValoresRepresentantes(): void {
@@ -90,17 +107,20 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    if(this.route.firstChild) {
-      if(this.listaRepresentantes.length !== 0) {
+    if (this.route.firstChild) {
+      if (this.listaRepresentantes.length !== 0) {
         this.route.firstChild.params.pipe(tap(data => this.cargarRepresentante(data.id))).toPromise();
       }
     }
+  }
 
+  private openSnackBar = (message: string, action: string) => {
+    this._snackBar.open(message, action, { duration: 5000 });
   }
 
   private cargarRepresentante(id: number): void {
-    const value = this.listaRepresentantes.find((r: RepresentanteI) =>  r.id == id );
-    if(value) { this.representante = value; }
+    const value = this.listaRepresentantes.find((r: RepresentanteI) => r.id == id);
+    if (value) { this.representante = value; }
   }
 
 }
