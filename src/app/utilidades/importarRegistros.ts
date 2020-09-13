@@ -23,12 +23,6 @@ export class Importacion {
 
       this.cantidad = Number(registros[i].Total);
 
-      const comprobante = this.generarComprobante(
-        registros[i].NombreRepresentante,
-        registros[i].FechaAdquisicion,
-        registros[i].Total,
-        '');
-
       const representante = {
         nombre: registros[i].NombreRepresentante,
         cedula: registros[i].CedulaRepresentante,
@@ -36,7 +30,6 @@ export class Importacion {
       }
 
       const sitio: SitioI = {
-        nombre: registros[i].Nombre,
         motivo: registros[i].Motivo,
         lugar: registros[i].Lugar,
         sector: this.asignarSector(),
@@ -57,7 +50,6 @@ export class Importacion {
         representante,
         sitio,
         fallecido,
-        comprobante,
         deudas
       });
 
@@ -76,14 +68,11 @@ export class Importacion {
     return registros;
   }
 
-  private asignarSector(): SectorI {
-    return this.listaSectores.filter(sector => sector.nombre === 'Sin def.')[0];
-  }
+  private asignarSector = (): SectorI => this.listaSectores.filter(sector => sector.nombre === 'Sin def.')[0];
 
-  private obtenerValoresServicio(registro: RegistroI): ValorI[] {
-
+  private obtenerValoresServicio(fecha_inicio: any, lugar: string, motivo: string): ValorI[] {
     let valores: ValorI[];
-    const fecha = new Date(registro.FechaInicio);
+    const fecha = new Date(fecha_inicio);
 
     if (fecha.getFullYear() <= 2000) {
       for (let i = 0; i < this.listaValores.length; i++) {
@@ -94,8 +83,8 @@ export class Importacion {
     } else {
       valores = this.listaValores.filter(valor =>
         Number(valor.anio) === fecha.getFullYear() &&
-        (valor.lugar.toLowerCase() == registro.Lugar.toLowerCase()) &&
-        (valor.motivo.toLowerCase() == registro.Motivo.toLowerCase()));
+        (valor.lugar.toLowerCase() == lugar.toLowerCase()) &&
+        (valor.motivo.toLowerCase() == motivo.toLowerCase()));
     }
     return valores;
   }
@@ -107,98 +96,95 @@ export class Importacion {
       (valor.motivo === 'Mantenimiento'));
   }
 
-  private generarComprobante(nombre: string, fecha: Date, total: string, observaciones: string): ComprobanteI {
-    return {
-      nombre,
-      fecha,
-      total,
-      observaciones,
-    }
-  }
-
   private generarDeudas(registro: RegistroI): DeudaI[] {
 
     let listaDeudas: DeudaI[] = [];
-    let valores = this.obtenerValoresServicio(registro);
-    let inicioS = new Date(registro.FechaInicio);
+    let valores = this.obtenerValoresServicio(registro.FechaInicio, registro.Lugar, registro.Motivo);
+    let inicio_servicio = new Date(registro.FechaInicio);
 
-    while (inicioS < new Date()) {
-      let servicioId = Number(valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].id);
-      let cantidad = Number(valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].periodo);
-      let servicio;
-      let finS;
+    while (inicio_servicio < new Date()) {
+      let periodo_renovacion_servicio = Number(valores[0].periodo);
+      let valor_servicio;
+      let culminacion_servicio;
       let i = 0;
 
-      if (cantidad !== 0) {
-        servicio = valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].valor;
+      if (periodo_renovacion_servicio !== 0) {
+        valor_servicio = valores[0].valor;
       } else {
-        if (inicioS.getFullYear() <= 2000) {
-          servicio = registro.Total;
+
+        if (inicio_servicio.getFullYear() <= 2001) {
+          valor_servicio = registro.Total;
         } else {
-          servicio = valores.filter(valor => valor.motivo !== 'Mantenimiento')[0].valor;
+          valor_servicio = valores[0].valor;
         }
-        if (new Date().getFullYear() === inicioS.getFullYear()) {
-          cantidad = 1;
+
+        if (new Date().getFullYear() === inicio_servicio.getFullYear()) {
+          periodo_renovacion_servicio = 1;
         } else {
-          cantidad = new Date().getFullYear() - inicioS.getFullYear();
+          periodo_renovacion_servicio = new Date().getFullYear() - inicio_servicio.getFullYear();
         }
       }
 
-      if (inicioS.getFullYear() >= 2001) {
-        finS = new Date((inicioS.getFullYear() + cantidad), inicioS.getMonth(), inicioS.getDate());
+      if (inicio_servicio.getFullYear() <= 2001) {
+        culminacion_servicio = new Date(2001, inicio_servicio.getMonth(), inicio_servicio.getDate());
       } else {
-        finS = new Date(2001, inicioS.getMonth(), inicioS.getDate());
+        culminacion_servicio = new Date((inicio_servicio.getFullYear() + periodo_renovacion_servicio), inicio_servicio.getMonth(), inicio_servicio.getDate());
       }
 
       listaDeudas.push({
-        valorId: servicioId,
-        valor: servicio,
+        valor: valor_servicio,
         descripcion: 'Servicio',
-        pagoDesde: inicioS,
-        pagoHasta: finS,
+        pagoDesde: inicio_servicio,
+        pagoHasta: culminacion_servicio,
         observaciones: '',
-        ingreso: this.generarIngreso(servicio)
+        ingreso: this.generarIngreso(valor_servicio)
       });
 
-      if (inicioS.getFullYear() >= 2001) {
+      if (inicio_servicio.getFullYear() >= 2001) {
 
-        while (i < cantidad) {
+        while (i < periodo_renovacion_servicio) {
+          let valoresM = this.obtenerValoresMantenimiento(inicio_servicio.getFullYear() + i);
+          let valor_mantenimiento = valoresM[0].valor;
+          let periodo_renovacion_mantenimiento = Number(valoresM[0].periodo);
 
-          let valoresM = this.obtenerValoresMantenimiento(inicioS.getFullYear() + i);
-
-          let mantenimientoId = Number(valoresM.filter(valor => valor.motivo === 'Mantenimiento')[0].id);
-          let mantenimiento = valoresM.filter(valor => valor.motivo === 'Mantenimiento')[0].valor;
-          let cantidadM = Number(valoresM.filter(valor => valor.motivo === 'Mantenimiento')[0].periodo);
-
-          let inicioM = new Date((inicioS.getFullYear() + i), inicioS.getMonth(), inicioS.getDate());
-          let finM = new Date((inicioS.getFullYear() + (i + cantidadM)), inicioS.getMonth(), inicioS.getDate());
+          let inicioM = new Date((inicio_servicio.getFullYear() + i), inicio_servicio.getMonth(), inicio_servicio.getDate());
+          let finM = new Date((inicio_servicio.getFullYear() + (i + periodo_renovacion_mantenimiento)), inicio_servicio.getMonth(), inicio_servicio.getDate());
 
           listaDeudas.push({
-            valorId: mantenimientoId,
-            valor: mantenimiento,
+            valor: valor_mantenimiento,
             descripcion: 'Mantenimiento',
             pagoDesde: inicioM,
             pagoHasta: finM,
             observaciones: '',
-            ingreso: this.generarIngreso(mantenimiento)
+            ingreso: this.generarIngreso(valor_mantenimiento)
           });
 
-          i = i + cantidadM;
-          if ((inicioS.getFullYear() + i) > new Date().getFullYear()) {
-            i = i + cantidad;
+          i = i + periodo_renovacion_mantenimiento;
+          if ((inicio_servicio.getFullYear() + i) > new Date().getFullYear()) {
+            i = i + periodo_renovacion_servicio;
           }
 
         }
       }
+      inicio_servicio = culminacion_servicio;
+      valores = this.obtenerValoresServicio(inicio_servicio, registro.Lugar, registro.Motivo);
+    }
 
-      inicioS = finS;
-      registro.FechaInicio = inicioS;
-      valores = this.obtenerValoresServicio(registro);
-
+    if (registro.Motivo === 'Compra') {
+      let servicio = true;
+      let listaDeudas2 = [];
+      listaDeudas.map((value: DeudaI) => {
+        if (value.descripcion === 'Mantenimiento' || servicio) {
+          listaDeudas2.push(value);
+        }
+        if (value.descripcion === 'Servicio') {
+          servicio = false;
+        }
+      })
+      listaDeudas = listaDeudas2;
     }
 
     return listaDeudas;
-
   }
 
   private generarIngreso(cant: string): IngresoI {
@@ -235,15 +221,7 @@ interface ValorI {
   estado: boolean;
 }
 
-interface ComprobanteI {
-  nombre: string;
-  fecha: Date;
-  total: string;
-  observaciones: string;
-}
-
 interface SitioI {
-  nombre: string,
   motivo: string,
   lugar: string,
   sector: SectorI,

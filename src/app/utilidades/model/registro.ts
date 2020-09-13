@@ -6,7 +6,6 @@ export interface RegistroI {
   CedulaFallecido: string;
   FechaFallecimiento: Date;
   Observaciones: string;
-  Nombre: string;
   Motivo: string;
   Lugar: string;
   Sector: string;
