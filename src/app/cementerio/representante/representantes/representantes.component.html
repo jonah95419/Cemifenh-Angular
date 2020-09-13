@@ -41,73 +41,80 @@
     </mat-sidenav>
 
     <mat-sidenav opened mode="side" position="end">
-        <mat-card style="background: white;" class="mat-elevation-z0">
-            <div>
-                <mat-card-subtitle>Información</mat-card-subtitle>
-            </div>
-            <mat-card-content>
-                <div style="display: flex; flex-direction: column;" *ngIf="representante != null && representante">
-                    <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios'" routerLinkActive="active" routerLinkActive #rlar="routerLinkActive">
-                        <div style="display: flex;">
-                            <div class="indicador" [ngClass]="{'indicador-filtro': rlar.isActive}"></div>
-                            <label>Sitios</label>
-                        </div>
-                    </a>
-                    <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/fallecidos'" routerLinkActive="active" routerLinkActive #rlar1="routerLinkActive">
-                        <div style="display: flex;">
-                            <div class="indicador" [ngClass]="{'indicador-filtro': rlar1.isActive}"></div>
-                            <label>Lista fallecidos</label>
-                        </div>
-                    </a>
-                    <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/estado-cuenta'" routerLinkActive="active" routerLinkActive #rlar4="routerLinkActive">
-                        <div style="display: flex;">
-                            <div class="indicador" [ngClass]="{'indicador-filtro': rlar4.isActive}"></div>
-                            <label>Estado de cuenta</label>
-                        </div>
-                    </a>
+        <div *ngIf="representante">
+            <mat-card style="background: white;" class="mat-elevation-z0">
+                <div>
+                    <mat-card-subtitle>Información</mat-card-subtitle>
                 </div>
-            </mat-card-content>
-            <mat-card-footer>
-                <button mat-icon-button matTooltip="Registrar sitio" [disabled]="true"><mat-icon style="opacity: 0;">add</mat-icon></button>
-                <button mat-icon-button matTooltip="Imprimir" [disabled]=true><mat-icon style="opacity: 0;">print</mat-icon></button>
-                <button mat-icon-button matTooltip="Guardar" [disabled]=true><mat-icon style="opacity: 0;">save_alt</mat-icon></button>
-                <button mat-icon-button matTooltip="Ver reportes" [disabled]=true><mat-icon style="opacity: 0;">insert_chart_outlined</mat-icon></button>
-            </mat-card-footer>
-        </mat-card>
-        <mat-divider>
-        </mat-divider>
-        <mat-card style="background: white;" class="mat-elevation-z0" *ngIf="sitio_id">
-            <div>
-                <mat-card-subtitle>Detalles sitio</mat-card-subtitle>
-            </div>
-            <mat-card-content>
-                <div style="display: flex; flex-direction: column;">
-                    <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios/informacion'" [queryParams]="{ id: sitio_id}" routerLinkActive="active" routerLinkActive #rlaf="routerLinkActive">
-                        <div style="display: flex;">
-                            <div class="indicador" [ngClass]="{'indicador-filtro': rlaf.isActive}"></div>
-                            <label>Información</label>
-                        </div>
-                    </a>
-                    <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios/fallecidos'" [queryParams]="{ id: sitio_id}" routerLinkActive="active" routerLinkActive #rlaf1="routerLinkActive">
-                        <div style="display: flex;">
-                            <div class="indicador" [ngClass]="{'indicador-filtro': rlaf1.isActive}"></div>
-                            <label>Lista fallecidos</label>
-                        </div>
-                    </a>
-                    <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios/estado-cuenta'" [queryParams]="{ id: sitio_id}" routerLinkActive="active" routerLinkActive #rlaf4="routerLinkActive">
-                        <div style="display: flex;">
-                            <div class="indicador" [ngClass]="{'indicador-filtro': rlaf4.isActive}"></div>
-                            <label>Estado de cuenta</label>
-                        </div>
-                    </a>
+                <mat-card-content>
+                    <div style="display: flex; flex-direction: column;" *ngIf="representante != null && representante">
+                        <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios'" routerLinkActive="active" routerLinkActive #rlar="routerLinkActive">
+                            <div style="display: flex;">
+                                <div class="indicador" [ngClass]="{'indicador-filtro': rlar.isActive}"></div>
+                                <label>Sitios</label>
+                            </div>
+                        </a>
+                        <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/fallecidos'" routerLinkActive="active" routerLinkActive #rlar1="routerLinkActive">
+                            <div style="display: flex;">
+                                <div class="indicador" [ngClass]="{'indicador-filtro': rlar1.isActive}"></div>
+                                <label>Lista fallecidos</label>
+                            </div>
+                        </a>
+                        <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/estado-cuenta'" routerLinkActive="active" routerLinkActive #rlar4="routerLinkActive">
+                            <div style="display: flex;">
+                                <div class="indicador" [ngClass]="{'indicador-filtro': rlar4.isActive}"></div>
+                                <label>Estado de cuenta</label>
+                            </div>
+                        </a>
+                    </div>
+                </mat-card-content>
+                <mat-card-footer>
+                    <button mat-icon-button matTooltip="Registrar sitio" [disabled]="true"><mat-icon style="opacity: 0;">add</mat-icon></button>
+                    <button mat-icon-button matTooltip="Imprimir" [disabled]=true><mat-icon style="opacity: 0;">print</mat-icon></button>
+                    <button mat-icon-button matTooltip="Guardar" [disabled]=true><mat-icon style="opacity: 0;">save_alt</mat-icon></button>
+                    <button mat-icon-button (click)="eliminarRepresentante()" [matTooltip]="'Eliminar registro de ' + representante?.nombre"><mat-icon color="warn">delete</mat-icon></button>
+                </mat-card-footer>
+            </mat-card>
+            <mat-divider>
+            </mat-divider>
+            <mat-card style="background: white;" class="mat-elevation-z0" *ngIf="sitio_id">
+                <div>
+                    <mat-card-subtitle>Detalles sitio</mat-card-subtitle>
                 </div>
-            </mat-card-content>
-            <!-- <mat-card-footer>
-                <button mat-icon-button matTooltip="Imprimir" [disabled]=true><mat-icon>print</mat-icon></button>
-                <button mat-icon-button matTooltip="Guardar" [disabled]=true><mat-icon>save_alt</mat-icon></button>
-                <button mat-icon-button matTooltip="Ver reportes" [disabled]=true><mat-icon>insert_chart_outlined</mat-icon></button>
-            </mat-card-footer> -->
-        </mat-card>
+                <mat-card-content>
+                    <div style="display: flex; flex-direction: column;">
+                        <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios/informacion'" [queryParams]="{ id: sitio_id}" routerLinkActive="active" routerLinkActive #rlaf="routerLinkActive">
+                            <div style="display: flex;">
+                                <div class="indicador" [ngClass]="{'indicador-filtro': rlaf.isActive}"></div>
+                                <label>Información</label>
+                            </div>
+                        </a>
+                        <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios/fallecidos'" [queryParams]="{ id: sitio_id}" routerLinkActive="active" routerLinkActive #rlaf1="routerLinkActive">
+                            <div style="display: flex;">
+                                <div class="indicador" [ngClass]="{'indicador-filtro': rlaf1.isActive}"></div>
+                                <label>Lista fallecidos</label>
+                            </div>
+                        </a>
+                        <a class="navigation-item " [routerLink]="'/representantes/registro/' + representante?.id +'/sitios/estado-cuenta'" [queryParams]="{ id: sitio_id}" routerLinkActive="active" routerLinkActive #rlaf4="routerLinkActive">
+                            <div style="display: flex;">
+                                <div class="indicador" [ngClass]="{'indicador-filtro': rlaf4.isActive}"></div>
+                                <label>Estado de cuenta</label>
+                            </div>
+                        </a>
+                    </div>
+                </mat-card-content>
+                <!-- <mat-card-footer>
+              <button mat-icon-button matTooltip="Imprimir" [disabled]=true><mat-icon>print</mat-icon></button>
+              <button mat-icon-button matTooltip="Guardar" [disabled]=true><mat-icon>save_alt</mat-icon></button>
+              <button mat-icon-button matTooltip="Ver reportes" [disabled]=true><mat-icon>insert_chart_outlined</mat-icon></button>
+          </mat-card-footer> -->
+            </mat-card>
+        </div>
+
+        <div *ngIf="!representante">
+            Página no encontrada
+        </div>
+
     </mat-sidenav>
 
     <div class="container-detalles">
