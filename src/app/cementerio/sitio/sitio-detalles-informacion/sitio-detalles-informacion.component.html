@@ -47,12 +47,16 @@
             <p>
                 <mat-form-field>
                     <mat-label>Observaciones</mat-label>
-                    <textarea matInput placeholder="Observaciones" formControlName="observaciones"> </textarea>
+                    <textarea matInput placeholder="Observaciones" #input maxlength="150" formControlName="observaciones"> </textarea>
+                    <mat-hint align="end">{{input.value?.length || 0}}/150</mat-hint>
                 </mat-form-field>
             </p>
             <p>
                 <button type="submit" mat-stroked-button>Guardar</button>
             </p>
+        </div>
+        <div style="display: flex; flex-direction: column; width: 100%;">
+            <a mat-button style="margin-left: auto; background-color: white;" (click)="eliminarSitio()">eliminar</a>
         </div>
     </div>
 </form>

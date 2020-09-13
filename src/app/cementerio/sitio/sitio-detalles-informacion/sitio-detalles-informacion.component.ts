@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { SitioService } from '../service/sitio.service';
 import { SitioI, ResponseSitioI } from '../model/sitio';
@@ -8,6 +8,7 @@ import { SectorI } from '../../../admin/model/sector';
 import { ServiceC } from '../service-c/sitio-serviceC';
 import { SectorService } from '../../../admin/service/sector.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Route } from '@angular/compiler/src/core';
 @Component({
   selector: 'app-sitio-detalles-informacion',
   templateUrl: './sitio-detalles-informacion.component.html',
@@ -17,7 +18,7 @@ export class SitioDetallesInformacionComponent implements OnInit {
 
   listaSectores: SectorI[];
   listaTipo: string[] = ['arriendo', 'compra', 'donacion', 'Arriendo', 'Compra', 'Donación'];
-  listaDescripcion: string[] = ['boveda', 'lote propio', 'piso', 'Boveda', 'Lote propio', 'Piso'];
+  listaDescripcion: string[] = ['boveda', 'lote propio', 'piso', 'Boveda', 'Bóveda', 'Lote propio', 'Piso'];
 
   id_sitio: string = "";
 
@@ -35,6 +36,7 @@ export class SitioDetallesInformacionComponent implements OnInit {
     private fb: FormBuilder,
     private sc: ServiceC,
     private route: ActivatedRoute,
+    private router: Router,
     private _snackBar: MatSnackBar,
     private apiSitios: SitioService,
     private apiSector: SectorService) {
@@ -53,11 +55,28 @@ export class SitioDetallesInformacionComponent implements OnInit {
 
   submit() {
     this.apiSitios.actualizarSitio(this.sitioForm.value).pipe(
-      tap( result => {
-        if(result.ok) {
+      tap(result => {
+        if (result.ok) {
           this.openSnackBar("Registro actualizado", "ok");
         } else {
           this.openSnackBar("Error al actualizar, puedes intentarlo nuevamente", "ok");
+        }
+      })
+    ).toPromise();
+  }
+
+  eliminarSitio = () => {
+    const currentUrl: string = this.router.url;
+    const ruta: string = currentUrl.split('sitios')[0].toString();
+
+    this.apiSitios.eliminarSitio(this.id_sitio).pipe(
+      tap((x: any) => {
+        if (x.ok) {
+          this.openSnackBar("Registro eliminado", "ok");
+          this.router.navigate([ruta]);
+          this.sc.emitIdSitioDetalleChange(null);
+        } else {
+          this.openSnackBar("Error al eliminar, puedes intentarlo nuevamente", "ok");
         }
       })
     ).toPromise();
