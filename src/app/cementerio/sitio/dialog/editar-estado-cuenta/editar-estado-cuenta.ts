@@ -5,7 +5,6 @@ import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FOR
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SectorService } from '../../../../admin/service/sector.service';
 import { SitioService } from '../../service/sitio.service';
 import { ServiceC } from '../../service-c/sitio-serviceC';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
