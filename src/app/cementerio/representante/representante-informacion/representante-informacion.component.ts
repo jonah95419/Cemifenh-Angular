@@ -13,6 +13,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 export class RepresentanteInformacionComponent implements OnInit {
 
   detalle: string = 'sitios';
+  representante: RepresentanteI;
 
   representanteForm = this.fb.group({
     id: new FormControl({ value: '', disabled: true }),
@@ -43,6 +44,7 @@ export class RepresentanteInformacionComponent implements OnInit {
   }
 
   private cargarRepresentante(r: RepresentanteI): void {
+    this.representante = r;
     if (r) {
       this.representanteForm.patchValue(r);
     }

@@ -1,30 +1,30 @@
-<div>
-    <form [formGroup]="representanteForm" novalidate>
-        <div class="fields-container">
-            <div style="display: flex; flex-direction: row;">
-                <p>
-                    <mat-form-field style="width: 100px;">
-                        <mat-label>Código:</mat-label>
-                        <input formControlName="id" type="text" matInput>
-                    </mat-form-field>
-                </p>
-                <p>
-                    <mat-form-field style="width: 280px;">
-                        <mat-label>Nombre representante:</mat-label>
-                        <input formControlName="nombre" type="text" matInput>
-                    </mat-form-field>
-                </p>
-                <p>
-                    <mat-form-field style="width: 150px;">
-                        <mat-label>Cédula:</mat-label>
-                        <input formControlName="cedula" type="text" matInput>
-                    </mat-form-field>
-                </p>
-                <button style="height: max-content;" mat-stroked-button class="btn-submit" matTooltip="guardar cambios">Guardar</button>
+<div *ngIf="representante">
+    <div>
+        <form [formGroup]="representanteForm" novalidate>
+            <div class="fields-container">
+                <div style="display: flex; flex-direction: row;">
+                    <p>
+                        <mat-form-field style="width: 280px;">
+                            <mat-label>Nombre representante:</mat-label>
+                            <input formControlName="nombre" type="text" matInput>
+                        </mat-form-field>
+                    </p>
+                    <p>
+                        <mat-form-field style="width: 150px;">
+                            <mat-label>Cédula:</mat-label>
+                            <input formControlName="cedula" type="text" matInput>
+                        </mat-form-field>
+                    </p>
+                    <button style="height: max-content; background: white;" mat-stroked-button class="btn-submit" matTooltip="guardar cambios">actualizar</button>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+    <div>
+        <router-outlet></router-outlet>
+    </div>
 </div>
-<div>
-    <router-outlet></router-outlet>
+
+<div *ngIf="!representante">
+    Página no encontrada
 </div>
