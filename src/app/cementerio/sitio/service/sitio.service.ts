@@ -21,108 +21,114 @@ export class SitioService {
 
   listarFechasSitios = () => {
     this.httpClient
-    .get<FechasResponse>(`${AUTH_SERVER}/sitio/fechas/`, this.httpOptions)
-    .subscribe((data: FechasResponse) => {
-      if(data.ok) {
-        this.dataStore.fechas = data.data;
-        this._fechas.next(Object.assign({}, this.dataStore).fechas);
-      } else {
-        console.log("mostar mensaje de error");
-      }
-    })
+      .get<FechasResponse>(`${AUTH_SERVER}/sitio/fechas/`, this.httpOptions)
+      .subscribe((data: FechasResponse) => {
+        if (data.ok) {
+          this.dataStore.fechas = data.data;
+          this._fechas.next(Object.assign({}, this.dataStore).fechas);
+        } else {
+          console.log("mostar mensaje de error");
+        }
+      })
   }
 
-  listarSitios(representanteId: string): Observable<ResponseSitioI> {
+  listarSitios(representanteId: any): Observable<ResponseSitioI> {
     return this.httpClient
-    .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   obtenerDeudas(sitioId: number): Observable<ResponseDeudaSitioI> {
     return this.httpClient
-    .get<ResponseDeudaSitioI>(`${AUTH_SERVER}/sitio/deudas/${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .get<ResponseDeudaSitioI>(`${AUTH_SERVER}/sitio/deudas/${sitioId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   obtenerSitio(sitioId: string): Observable<ResponseSitioI> {
     return this.httpClient
-    .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   obtenerEstadoCuenta(sitioId: string): Observable<ResponseEstadoCuentaSitioI> {
     return this.httpClient
-    .get<ResponseEstadoCuentaSitioI>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .get<ResponseEstadoCuentaSitioI>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
 
   agregarPago(pago: any): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/pago`, JSON.stringify(pago), this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .post<any>(`${AUTH_SERVER}/sitio/pago`, JSON.stringify(pago), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
 
   actualizarSitio(sitio: any): Observable<any> {
     return this.httpClient
-    .put<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .put<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   actualizarSitioEstadoCuenta(sitio: any): Observable<any> {
     return this.httpClient
-    .put<any>(`${AUTH_SERVER}/sitio/estado-cuenta`, JSON.stringify(sitio), this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .put<any>(`${AUTH_SERVER}/sitio/estado-cuenta`, JSON.stringify(sitio), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
 
   agregarSitio(sitio: SitioI): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   agregarIngreso(ingreso: IngresoI): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/ingreso/`, JSON.stringify(ingreso), this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .post<any>(`${AUTH_SERVER}/sitio/ingreso/`, JSON.stringify(ingreso), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   agregarDeuda(deuda: any): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/deuda/`, JSON.stringify(deuda), this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .post<any>(`${AUTH_SERVER}/sitio/deuda/`, JSON.stringify(deuda), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   agregarComprobante(comprobante: ComprobanteI): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/sitio/comprobante/`, JSON.stringify(comprobante), this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .post<any>(`${AUTH_SERVER}/sitio/comprobante/`, JSON.stringify(comprobante), this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
 
   obtenerPagoDetalles(codigoId: number, sitioId: number): Observable<any> {
     return this.httpClient
-    .get<any>(`${AUTH_SERVER}/sitio/pago-detalles/${codigoId}&${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .get<any>(`${AUTH_SERVER}/sitio/pago-detalles/${codigoId}&${sitioId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
   obtenerPagos(sitioId: number): Observable<any> {
     return this.httpClient
-    .get<any>(`${AUTH_SERVER}/sitio/pagos/${sitioId}`, this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .get<any>(`${AUTH_SERVER}/sitio/pagos/${sitioId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
   eliminarEstadoCuenta(data: any): Observable<any> {
     return this.httpClient
-    .patch<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(data), this.httpOptions)
-    .pipe( catchError(this.handleError) );
+      .patch<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(data), this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  eliminarSitio(sitio: any): Observable<any> {
+    return this.httpClient
+    .delete<any>(`${AUTH_SERVER}/sitio/${sitio}`, this.httpOptions)
+    .pipe(catchError(this.handleError));
   }
 
 
@@ -133,7 +139,7 @@ export class SitioService {
 
   private httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type':  'application/json',
+      'Content-Type': 'application/json',
       // 'authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).stsTokenManager.accessToken}`
     })
   };
