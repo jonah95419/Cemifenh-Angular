@@ -1,5 +1,4 @@
 export interface DeudaI {
-  valorId: number;
   valor: string;
   descripcion: string;
   pagoDesde: Date;
