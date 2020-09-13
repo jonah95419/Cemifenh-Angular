@@ -1,11 +1,9 @@
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: row; margin-bottom: 6px;">
     <h4 style="margin: auto 0 0 0;">
         Lista fallecidos - Sitio N° {{id_sitio}}
     </h4>
     <span class="example-spacer"></span>
-    <div *ngIf="!nuevo">
-        <button mat-stroked-button (click)="accordion.openAll(); nuevo=true;" style="background: white;">Nuevo registro</button>
-    </div>
+    <button mat-stroked-button (click)="accordion.openAll();" style="background: white;">Nuevo registro</button>
 </div>
 
 <mat-accordion #accordion_add="matAccordion" class="example-headers-align" multi>
