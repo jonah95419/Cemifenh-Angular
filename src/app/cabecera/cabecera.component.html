@@ -1,6 +1,8 @@
 <mat-toolbar class="mat-elevation-z1" style="background-color: white;">
-    <div mat-card-avatar [style.background-image]=" 'url('+ logo + ')' " class="example-header-image "></div>
-    GAD San Pablo del Lago
+    <a class="navigation-item" style="display: flex;" routerLink="/inicio">
+        <div mat-card-avatar [style.background-image]=" 'url('+ logo + ')' " class="example-header-image "></div>
+        GAD San Pablo del Lago
+    </a>
     <!-- <strong class="navigation-item" style="color: rgb(39, 39, 39); cursor: pointer;" routerLink="/inicio">{{title}}</strong> -->
     <span class="example-spacer"></span>
     <a class="navigation-item opcion" routerLink="/inicio" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
