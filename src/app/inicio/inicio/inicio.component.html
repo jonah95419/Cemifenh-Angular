@@ -1,17 +1,10 @@
 <div class="container-inicio">
     <div class="container-filtro-representante">
-        <p matTooltip="Lista a los representantes con un sitio adquirido">Fecha adquisición</p>
+        <p matTooltip="Lista a los representantes con un sitio adquirido">Representantes</p>
 
         <ng-container *ngIf="apiSitios.fechas | async as fechas; else loading">
 
             <ng-container *ngIf="fechas && fechas.length !== 0; else lenp;">
-
-                <a class="navigation-item" routerLink="/inicio/representantes/todos" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
-                    <div class="item-filtro">
-                        <label>ver todo</label>
-                        <div [ngClass]="{'indicador-filtro': rla.isActive}"></div>
-                    </div>
-                </a>
 
                 <a *ngFor="let item of fechas" class="navigation-item" [routerLink]="'./representantes/'+ item?.title" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
                     <div class="item-filtro">
@@ -19,10 +12,8 @@
                         <div [ngClass]="{'indicador-filtro': rla2.isActive}"></div>
                     </div>
                 </a>
-
-                <p matTooltip="Lista a los representantes sin un sitio adquirido">Sin fecha adquisición</p>
-
-                <a class="navigation-item" routerLink="/inicio/representantes/sinsitios" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
+                <mat-divider style="margin: 12px;"></mat-divider>
+                <a class="navigation-item" routerLink="/inicio/representantes/todos" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
                     <div class="item-filtro">
                         <label>ver todo</label>
                         <div [ngClass]="{'indicador-filtro': rla3.isActive}"></div>
