@@ -11,7 +11,6 @@ import { Importacion } from '../../../../utilidades/importarRegistros';
 import { ValoresService } from '../../../../admin/service/valores.service';
 import { ValorI } from '../../../../admin/model/valor';
 import { RepresentanteService } from '../../service/representante.service';
-import { RegistroI } from '../../../../utilidades/model/registro';
 import { MatSelectChange } from '@angular/material/select';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { DeudaI } from '../../model/deuda';
@@ -37,16 +36,15 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
 
   @ViewChild(MatTable) table: MatTable<any>;
 
-
   step = 0;
 
-  columnsToDisplay: string[] = ['descripcion', 'desde', 'hasta', 'valor', 'accion'];
+  columnsToDisplay: string[] = ['descripcion', 'fecha', 'valor', 'accion'];
 
   registrarSitio: boolean = false;
   registrarFallecido: boolean = false;
   generarDeudas: boolean = false;
 
-  listaTipo = ['Arriendo', 'Propio', 'Donación'];
+  listaTipo = ['Arriendo', 'Compra', 'Donación'];
   listaDescripcion = ['Boveda', 'Piso propio', 'Piso'];
   listaSectores: SectorI[];
   listaValores: ValorI[];
@@ -59,11 +57,10 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
   })
 
   sitioForm = this.fb.group({
-    nombre: new FormControl('', Validators.required),
     sector: new FormControl('', Validators.required),
     tipo: new FormControl('', Validators.required),
     descripcion: new FormControl('', Validators.required),
-    fecha: new FormControl('', Validators.required),
+    fecha: new FormControl(new Date(), Validators.required),
     observaciones: ""
   })
 
@@ -143,11 +140,11 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
 
   setStep(index: number) { this.step = index; }
 
-  nextStep() { this.step++; }
+  nextStep(): void { this.step++; }
 
-  prevStep() { this.step--; }
+  prevStep(): void { this.step--; }
 
-  generarDeudasSitios(event: MatCheckboxChange) {
+  generarDeudasSitios(event: MatCheckboxChange): void {
     if(event.checked) {
       if(this.sitioForm.controls['tipo'].value !== "Donación") {
         this.generarListaDeudas(this.sitioForm.value);
@@ -157,45 +154,34 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
     }
   }
 
-  tipoSeleccionado(event: MatSelectChange) {
+  tipoSeleccionado(event: MatSelectChange): void {
     const value = event.source.value;
     if(value === "Arriendo") {
-      this.listaDescripcion = ['Boveda', 'Piso'];
+      this.listaDescripcion = ['Bóveda', 'Piso'];
     }
-    if(value === "Propio") {
-      this.listaDescripcion = ['Piso propio'];
+    if(value === "Compra") {
+      this.listaDescripcion = ['Lote propio'];
     }
     if(value === "Donación" ) {
-      this.listaDescripcion = ['Boveda', 'Piso'];
+      this.listaDescripcion = ['Bóveda', 'Piso'];
     }
   }
 
-  getTotalCost() {
+  getTotalCost(): number {
     return this.listaDeudas?.map(t => Number(t.valor)).reduce((acc, value) => acc + value, 0);
   }
 
-  eliminarDeuda(deuda: DeudaI) {
-    this.listaDeudas = this.listaDeudas.filter(d => d.valorId !== deuda.valorId);
+  eliminarDeuda(deuda: DeudaI): void {
+    this.listaDeudas = this.listaDeudas.filter(d => d !== deuda);
     this.table.renderRows();
   }
 
   private generarListaDeudas(r: any): void {
-    let nuevo_registro: RegistroI[] = [{
-      NombreRepresentante: "",
-      CedulaRepresentante: "",
-      ObservacionesRepresetante: "",
-      NombreFallecido: "",
-      CedulaFallecido: "",
-      FechaFallecimiento: null,
-      Observaciones: "",
-      Nombre: r.nombre,
-      Sector: r.sector,
+    let nuevo_registro: any[] = [{
       Motivo: r.tipo,
       Lugar: r.descripcion,
       FechaAdquisicion: r.fecha,
       FechaInicio: null,
-      ObservacionesSitio: "",
-      Total: "0"
     }];
 
     const importar:Importacion = new Importacion(this.listaSectores, this.listaValores);
@@ -213,7 +199,6 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
           observaciones: r.representante.observaciones
         },
         sitio: {
-          nombre: r.sitio.nombre,
           motivo: r.sitio.tipo,
           lugar: r.sitio.descripcion,
           sector: this.obtenerSector(r.sitio.sector),
@@ -244,7 +229,7 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
     return this.listaSectores.filter ( sector => sector.id == id)[0];
   }
 
-  private openSnackBar = (message: string, action: string) => {
+  private openSnackBar = (message: string, action: string): void => {
     this._snackBar.open(message, action, { duration: 5000 });
   }
 
