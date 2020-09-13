@@ -11,11 +11,13 @@ import { SitioDetallesInformacionComponent } from './sitio-detalles-informacion/
 import { SitioDetallesEstadoCuentaComponent } from './sitio-detalles-estado-cuenta/sitio-detalles-estado-cuenta.component';
 import { SitioDetallesListaFallecidosComponent } from './sitio-detalles-lista-fallecidos/sitio-detalles-lista-fallecidos.component';
 import { DialogEstadoCuenta } from './dialog/editar-estado-cuenta/editar-estado-cuenta';
+import { DialogRegistrarSitio } from './dialog/registrar-sitio/registrar-sitio';
 
 
 @NgModule({
   declarations: [
     DialogEstadoCuenta,
+    DialogRegistrarSitio,
     SitiosComponent,
     SitioDetallesListaFallecidosComponent,
     SitioDetallesInformacionComponent,
@@ -40,7 +42,8 @@ import { DialogEstadoCuenta } from './dialog/editar-estado-cuenta/editar-estado-
     SitioService
   ],
   entryComponents: [
-    DialogEstadoCuenta
+    DialogEstadoCuenta,
+    DialogRegistrarSitio
   ]
 })
 export class SitioModule { }
