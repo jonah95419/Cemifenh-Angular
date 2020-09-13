@@ -19,6 +19,7 @@ import { ServiceC } from '../../cementerio/sitio/service-c/sitio-serviceC';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { DialogEstadoCuenta } from '../../cementerio/sitio/dialog/editar-estado-cuenta/editar-estado-cuenta';
+import { DialogRegistrarSitio } from '../../cementerio/sitio/dialog/registrar-sitio/registrar-sitio';
 
 @Component({
   selector: 'app-historial',
@@ -116,6 +117,11 @@ export class HistorialComponent implements OnInit, OnDestroy {
   eliminarLista = (): void => this.eliminar(this.selection.selected);
 
   eliminarEstadoCuenta = (row: any): void => this.eliminar([row]);
+
+  agregarSitio = () => {
+    const dialogRef = this.dialog.open(DialogRegistrarSitio,{ width: '500px', panelClass: "my-class", data: this.id });
+    dialogRef.afterClosed().subscribe();
+  }
 
   agregarDeuda(): void {
     const dialogRef = this.dialog.open(DialogRegistroDeuda, {
