@@ -6,7 +6,6 @@ import { catchError } from 'rxjs/operators';
 import { RepresentantesResponse, RepresentanteI } from '../model/representante';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResponseDeudaRepresentanteI } from '../model/deuda';
-import { ResponsePagosRepresentanteI, ResponsePagosDetallesRepresentanteI } from '../model/pagos';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -23,20 +22,6 @@ export class RepresentanteService {
 
   listarRepresentantesTodo = (): void => {
     this.httpClient
-      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/todo`, this.httpOptions)
-      .pipe(catchError(this.handleError))
-      .subscribe((data: RepresentantesResponse) => {
-        if (data.ok) {
-          this.dataStore.representantes = data.data;
-          this._representantes.next(Object.assign({}, this.dataStore).representantes);
-        } else {
-          console.log("mostar mensaje de error");
-        }
-      });
-  }
-
-  listarRepresentantes = (): void => {
-    this.httpClient
       .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/`, this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe((data: RepresentantesResponse) => {
@@ -44,7 +29,7 @@ export class RepresentanteService {
           this.dataStore.representantes = data.data;
           this._representantes.next(Object.assign({}, this.dataStore).representantes);
         } else {
-          console.log("mostar mensaje de error");
+          this.openSnackBar('A ocurrido un error, puedes intentarlo nuevamente en unos instantes.', 'ok');
         }
       });
   }
@@ -58,26 +43,14 @@ export class RepresentanteService {
           this.dataStore.representantes = data.data;
           this._representantes.next(Object.assign({}, this.dataStore).representantes);
         } else {
-          console.log("mostar mensaje de error");
+          this.openSnackBar('A ocurrido un error, puedes intentarlo nuevamente en unos instantes.', 'ok');
         }
       });
-  }
-
-  listarRepresentantesSinSitio = (): Observable<RepresentantesResponse> => {
-    return this.httpClient
-      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/sin-sitio/`, this.httpOptions)
-      .pipe(catchError(this.handleError));
   }
 
   obtenerEstadoCuentaRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
     return this.httpClient
       .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/estado-cuenta/${id}`, this.httpOptions)
-      .pipe(catchError(this.handleError));
-  }
-
-  obtenerDeudasRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
-    return this.httpClient
-      .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/deudas/${id}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
@@ -87,34 +60,26 @@ export class RepresentanteService {
       .pipe(catchError(this.handleError));
   }
 
-  obtenerPagoDetallesRepresentante(comprobanteID: string): Observable<ResponsePagosDetallesRepresentanteI> {
-    return this.httpClient
-    .get<ResponsePagosDetallesRepresentanteI>(`${AUTH_SERVER}/representante/pago-detalles/${comprobanteID}`, this.httpOptions)
-      .pipe(catchError(this.handleError));
-  }
-
-  obtenerPagosRepresentante(representanteId: string): Observable<ResponsePagosRepresentanteI> {
-    return this.httpClient
-      .get<ResponsePagosRepresentanteI>(`${AUTH_SERVER}/representante/pagos/${representanteId}`, this.httpOptions)
-      .pipe(catchError(this.handleError));
-  }
-
-
-
-
-
-
-
   agregarRepresentante(representante: any) {
     this.httpClient
       .post<any>(`${AUTH_SERVER}/representante/`, JSON.stringify(representante), this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe(data => {
-        console.log(data);
-        this.dataStore.representantes.push(this.cargarRegistro(representante, data));
-        this.openSnackBar('Registro creado', 'ok');
+        if(data.ok) {
+          this.dataStore.representantes.push(this.cargarRegistro(representante, data));
+        this.openSnackBar('Reprentante registrado', 'ok');
         this._representantes.next(Object.assign({}, this.dataStore).representantes);
+        }
+        else {
+          this.openSnackBar('A ocurrido un error, puedes intentarlo nuevamente en unos instantes.', 'ok');
+        }
       })
+  }
+
+  eliminarRepresentante(representante: any): Observable<any> {
+    return this.httpClient
+    .delete<any>(`${AUTH_SERVER}/representante/${representante}`, this.httpOptions)
+    .pipe(catchError(this.handleError));
   }
 
   private cargarRegistro(registro, result) {
