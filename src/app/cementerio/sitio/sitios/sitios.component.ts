@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,25 +8,37 @@ import { SitioService } from '../service/sitio.service';
 import { ResponseSitioI, SitioI } from '../model/sitio';
 import { ServiceC } from '../service-c/sitio-serviceC';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogRegistrarSitio } from '../dialog/registrar-sitio/registrar-sitio';
 
 @Component({
   selector: 'app-sitios',
   templateUrl: './sitios.component.html',
-  styleUrls: ['./sitios.component.css']
+  styleUrls: ['./sitios.component.css'],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-EC' },
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
+  ],
 })
 export class SitiosComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
+  displayedColumns: string[] = [ 'sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
   listaSitios: SitioI[] = [];
-  verDetalle = false;
-  detalle: any;
+
   sitioId: number;
   representante: number;
-
   locale: string;
-  displayedColumns: string[] = [ 'sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
   dataSource: MatTableDataSource<any>;
 
   constructor(
@@ -34,6 +46,7 @@ export class SitiosComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private sc: ServiceC,
+    private dialog: MatDialog,
     private apiSitios: SitioService) {
       route.parent.params.pipe( tap((data: Params) => {
         if(data.id) {
@@ -55,14 +68,23 @@ export class SitiosComponent implements OnInit {
     ).toPromise();
   }
 
+  agregarSitio = () => {
+    const dialogRef = this.dialog.open(DialogRegistrarSitio,{ width: '500px', panelClass: "my-class", data: this.representante });
+    dialogRef.afterClosed().pipe(
+      tap(x => {
+        if(x.ok) { this.obtenerValores(this.representante); }
+      })
+    ).toPromise();
+  }
+
   verDetalles(sitio: any): void {
-    this.verDetalle = true;
     this.sitioId = sitio.id;
     this.sc.emitIdSitioDetalleChange(this.sitioId);
     this.router.navigate([`./representantes/registro/${this.representante}/sitios/informacion`], {queryParams: {id: this.sitioId}});
   }
 
-  private obtenerValores(id: string): void {
+  private obtenerValores(id: number): void {
+    this.representante = id;
     this.apiSitios.listarSitios(id).pipe(
       tap((data: ResponseSitioI) => {
         if (data.ok) { this.cargarValores(data.data); } else { console.log(data.message); }

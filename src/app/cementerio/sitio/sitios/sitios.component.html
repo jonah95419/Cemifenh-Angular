@@ -3,9 +3,10 @@
 </h4>
 <div class="container-opciones ">
     <button mat-stroked-button style="background-color: white; margin-left: auto;">Imprimir</button>
-    <button mat-stroked-button style="background-color: white;">Nuevo registro</button>
+    <button mat-stroked-button style="background-color: white;" (click)="agregarSitio();">Registrar sitio</button>
 </div>
-<div class="mat-elevation-z1" style="margin-bottom: 18px;">
+
+<div class="mat-elevation-z1" style="margin: 6px 0px 18px 0px;">
     <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="sector">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> sector </th>
@@ -35,8 +36,9 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="verDetalles(row)" [style.background]="sitioId == row.id ? '#dbdbdb':'white'" style="cursor: pointer; ">
         </tr>
     </table>
+    <mat-paginator class="mat-paginator-sticky2" [pageSizeOptions]="[ 5, 10, 25]" showFirstLastButtons></mat-paginator>
+
 </div>
-<!-- <app-sitio-detalles [sitioId]="sitioId"></app-sitio-detalles> -->
 <div>
     <router-outlet>
     </router-outlet>
