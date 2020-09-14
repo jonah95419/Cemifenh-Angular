@@ -1,0 +1,21 @@
+button {
+    margin: 5px;
+}
+
+span {
+    margin-left: 6px;
+}
+
+.example-container {
+    position: absolute;
+    top: 66px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: whitesmoke;
+}
+
+.container-detalles {
+    margin: 0px 12px;
+    padding: 12px 0px;
+}
