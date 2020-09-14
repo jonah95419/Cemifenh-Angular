@@ -26,7 +26,7 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['select', 'fecha', 'descripcion', 'cargos', 'abonos', 'acciones'];
+  displayedColumnsEC: string[] = ['fecha', 'descripcion', 'cargos', 'abonos', 'acciones']; //'select',
   dataSource: MatTableDataSource<EstadoCuentaI>;
   selection = new SelectionModel<EstadoCuentaI>(true, []);
 

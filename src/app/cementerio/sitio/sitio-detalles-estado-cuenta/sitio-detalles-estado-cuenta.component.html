@@ -1,6 +1,6 @@
 <div style="display: flex; flex-direction: row; margin-bottom: 6px;">
     <h4 style="margin: auto 0 0 0;">
-        Estado de cuenta - Sitio N° {{id_sitio}}
+        Detalle de movimientos - Sitio N° {{id_sitio}}
     </h4>
     <span class="example-spacer"></span>
     <button *ngIf="selection.hasValue()" matTooltip="Imprimir seleccionados" mat-stroked-button (click)="accordion.openAll();" style="background: white;">Imprimir</button>
@@ -160,23 +160,23 @@
         </ng-container>
 
         <ng-container matColumnDef="header-row-cero-grupo_2">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="3"></th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2"></th>
         </ng-container>
         <ng-container matColumnDef="header-row-uno-grupo_2">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">Cargos:</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Cargos:</th>
         </ng-container>
         <ng-container matColumnDef="header-row-dos-grupo_2">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'red';">{{getDeudas() | currency}}</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="color: 'red';">{{getDeudas() | currency}}</th>
         </ng-container>
 
         <ng-container matColumnDef="header-row-cero-grupo_1">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="3"></th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2"></th>
         </ng-container>
         <ng-container matColumnDef="header-row-uno-grupo_1">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1">Abonos:</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Abonos:</th>
         </ng-container>
         <ng-container matColumnDef="header-row-dos-grupo_1">
-            <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" style="color: 'green';">{{getPagos() | currency}}</th>
+            <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="color: 'green';">{{getPagos() | currency}}</th>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo_2', 'header-row-uno-grupo_2', 'header-row-dos-grupo_2']; sticky: true"></tr>
