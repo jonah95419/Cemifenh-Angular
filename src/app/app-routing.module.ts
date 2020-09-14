@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdministracionComponent } from './admin/administracion/administracion.component';
 import { PreciosComponent } from './admin/precios/precios.component';
 import { ImportacionComponent } from './admin/importacion/importacion.component';
-import { ExportacionComponent } from './admin/exportacion/exportacion.component';
 import { CopiaSeguridadComponent } from './admin/copia-seguridad/copia-seguridad.component';
 import { RepresentanteInformacionComponent } from './cementerio/representante/representante-informacion/representante-informacion.component';
 import { SitiosComponent } from './cementerio/sitio/sitios/sitios.component';
@@ -16,6 +15,9 @@ import { RepresentantesComponent } from './cementerio/representante/representant
 import { SitioDetallesInformacionComponent } from './cementerio/sitio/sitio-detalles-informacion/sitio-detalles-informacion.component';
 import { SitioDetallesEstadoCuentaComponent } from './cementerio/sitio/sitio-detalles-estado-cuenta/sitio-detalles-estado-cuenta.component';
 import { SitioDetallesListaFallecidosComponent } from './cementerio/sitio/sitio-detalles-lista-fallecidos/sitio-detalles-lista-fallecidos.component';
+import { ReportesComponent } from './reportes/reportes/reportes.component';
+import { InvoiceComponent } from './reportes/invoice/invoice.component';
+import { PrintLayoutComponent } from './reportes/print-layout/print-layout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -51,11 +53,21 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'reportes', component: ReportesComponent,
+    children: [
+      {
+        path: 'print', outlet: 'print', component: PrintLayoutComponent,
+        children: [
+          { path: 'invoice/:invoiceIds', component: InvoiceComponent }
+        ]
+      }
+    ]
+  },
+  {
     path: 'administracion', component: AdministracionComponent,
     children: [
       { path: 'lista-precios', component: PreciosComponent },
       { path: 'importar-datos', component: ImportacionComponent },
-      { path: 'exportar-datos', component: ExportacionComponent },
       { path: 'copia-seguridad', component: CopiaSeguridadComponent },
     ]
   },
