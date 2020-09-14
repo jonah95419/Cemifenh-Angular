@@ -21,7 +21,7 @@ import { RepresentanteModule } from './cementerio/representante/representante.mo
 import { SitioModule } from './cementerio/sitio/sitio.module';
 import { AdminModule } from './admin/admin.module';
 import { InicioModule } from './inicio/inicio.module';
-import { DialogRegistroRepresentante } from './cementerio/representante/dialog/registro-representante/dialog-registro-representante';
+import { ReportesModule } from './reportes/reportes.module';
 
 registerLocaleData(localeES, 'es');
 const AUTH_SERVER = environment.baseUrl
@@ -45,6 +45,7 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
     SitioModule,
     AdminModule,
     InicioModule,
+    ReportesModule,
     SocketIoModule.forRoot(config),
     HttpClientModule,
         TranslateModule.forRoot({
