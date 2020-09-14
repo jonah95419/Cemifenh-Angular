@@ -15,10 +15,11 @@ import { SitioService } from '../../sitio/service/sitio.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPagoExtra } from '../dialog/registro-pago-extra/dialog-pago-extra';
 import { RepresentantesResponse, RepresentanteI } from '../model/representante';
-import { ResponseSitioI } from '../../sitio/model/sitio';
 import { EstadoCuentaH } from '../model/estadoCuentaR';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
+import { HttpClient } from '@angular/common/http';
+import { PDFClass } from '../../../utilidades/pdf';
 
 @Component({
   selector: 'app-estado-cuenta',
@@ -39,7 +40,7 @@ export class EstadoCuentaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['select', 'fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'acciones'];
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'acciones']; //'select',
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
   selection = new SelectionModel<EstadoCuentaH>(true, []);
@@ -51,9 +52,12 @@ export class EstadoCuentaComponent implements OnInit {
   locale: string;
   fecha: Date = new Date();
 
+  pdf: PDFClass;
+
   private _translate;
 
   constructor(
+    private http: HttpClient,
     private _snackBar: MatSnackBar,
     private translate: TranslateService,
     private apiRepresentante: RepresentanteService,
@@ -61,8 +65,9 @@ export class EstadoCuentaComponent implements OnInit {
     private notsitio: ServiceC,
     private dialog: MatDialog,
     private route: ActivatedRoute) {
-    route.parent.params.pipe( tap((data: Params) => {
-      if(data.id) {
+    this.pdf = new PDFClass(http);
+    route.parent.params.pipe(tap((data: Params) => {
+      if (data.id) {
         const representante = data.id;
         this.id = representante;
         this.obtenerHistorial();
@@ -92,17 +97,29 @@ export class EstadoCuentaComponent implements OnInit {
       this.dataSourceEC.data.forEach(row => this.selection.select(row));
   }
 
-  imprimirLista = (): void => {
+  imprimirLista = (): void =>
+    this.pdf.jojo(this.procesarDatosImprimir(this.listaEstadoCuenta), 'print', {
+      nombre: 'Jhonatan Stalin Salazar Hurtado',
+      representante: this.representante?.nombre,
+      cedula: this.representante?.cedula,
+      tipo: 'Comprobante',
+      descripcion: 'Estado de cuenta',
+      codigo: ''
+    }, 'abonos_y_cargos')
 
-  }
-
-  imprimir = (): void => {
-
-  }
+  imprimir = (row: EstadoCuentaH): void =>
+    this.pdf.jojo(this.procesarDatosImprimir([row]), 'print', {
+      nombre: 'Jhonatan Stalin Salazar Hurtado',
+      representante: this.representante?.nombre,
+      cedula: this.representante?.cedula,
+      tipo: 'Comprobante',
+      descripcion: row.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
+      codigo: ''
+    }, row.estado_cuenta === 'deuda' ? 'cargos' : 'abonos')
 
   editar = (row: any) => {
     row.pago = String(row.pago).toLowerCase();
-    const dialogRef = this.dialog.open(DialogEstadoCuenta,{ width: '350px', panelClass: "my-class", data: row });
+    const dialogRef = this.dialog.open(DialogEstadoCuenta, { width: '350px', panelClass: "my-class", data: row });
     dialogRef.afterClosed().subscribe();
   }
 
@@ -142,6 +159,18 @@ export class EstadoCuentaComponent implements OnInit {
       (new Date(t.fecha) > new Date('2001/01/01')))
     .reduce((a, b) => a + Number(b.cantidad), 0);
 
+  private procesarDatosImprimir = (data: EstadoCuentaH[]) =>
+    data.map((x: EstadoCuentaH) => {
+      return {
+        fecha: x.fecha,
+        lugar: x.tipo,
+        motivo: x.descripcion,
+        sector: x.sector,
+        descripcion: x.pago,
+        estado_cuenta: x.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
+        cantidad: x.cantidad
+      }
+    })
 
   private eliminar(data): void {
     this.apiSitio.eliminarEstadoCuenta(data).pipe(

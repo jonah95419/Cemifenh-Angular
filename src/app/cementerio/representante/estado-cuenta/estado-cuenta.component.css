@@ -22,9 +22,9 @@ th.mat-header-cell {
 }
 
 .mat-column-fecha {
-    min-width: 95px;
-    width: 95px;
-    max-width: 95px;
+    min-width: 115px;
+    width: 115px;
+    max-width: 115px;
 }
 
 .mat-column-abonos,
@@ -34,9 +34,9 @@ th.mat-header-cell {
 }
 
 .mat-column-acciones {
-    width: 80px;
-    max-width: 80px;
-    min-width: 80px;
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
 }
 
 .mat-column-descripcion {
