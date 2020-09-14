@@ -10,7 +10,6 @@ import { SectorService } from './service/sector.service';
 import { ValoresService } from './service/valores.service';
 import { AdministracionComponent } from './administracion/administracion.component';
 import { CopiaSeguridadComponent } from './copia-seguridad/copia-seguridad.component';
-import { ExportacionComponent } from './exportacion/exportacion.component';
 import { ImportacionComponent } from './importacion/importacion.component';
 import { PreciosComponent } from './precios/precios.component';
 import { LineChart1Component } from '../chart/line-chart1/line-chart1.component';
@@ -20,7 +19,6 @@ import { LineChart1Component } from '../chart/line-chart1/line-chart1.component'
   declarations: [
     AdministracionComponent,
     CopiaSeguridadComponent,
-    ExportacionComponent,
     ImportacionComponent,
     PreciosComponent,
     LineChart1Component
