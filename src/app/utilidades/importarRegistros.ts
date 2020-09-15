@@ -1,5 +1,5 @@
 import { SectorI } from '../admin/model/sector';
-import { IngresoI, DeudaI } from '../cementerio/representante/model/deuda';
+import { DeudaI } from '../cementerio/representante/model/deuda';
 import { RegistroI } from './model/registro';
 
 export class Importacion {
@@ -23,6 +23,12 @@ export class Importacion {
 
       this.cantidad = Number(registros[i].Total);
 
+      const comprobante = this.generarComprobante(
+        registros[i].NombreRepresentante,
+        registros[i].FechaAdquisicion,
+        registros[i].Total,
+        '');
+
       const representante = {
         nombre: registros[i].NombreRepresentante,
         cedula: registros[i].CedulaRepresentante,
@@ -44,13 +50,21 @@ export class Importacion {
         observaciones: registros[i].Observaciones
       }
 
-      const deudas = this.generarDeudas(registros[i]);
+      let deudas = this.generarDeudas(registros[i]);
+
+      const ingresos = this.cantidad <= 0 ? [] : [{
+        valor: this.cantidad,
+        descripcion: 'Registro importado, abono acreditado a la fecha de adquisición',
+        pagoDesde: registros[i].FechaAdquisicion,
+      }]
 
       nuevoDataSet.push({
         representante,
         sitio,
         fallecido,
-        deudas
+        comprobante,
+        deudas,
+        ingresos
       });
 
     }
@@ -59,11 +73,23 @@ export class Importacion {
 
   };
 
+  private generarComprobante(nombre: string, fecha: Date, total: string, observaciones: string): any {
+    return {
+      nombre,
+      fecha,
+      total,
+      observaciones,
+    }
+  }
+
   private asignarColumnas(registros: RegistroI[]): RegistroI[] {
     for (let i = 0; i < registros.length; i++) {
       registros[i].FechaInicio = registros[i].FechaAdquisicion;
       registros[i].Motivo = registros[i].Motivo.replace(/\s?$/, '');
+      registros[i].Motivo = registros[i].Motivo.toLowerCase() === 'propio' ? 'Compra' : registros[i].Motivo;
       registros[i].Lugar = registros[i].Lugar.replace(/\s?$/, '');
+      registros[i].Lugar = registros[i].Lugar.toLowerCase() === 'boveda' ? 'Bóveda' : registros[i].Lugar;
+      registros[i].Lugar = registros[i].Lugar.toLowerCase() === 'piso propio' ? 'Lote propio' : registros[i].Lugar;
     }
     return registros;
   }
@@ -96,16 +122,17 @@ export class Importacion {
       (valor.motivo === 'Mantenimiento'));
   }
 
-  private generarDeudas(registro: RegistroI): DeudaI[] {
+  private generarDeudas(registro: RegistroI): any[] {
 
-    let listaDeudas: DeudaI[] = [];
+    let listaDeudas: any[] = [];
     let valores = this.obtenerValoresServicio(registro.FechaInicio, registro.Lugar, registro.Motivo);
-    let inicio_servicio = new Date(registro.FechaInicio);
+    let inicio_servicio: Date = new Date(registro.FechaInicio);
+    let culminacion_servicio: Date;
 
     while (inicio_servicio < new Date()) {
       let periodo_renovacion_servicio = Number(valores[0].periodo);
       let valor_servicio;
-      let culminacion_servicio;
+
       let i = 0;
 
       if (periodo_renovacion_servicio !== 0) {
@@ -125,8 +152,12 @@ export class Importacion {
         }
       }
 
-      if (inicio_servicio.getFullYear() <= 2001) {
-        culminacion_servicio = new Date(2001, inicio_servicio.getMonth(), inicio_servicio.getDate());
+      if (inicio_servicio.getFullYear() < 2002) {
+        if (inicio_servicio.getFullYear() === culminacion_servicio?.getFullYear()) {
+          culminacion_servicio = new Date((inicio_servicio.getFullYear() + periodo_renovacion_servicio), inicio_servicio.getMonth(), inicio_servicio.getDate());
+        } else {
+          culminacion_servicio = new Date(2001, inicio_servicio.getMonth(), inicio_servicio.getDate());
+        }
       } else {
         culminacion_servicio = new Date((inicio_servicio.getFullYear() + periodo_renovacion_servicio), inicio_servicio.getMonth(), inicio_servicio.getDate());
       }
@@ -137,7 +168,7 @@ export class Importacion {
         pagoDesde: inicio_servicio,
         pagoHasta: culminacion_servicio,
         observaciones: '',
-        ingreso: this.generarIngreso(valor_servicio)
+        tipo: 'cargo'
       });
 
       if (inicio_servicio.getFullYear() >= 2001) {
@@ -156,7 +187,7 @@ export class Importacion {
             pagoDesde: inicioM,
             pagoHasta: finM,
             observaciones: '',
-            ingreso: this.generarIngreso(valor_mantenimiento)
+            tipo: 'cargo'
           });
 
           i = i + periodo_renovacion_mantenimiento;
@@ -186,29 +217,6 @@ export class Importacion {
 
     return listaDeudas;
   }
-
-  private generarIngreso(cant: string): IngresoI {
-    let ingreso: IngresoI;
-    if (this.cantidad >= Number(cant)) {
-      ingreso = {
-        codigoD: 0,
-        condigoC: 0,
-        cant: cant
-      }
-      this.cantidad -= Number(cant);
-    } else {
-      if (this.cantidad > 0) {
-        ingreso = {
-          codigoD: 0,
-          condigoC: 0,
-          cant: String(this.cantidad)
-        }
-        this.cantidad -= Number(cant);
-      }
-    }
-    return ingreso;
-  }
-
 }
 
 interface ValorI {
