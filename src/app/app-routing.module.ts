@@ -66,7 +66,7 @@ const routes: Routes = [
   {
     path: 'administracion', component: AdministracionComponent,
     children: [
-      { path: 'lista-precios', component: PreciosComponent },
+      { path: 'lista-valores', component: PreciosComponent },
       { path: 'importar-datos', component: ImportacionComponent },
       { path: 'copia-seguridad', component: CopiaSeguridadComponent },
     ]
