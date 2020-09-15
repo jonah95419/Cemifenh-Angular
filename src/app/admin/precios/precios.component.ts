@@ -16,13 +16,11 @@ export class PreciosComponent implements OnInit, OnDestroy {
   listaValores: ValorI[];
 
   displayedColumns: string[] = [
-    'id',
     'anio',
     'periodo',
     'motivo',
     'lugar',
-    'valor',
-    'acciones'
+    'valor'
   ];
 
   dataSource: MatTableDataSource<ValorI>;
