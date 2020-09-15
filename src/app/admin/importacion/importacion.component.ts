@@ -3,20 +3,17 @@ import { SectorService } from '../service/sector.service';
 import { ValoresService } from '../service/valores.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Importacion } from '../../utilidades/importarRegistros';
 import { Limpieza } from '../../utilidades/limpiezaRegistros';
 import * as XLSX from 'xlsx';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
-import { SitioService } from '../../cementerio/sitio/service/sitio.service';
-import { FallecidoService } from '../../cementerio/fallecido/service/fallecido.service';
 import { ImportarService } from '../service/importar.service';
-import { Socket } from 'ngx-socket-io';
 import { SectorI } from '../model/sector';
 import { ValorI } from '../model/valor';
+import { tap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -35,7 +32,7 @@ import { ValorI } from '../model/valor';
   ],
 })
 
-export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ImportacionComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -51,13 +48,13 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
   listaImportacion;
   listaRegistros = [];
   listaRegistros2 = [];
-  listadoImporte: EstadoImporteI[] = [];
 
   paso1 = true;
   paso2 = false;
   paso3 = false;
   paso4 = false;
   paso5 = false;
+  importando = true;
   indicadorImportacion = false;
   importacion = false;
   generarGastosMantenimiento = true;
@@ -75,12 +72,8 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     {nombre:'general'},
   ]
 
-  progreso = 0;
   cantidaRegistros = 0;
   cantidadRegistros = 0;
-
-  private subscribeSector: any;
-  private subscribeValores: any;
 
   displayedColumns: string[] = [
     'nombre',
@@ -90,27 +83,13 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     'adquisicion',
     'cantidad'
   ];
-  columnasImporte: string[] = [
-    'id',
-    'representante',
-    'sitio',
-    'f',
-    's',
-    'm',
-    'c',
-    'p',
-    'd'
-  ];
 
   constructor(
     private translate: TranslateService,
-    private zone: NgZone,
+    private _snackBar: MatSnackBar,
     private sectorservice: SectorService,
     private valoresservice: ValoresService,
-    private sitioservice: SitioService,
-    private representanteservice: RepresentanteService,
-    private fallecidoservice: FallecidoService,
-    private importarservice: ImportarService, private socket: Socket) { }
+    private importarservice: ImportarService) { }
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
@@ -119,28 +98,11 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.locale = langChangeEvent.lang;
             })
     this.obtenerValores();
-    this.socket.on('socketImportar',(data)=>{
-      if ( data.ok ) {
-        this.cargarListadoImporte(data);
-      } else {
-
-      }
-    });
   }
 
-  ngAfterViewInit() {
-
-  }
 
   ngOnDestroy() {
     this._translate.unsubscribe();
-
-    if (this.subscribeSector != undefined ) {
-      this.subscribeSector.unsubscribe();
-    }
-    if (this.subscribeValores != undefined ) {
-      this.subscribeValores.unsubscribe();
-    }
   }
 
   onFileChange(event) {
@@ -169,13 +131,9 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     fileReader.readAsArrayBuffer(this.file);
   }
 
-  obtenerRegistrosRepresentantes() {
-    return this.listaRegistros2.length;
-  }
+  obtenerRegistrosRepresentantes = () => this.listaRegistros2.length;
 
-  obtenerRegistrosSitio() {
-    return this.listaRegistros2.length;
-  }
+  obtenerRegistrosSitio = () => this.listaRegistros2.length;
 
   obtenerRegistrosServicio() {
     let cantidad = 0;
@@ -205,8 +163,8 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     let cantidad = 0;
     for (let i=0; i<this.listaRegistros2.length; i++) {
       for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Mantenimiento' ) {
-          if (this.listaRegistros2[i].deudas[j].ingreso === undefined) {
+        if (this.listaRegistros2[i].deudas[j].descripcion === 'Mantenimiento'  && new Date(this.listaRegistros2[i].deudas[j].pagoDesde).getFullYear() >= 2002) {
+          if (this.listaRegistros2[i].deudas[j].ingreso === undefined ) {
             cantidad  += Number(this.listaRegistros2[i].deudas[j].valor);
           } else {
             let cant = Number(this.listaRegistros2[i].deudas[j].valor) - Number(this.listaRegistros2[i].deudas[j].ingreso.cant);
@@ -222,8 +180,8 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     let cantidad = 0;
     for (let i=0; i<this.listaRegistros2.length; i++) {
       for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Servicio') {
-          if (this.listaRegistros2[i].deudas[j].ingreso === undefined) {
+        if (this.listaRegistros2[i].deudas[j].descripcion === 'Servicio' && new Date(this.listaRegistros2[i].deudas[j].pagoDesde).getFullYear() >= 2002) {
+          if (this.listaRegistros2[i].deudas[j].ingreso === undefined ) {
             cantidad  += Number(this.listaRegistros2[i].deudas[j].valor);
           } else {
             let cant = Number(this.listaRegistros2[i].deudas[j].valor) - Number(this.listaRegistros2[i].deudas[j].ingreso.cant);
@@ -235,29 +193,14 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     return cantidad;
   }
 
-  obtenerPagosMantenimiento() {
+  obtenerAbonos = (): number => {
     let cantidad = 0;
-    for (let i=0; i<this.listaRegistros2.length; i++) {
-      for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Mantenimiento' && this.listaRegistros2[i].deudas[j].ingreso !== undefined) {
-          cantidad  += Number(this.listaRegistros2[i].deudas[j].ingreso.cant);
-        }
-      }
-    }
-    return cantidad;
-  }
-
-  obtenerPagosServicio() {
-    let cantidad = 0;
-    for (let i=0; i<this.listaRegistros2.length; i++) {
-      for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Servicio' &&
-            this.listaRegistros2[i].deudas[j].ingreso !== undefined &&
-            new Date(this.listaRegistros2[i].deudas[j].pagoDesde).getFullYear() >= 2001) {
-          cantidad  += Number(this.listaRegistros2[i].deudas[j].ingreso.cant);
-        }
-      }
-    }
+    this.listaRegistros2.forEach((value: any) => {
+      cantidad = cantidad + value.ingresos
+      .filter((x: any) => new Date(x.pagoDesde).getFullYear() >= 2002)
+      .map((x: any) => Number(x.valor))
+      .reduce((a, b) => a + b, 0)
+    })
     return cantidad;
   }
 
@@ -267,7 +210,6 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
       new Date(registro.sitio.fechaAdquisicion) <= new Date(this.periodoFinal));
   }
 
-  // fines de visualizacion
   verCantidadRegistros() {
     this.listaRegistros2.forEach( registro => {
       this.cantidaRegistros = this.cantidaRegistros + 4;
@@ -282,100 +224,39 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   guardarRegistros() {
+    this.importando = false;
     this.guardarRegistrosImportacion();
   }
 
   private guardarRegistrosImportacion() {
     this.importarservice.agregarImportacion(this.listaRegistros2)
-    .subscribe( data => { console.log(data);})
+    .pipe( tap(data => {
+      if(data.ok) {
+        window.location.reload();
+        this.openSnackBar("Registros importados exitosamente!!", "ok")}
+      else { this.openSnackBar("A ocurrido un error al momento de importar, puedes intentarlo nuevamente!!", "ok")}
+    })).toPromise()
   }
-
-  // private guardarRegistroRepresentante() {
-  //   this.representanteservice.agregarRepresentante(
-  //     {
-  //       representante: 'nombre de prueba',
-  //       cedula: 'cedula de prueba'
-  //     })
-  //   .subscribe( data => { if (data.ok) { this.guardarRegistroSitio(data.data.id); } else { alert(data.message); }});
-  // }
-
-  // private guardarRegistroSitio(representante: number) {
-  //   this.sitioservice.agregarSitio(
-  //     {
-  //       representante: representante,
-  //       nombre: 'string',
-  //       tipo: 'string',
-  //       descripcion: 'string',
-  //       sector: 2,
-  //       fecha: new Date(),
-  //       observaciones: 'string',
-  //     })
-  //   .subscribe( data => { if (data.ok) { this.guardarRegistroFallecido(data.data.id); } else { alert(data.message); }});
-  // }
-
-  // private guardarRegistroFallecido(sitio: number) {
-  //   this.fallecidoservice.agregarFallecido(
-  //     {
-  //       sitio: sitio,
-  //       nombre: 'string',
-  //       cedula: 'string',
-  //       fecha: new Date(),
-  //       observaciones: 'string',
-  //     })
-  //   .subscribe( data => { if (data.ok) { this.guardarRegistroComprobante(sitio); } else { alert(data.message); } });
-  // }
-
-  // private guardarRegistroComprobante(sitio: number) {
-  //   this.sitioservice.agregarComprobante(
-  //     {
-  //       nombre: 'string',
-  //       total: 'string',
-  //       fecha: new Date(),
-  //       observaciones: 'string',
-  //     })
-  //   .subscribe( data => { if (data.ok) {this.guardarRegistroDeuda(sitio, data.data.id); } else { alert(data.message); } });
-  // }
-
-  // private guardarRegistroDeuda(sitio: number, comprobante: number) {
-  //   this.sitioservice.agregarDeuda(
-  //     {
-  //       sitio: sitio,
-  //       valor: 'string',
-  //       descripcion: 'string',
-  //       desde: new Date(),
-  //       hasta: new Date(),
-  //       observaciones: 'string',
-  //     })
-  //   .subscribe( data => { if (data.ok) {this.guardarRegistroIngreso(data.data.id, comprobante); } else {alert(data.message); } });
-  // }
-
-  // private guardarRegistroIngreso(deuda: number, comprobante: number) {
-  //   this.sitioservice.agregarIngreso(
-  //     {
-  //       deuda: deuda,
-  //       comprobante: comprobante,
-  //       cantidad: 'string'
-  //     })
-  //   .subscribe( data => { if (data.ok) {console.log(data.data.id);} else {alert(data.message);} });
-  // }
 
   private limpiarRegistros( data: any) {
    const limpiar: Limpieza = new Limpieza();
    this.listaImportacion = limpiar.limpiarRegistros(data);
+   console.log(this.listaImportacion);
    this.procesarInformacion();
    this.indicadorImportacion = false;
    this.importacion = true;
   }
 
-  private procesarInformacion() {
+  procesarInformacion() {
     const importar:Importacion = new Importacion(this.listaSectores, this.listaValores);
     this.listaRegistros = importar.generarDatosImporte(this.listaImportacion.registrosValidos);
     this.listaRegistros2 = this.listaRegistros;
+    console.log(this.listaRegistros2);
   }
 
   private obtenerValores() {
-    this.subscribeSector = this.sectorservice.sectores.subscribe( data => this.cargarValores(data) );
-    this.subscribeValores = this.valoresservice.valores.subscribe( data =>this.cargarValoresValor(data));
+    this.sectorservice.sectores.pipe( tap(data => this.cargarValores(data)) ).toPromise();
+    this.valoresservice.valores.pipe( tap(data =>this.cargarValoresValor(data)) ).toPromise();
   }
 
   private cargarValores( data: SectorI[]) {
@@ -386,59 +267,10 @@ export class ImportacionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.listaValores = data;
   }
 
-  private cargarListadoImporte (data) {
-
-    let crear = true;
-
-    this.listadoImporte.forEach ( (listado:EstadoImporteI) => {
-      if( data.R === listado.id) {
-        crear = false;
-      }
-    });
-
-    if (crear) {
-      this.listadoImporte.push(
-        {
-          id: data.R,
-          representante: data.r.representante.nombre,
-          sitio: data.S,
-          fallecido: data.F,
-          comprobante: data.C,
-          pagos: 0,
-          deudas: 0,
-          mantenimiento: 0,
-          servicio: 0,
-          comprobanteFecha: data.r.sitio.fechaAdquisicion
-        });
-        this.cantidadRegistros = this.cantidadRegistros + 4;
-        this.progreso = (this.cantidadRegistros / this.cantidaRegistros) * 100;
-    }
-    this.listadoImporte = [...this.listadoImporte];
-    this.actualizarListadoImporte(data);
+  private openSnackBar = (message: string, action: string): void => {
+    this._snackBar.open(message, action, { duration: 5000 });
   }
 
-  private actualizarListadoImporte (data) {
-    for (let i=0; i<this.listadoImporte.length; i++) {
-      if( data.R === this.listadoImporte[i].id) {
-        if (data.M === 'Mantenimiento') {
-          this.listadoImporte[i].mantenimiento = Number(this.listadoImporte[i].mantenimiento) + 1;
-        } else {
-          this.listadoImporte[i].servicio = Number(this.listadoImporte[i].servicio) + 1;
-        }
-        if ( new Date(data.FD) > new Date('2001/01/01')) {
-          this.listadoImporte[i].pagos = Number(this.listadoImporte[i].pagos) + Number(data.I);
-          this.listadoImporte[i].deudas = Number(this.listadoImporte[i].deudas) + Number(data.D);
-        }
-        if (data.I === 0) {
-          this.cantidadRegistros = this.cantidadRegistros + 1;
-        } else {
-          this.cantidadRegistros = this.cantidadRegistros + 2;
-        }
-        this.progreso = (this.cantidadRegistros / this.cantidaRegistros) * 100;
-      }
-    }
-    this.listadoImporte = [...this.listadoImporte];
-  }
 }
 
 interface RegistroI {
@@ -457,19 +289,4 @@ interface RegistroI {
   FechaInicio: string;
   ObservacionesSitio: string;
   Total: string;
-}
-
-
-
-interface EstadoImporteI {
-  id: number;
-  representante: string;
-  sitio: boolean;
-  fallecido: boolean;
-  mantenimiento: number;
-  servicio: number;
-  comprobante: number;
-  pagos: number;
-  deudas: number;
-  comprobanteFecha: Date;
 }
