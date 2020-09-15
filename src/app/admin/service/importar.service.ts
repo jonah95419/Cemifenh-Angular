@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { throwError, Observable } from 'rxjs';
 import { HttpErrorResponse, HttpHeaders, HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import { catchError, publish, refCount, shareReplay, timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 const AUTH_SERVER = environment.baseUrl;
@@ -15,7 +15,14 @@ export class ImportarService {
 
   agregarImportacion(registros: any): Observable<any> {
     return this.httpClient.post<any>(`${AUTH_SERVER}/importar/`, JSON.stringify(registros), this.httpOptions)
-    .pipe(catchError(this.handleError));
+    //.timeout(3000, new Error('timeout exceeded'))
+      .pipe(
+        timeout(3000000),
+        catchError(this.handleError),
+        shareReplay(1),
+        publish(),
+        refCount()
+      );
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -25,7 +32,7 @@ export class ImportarService {
 
   private httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type':  'application/json',
+      'Content-Type': 'application/json', 'Keep-Alive': 'timeout=560'
       // 'authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).stsTokenManager.accessToken}`
     })
   };
