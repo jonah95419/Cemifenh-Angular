@@ -1,28 +1,36 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-2" style="display: flex; flex-direction: column;">
-            <mat-card style="background: #FAFAFA;">
-                <mat-card-header>
-                    <mat-card-title>Tareas</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div style="display: flex; flex-direction: column;">
-                        <a (click)="cargarDetalles('lista-precios')" routerLinkActive="active" style="color: #007Bff;">Lista de precios</a>
-                        <a (click)="cargarDetalles('importar-datos')" routerLinkActive="active" style="color: #007Bff;">Importar datos</a>
-                        <a (click)="cargarDetalles('copia-seguridad')" routerLinkActive="active" style="color: #007Bff;">Copia de seguridad</a>
-                    </div>
-                </mat-card-content>
-            </mat-card>
+<mat-sidenav-container class="example-container">
+    <mat-sidenav opened mode="side" style="background-color: white; padding: 12px;">
+        <div style="display: flex; flex-direction: column; width: 170px;">
+            <a class="navigation-item " [routerLink]="'/administracion/lista-valores/'" routerLinkActive="active" routerLinkActive #rlad1="routerLinkActive">
+                <div style="display: flex; flex-direction: row;">
+                    <label> Lista de valores</label>
+                    <div [ngClass]="{'indicador-filtro': rlad1.isActive}"></div>
+                </div>
+            </a>
+            <a class="navigation-item " [routerLink]="'/administracion/importar-datos/'" routerLinkActive="active" routerLinkActive #rlad2="routerLinkActive">
+                <div style="display: flex; flex-direction: row;">
+                    <label>Importar datos</label>
+                    <div [ngClass]="{'indicador-filtro': rlad2.isActive}"></div>
+                </div>
+            </a>
+            <a class="navigation-item " [routerLink]="'/administracion/copia-seguridad/'" routerLinkActive="active" routerLinkActive #rlad3="routerLinkActive">
+                <div style="display: flex; flex-direction: row;">
+                    <label>Copia de seguridad</label>
+                    <div [ngClass]="{'indicador-filtro': rlad3.isActive}"></div>
+                </div>
+            </a>
         </div>
-        <div class="col-10" style="margin-top: 24px;">
-            <div style="display: flex; padding-left: 12px; padding-top: 6px; background: #FAFAFA; margin-bottom: 24px;">
-                <label>{{detalles}}</label>
-                <button *ngIf="detalle == 'lista-precios'" mat-raised-button style="margin-left: auto; margin-top: 3px; margin-right: 24px; height: 40px;">registrar valor</button>
-                <button *ngIf="detalle == 'Deudas pendientes'" mat-raised-button style="margin-left: auto; margin-top: 3px; margin-right: 24px; height: 40px;">registar pago</button>
-                <button *ngIf="detalle == 'Pagos realizados'" mat-raised-button style="margin-left: auto; margin-top: 3px; margin-right: 24px; height: 40px;">ver pago</button>
-            </div>
-            <router-outlet></router-outlet>
-        </div>
+    </mat-sidenav>
+
+    <mat-sidenav opened mode="side" position="end">
+        <!-- <div style="width: 150px;">
+            {{admin}} descripcion
+        </div> -->
+    </mat-sidenav>
+
+    <div class="container-detalles">
+        <router-outlet>
+        </router-outlet>
     </div>
 
-</div>
+</mat-sidenav-container>
