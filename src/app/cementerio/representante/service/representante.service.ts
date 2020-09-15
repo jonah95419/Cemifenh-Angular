@@ -76,6 +76,26 @@ export class RepresentanteService {
       })
   }
 
+  actualizarRepresentante(id, datos) {
+    this.httpClient
+    .put<any>(`${AUTH_SERVER}/representante/${id}`, JSON.stringify(datos), this.httpOptions)
+    .pipe(catchError(this.handleError))
+    .subscribe((data: RepresentantesResponse) => {
+      if (data.ok) {
+        this.dataStore.representantes.forEach((t, i) => {
+          if (t.id === id) {
+            this.dataStore.representantes[i].nombre = datos.nombre;
+            this.dataStore.representantes[i].cedula = datos.cedula;
+          }
+        });
+        this.openSnackBar('Registro actualizado', 'ok');
+        this._representantes.next(Object.assign({}, this.dataStore).representantes);
+      } else {
+        this.openSnackBar('A ocurrido un error, puedes intentarlo nuevamente en unos instantes.', 'ok');
+      }
+    });
+  }
+
   eliminarRepresentante(representante: any): Observable<any> {
     return this.httpClient
     .delete<any>(`${AUTH_SERVER}/representante/${representante}`, this.httpOptions)
