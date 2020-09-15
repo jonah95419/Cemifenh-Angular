@@ -4,7 +4,7 @@ export interface DeudaI {
   pagoDesde: Date;
   pagoHasta: Date;
   observaciones: string;
-  ingreso: IngresoI;
+  tipo: string;
 }
 
 export interface DeudaRepresentanteI {
@@ -27,10 +27,4 @@ export interface ResponseDeudaRepresentanteI {
   data?: DeudaRepresentanteI[];
   message?: string;
   cant: number;
-}
-
-export interface IngresoI {
-  codigoD: number;
-  condigoC: number;
-  cant: string;
 }
