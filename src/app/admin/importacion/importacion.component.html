@@ -1,4 +1,4 @@
-<div class="mat-elevation-z1 container-fluid" style="width: 100%; ">
+<div class="mat-elevation-z1 container-fluid" style="width: 100%; background-color: white;">
     <div class="row">
         <div class="col menu">
             <button mat-button [disabled]="!paso1"><mat-icon>looks_one</mat-icon> elegir archivo</button>
@@ -13,7 +13,7 @@
             <div class="form-group" style="text-align: center;">
                 <h1>Por favor selecciona el archivo <b>Excel</b> de registros. </h1>
                 <p style="margin-top: 24px; margin-bottom: 36px; width: 50%; margin-left: auto; margin-right: auto;">No te olvides* de revisar el <i>formato de importación</i> de registros y que los datos cumplan los parametros minimos establecidos.
-                    <br> Para mayor información puedes dirigirte a la sección de <b style="cursor: pointer; text-decoration: underline;">ayuda</b> que se encuentra en la parte inferior del menú.
+                    <!-- <br> Para mayor información puedes dirigirte a la sección de <b style="cursor: pointer; text-decoration: underline;">ayuda</b> que se encuentra en la parte inferior del menú. -->
                 </p>
                 <div style="display: flex;">
                     <input type="file" class="form-control" (change)="onFileChange($event);" style="width: 70%; margin-left: auto;" accept=".xlsx, .xls">
@@ -30,12 +30,12 @@
                     <div class="row">
                         <div class="col-2">Registros válidos:</div>
                         <div class="col-2" style="text-align: right;">{{listaImportacion.registrosValidos.length}}</div>
-                        <div class="col-8"><a style="color: #007Bff; text-decoration: underline; cursor: pointer;">ver</a></div>
+                        <!-- <div class="col-8"><a style="color: #007Bff; text-decoration: underline; cursor: pointer;">ver</a></div> -->
                     </div>
                     <div class="row">
                         <div class="col-2">Registros inválidos:</div>
                         <div class="col-2" style="text-align: right;">{{listaImportacion.registrosInvalidos.length}}</div>
-                        <div class="col-8"><a style="color: #007Bff; text-decoration: underline; cursor: pointer;">ver</a></div>
+                        <!-- <div class="col-8"><a style="color: #007Bff; text-decoration: underline; cursor: pointer;">ver</a></div> -->
                     </div>
                     <div class="row">
                         <div class="col-2">Total registros:</div>
