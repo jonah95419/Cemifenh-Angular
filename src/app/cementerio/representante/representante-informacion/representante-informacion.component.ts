@@ -16,8 +16,8 @@ export class RepresentanteInformacionComponent implements OnInit {
   representante: RepresentanteI;
 
   representanteForm = this.fb.group({
-    id: new FormControl({ value: '', disabled: true }),
-    nombre: new FormControl(''),
+    id: '',
+    nombre: new FormControl('', Validators.required),
     cedula: new FormControl('', Validators.min(0)),
   })
 
@@ -33,6 +33,16 @@ export class RepresentanteInformacionComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  submit = () => {
+    if(this.representanteForm.valid) {
+      this.apiRepresentantes.actualizarRepresentante(this.representanteForm.value.id, this.representanteForm.value)
+    }
+  }
+
+  get representanteFormControls() {
+    return this.representanteForm.controls;
+  }
 
   private obtenerValores(id: number) {
     if (id) {

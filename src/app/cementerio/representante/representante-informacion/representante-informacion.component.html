@@ -1,12 +1,13 @@
 <div *ngIf="representante">
     <div>
-        <form [formGroup]="representanteForm" novalidate>
+        <form [formGroup]="representanteForm" (ngSubmit)="submit()" novalidate>
             <div class="fields-container">
                 <div style="display: flex; flex-direction: row;">
                     <p>
                         <mat-form-field style="width: 280px;">
                             <mat-label>Nombre representante:</mat-label>
                             <input formControlName="nombre" type="text" matInput>
+                            <mat-error *ngIf="representanteFormControls.nombre.errors?.required">Campor requerido *</mat-error>
                         </mat-form-field>
                     </p>
                     <p>
@@ -15,7 +16,7 @@
                             <input formControlName="cedula" type="text" matInput>
                         </mat-form-field>
                     </p>
-                    <button style="height: max-content; background: white;" mat-stroked-button class="btn-submit" matTooltip="guardar cambios">actualizar</button>
+                    <button type="submit" style="height: max-content; background: white;" mat-stroked-button class="btn-submit" matTooltip="guardar cambios">actualizar</button>
                 </div>
             </div>
         </form>
