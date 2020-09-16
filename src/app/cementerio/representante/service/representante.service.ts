@@ -125,7 +125,7 @@ export class RepresentanteService {
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
-      // 'authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).stsTokenManager.accessToken}`
+      'authorization': `Bearer ${localStorage.getItem('access_token')}`
     })
   };
 }
