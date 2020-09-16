@@ -15,7 +15,7 @@ export class ImportarService {
 
   agregarImportacion(registros: any): Observable<any> {
     return this.httpClient.post<any>(`${AUTH_SERVER}/importar/`, JSON.stringify(registros), this.httpOptions)
-    //.timeout(3000, new Error('timeout exceeded'))
+      //.timeout(3000, new Error('timeout exceeded'))
       .pipe(
         timeout(3000000),
         catchError(this.handleError),
@@ -32,8 +32,8 @@ export class ImportarService {
 
   private httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type': 'application/json', 'Keep-Alive': 'timeout=560'
-      // 'authorization': `Bearer ${JSON.parse(localStorage.getItem('user')).stsTokenManager.accessToken}`
+      'Content-Type': 'application/json', 'Keep-Alive': 'timeout=560',
+      'authorization': `Bearer ${localStorage.getItem('access_token')}`
     })
   };
 }
