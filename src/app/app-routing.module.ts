@@ -18,14 +18,18 @@ import { SitioDetallesListaFallecidosComponent } from './cementerio/sitio/sitio-
 import { ReportesComponent } from './reportes/reportes/reportes.component';
 import { InvoiceComponent } from './reportes/invoice/invoice.component';
 import { PrintLayoutComponent } from './reportes/print-layout/print-layout.component';
+import { IngresoComponent } from './user/ingreso/ingreso.component';
+import { CallbackComponent } from './callback/callback.component';
+import { SecureInnerPagesGuard } from './core/guard/secure-inner-pages.guard';
+import { AuthGuard } from './core/guard/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/inicio', pathMatch: 'full' },
+  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
-    path: 'inicio', component: InicioComponent,
+    path: 'inicio', component: InicioComponent, canActivate: [AuthGuard],
     children: [
       {
-        path: 'representantes/:periodo', component: RepresentanteComponent,
+        path: 'representantes/:periodo', component: RepresentanteComponent, canActivate: [AuthGuard],
         children: [
           { path: 'historial/:id', component: HistorialComponent },
         ]
@@ -33,13 +37,13 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'representantes', component: RepresentantesComponent,
+    path: 'representantes', component: RepresentantesComponent, canActivate: [AuthGuard],
     children: [
       {
-        path: 'registro/:id', component: RepresentanteInformacionComponent,
+        path: 'registro/:id', component: RepresentanteInformacionComponent, canActivate: [AuthGuard],
         children: [
           {
-            path: 'sitios', component: SitiosComponent,
+            path: 'sitios', component: SitiosComponent, canActivate: [AuthGuard],
             children: [
               { path: 'informacion', component: SitioDetallesInformacionComponent },
               { path: 'fallecidos', component: SitioDetallesListaFallecidosComponent },
@@ -53,7 +57,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'reportes', component: ReportesComponent,
+    path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard],
     children: [
       {
         path: 'print', outlet: 'print', component: PrintLayoutComponent,
@@ -64,13 +68,16 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'administracion', component: AdministracionComponent,
+    path: 'administracion', component: AdministracionComponent, canActivate: [AuthGuard],
     children: [
       { path: 'lista-valores', component: PreciosComponent },
       { path: 'importar-datos', component: ImportacionComponent },
       { path: 'copia-seguridad', component: CopiaSeguridadComponent },
     ]
   },
+  { path: 'si-admin', component: IngresoComponent },
+  {
+    path: 'callback', component: CallbackComponent}
 ];
 
 @NgModule({
