@@ -22,6 +22,8 @@ import { SitioModule } from './cementerio/sitio/sitio.module';
 import { AdminModule } from './admin/admin.module';
 import { InicioModule } from './inicio/inicio.module';
 import { ReportesModule } from './reportes/reportes.module';
+import { UserModule } from './user/user.module';
+import { CoreModule } from './core/core.module';
 
 registerLocaleData(localeES, 'es');
 const AUTH_SERVER = environment.baseUrl
@@ -46,6 +48,8 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
     AdminModule,
     InicioModule,
     ReportesModule,
+    UserModule,
+    CoreModule,
     SocketIoModule.forRoot(config),
     HttpClientModule,
         TranslateModule.forRoot({
