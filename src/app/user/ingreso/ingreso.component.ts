@@ -54,6 +54,10 @@ export class IngresoComponent implements OnInit {
       );
   }
 
+  cerrarLogin = () => {
+    this.router.navigate(["/"]);
+  }
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
