@@ -1,0 +1,142 @@
+<mat-toolbar class="mat-elevation-z1" style="background-color: #00589D; color: white;">
+    <span class="example-spacer"></span>
+    <div mat-card-avatar [style.background-image]=" 'url(assets/images/logoCementerio.jpg)' " (click)="initLogin();" class="example-header-image "></div>
+    <div style="margin-left: 12px;">GAD San Pablo del Lago</div>
+    <span class="example-spacer"></span>
+</mat-toolbar>
+<div *ngIf="step == 0" class="contenedor-step">
+    <h1 style="margin: 24px auto;">Consultar Estado de Cuenta</h1>
+    <mat-card>
+        <mat-card-header style="display: block; background-color: #00589D; color: white; padding: 12px;">
+            <mat-card-title>
+                <div style="display: flex;">
+                    <div style="margin: auto 0px;">Información del representante</div>
+                    <button mat-icon-button matTooltip="Representante que se asignó el registro del/los sitio(s)" style="margin-left: auto;"><mat-icon style="color: white;">help</mat-icon></button>
+                </div>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="margin-top: 36px; padding: 0px 16px;">
+            <label id="example-radio-group-label">Instructivo para búsqueda de representantes</label>
+            <mat-radio-group class="example-radio-group" [(ngModel)]="condicion" (change)="cambioCondicion($event);">
+                <mat-radio-button value="1">RUC/CI</mat-radio-button>
+                <mat-radio-button value="2">Nombre</mat-radio-button>
+            </mat-radio-group>
+            <mat-form-field appearance="outline" style="width: 100%;" *ngIf="condicion == '2'">
+                <input type="text" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 100%;" *ngIf="condicion == '1'">
+                <input min="0" type="number" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions style="padding: 0px 16px 16px 16px;" align=end>
+            <button *ngIf="condicion == '1'" [disabled]="parametro <= 999999999" (click)="buscarRepresentante()" mat-raised-button style="border-radius: 18px;">Buscar</button>
+            <button *ngIf="condicion == '2'" [disabled]="parametro.length < 4" (click)="buscarRepresentante()" mat-raised-button style="border-radius: 18px;">Buscar </button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+
+<div *ngIf="step == 1" class="contenedor-step">
+    <h1 style="margin: 24px auto;">Consulta de Estado de Cuenta</h1>
+    <mat-card>
+        <mat-card-header style="display: block; background-color: #00589D; color: white; padding: 12px;">
+            <mat-card-title>
+                <div style="display: flex;">
+                    <div style="margin: auto 0px;">Resultado de la búsqueda</div>
+                    <button mat-icon-button matTooltip="Registro(s) que coincide(n) con los parametros de la búsqueda" style="margin-left: auto;"><mat-icon style="color: white;">help</mat-icon></button>
+                </div>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="margin-top: 0px; padding: 0px 16px; overflow: auto; max-height: 50vh;">
+            <table #table mat-table [dataSource]="representantes$ | async" style="margin-top: 12px; " matSort>
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Representante </th>
+                    <td mat-cell *matCellDef="let row"> {{row.nombre}} </td>
+                </ng-container>
+                <ng-container matColumnDef="cedula">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> RUC/CI </th>
+                    <td mat-cell *matCellDef="let row"> {{row.cedula}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="verEstadoCuenta(row);"></tr>
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="2">Sin resultados</td>
+                </tr>
+            </table>
+        </mat-card-content>
+        <mat-card-actions style="padding: 0px 16px 16px 16px;">
+            <button (click)="step = 0" mat-raised-button style="border-radius: 18px;">Volver</button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+<div *ngIf="step == 2" class="contenedor-step">
+    <h1 style="margin: 24px auto;">Consulta de Estado de Cuenta</h1>
+    <mat-card style="width: 840px;">
+        <mat-card-header style="display: block; background-color: #00589D; color: white; padding: 12px;">
+            <mat-card-title>
+                <div style="display: flex;">
+                    <div style="margin: auto 0px;">{{representante.nombre}} - {{representante.cedula}}</div>
+                    <button (click)="comprobante();" mat-mini-fab style="margin-left: auto; background-color: white;" matTooltip="Imprimir"><mat-icon style="color: #00589D; font-size: x-large !important;">print</mat-icon></button>
+                </div>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="margin:0px; padding: 0px 16px; overflow: auto; max-height: 50vh;">
+
+            <table mat-table [dataSource]="estadoCuenta$ | async" style="margin-top: 12px; " matSort>
+                <ng-container matColumnDef="fecha">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+                    <td mat-cell *matCellDef="let row">{{row.fecha | date : 'MMM d, y':undefined:locale}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="sector">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sector </th>
+                    <td mat-cell *matCellDef="let row" [matTooltip]="row.tipo + ', ' + row.descripcion"> {{row.sector}}</td>
+                </ng-container>
+                <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción
+                    </th>
+                    <td mat-cell *matCellDef="let row">
+                        {{row.pago}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="cargos">
+                    <th mat-header-cell *matHeaderCellDef> Cargos </th>
+                    <td mat-cell *matCellDef="let row" [style.color]="row.desde
+              < '2001/01/01' ? 'blue': 'red'">
+                        {{ row.estado_cuenta !='deuda' ? '' : row.cantidad | currency}} {{row.desde
+                        < '2001/01/01' ? '(sucres)': ''}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="abonos">
+                    <th mat-header-cell *matHeaderCellDef> Abonos </th>
+                    <td mat-cell *matCellDef="let row" [style.color]="row.desde
+            < '2001/01/01' ? 'blue': 'green'">
+                        {{ row.estado_cuenta =='deuda' ? '' : row.cantidad | currency}} {{row.desde
+                        < '2001/01/01' ? '(sucres)': ''}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsEC; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsEC;"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="2">Sin resultados</td>
+                </tr>
+
+            </table>
+
+        </mat-card-content>
+        <mat-card-actions style="padding: 0px 16px 16px 16px;" align=end>
+            <button mat-raised-button style="border-radius: 18px; margin-top: 12px;" (click)="nuevaConsulta();">Nueva consulta</button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+<footer class="footer mat-elevation-z6" style="background-color: #00589D; color: white;">
+    <div class="content has-text-centered" style="display: flex;">
+        <p style="margin: 0; padding: 6px 0px 0px 6px; font-size: small;">
+            Departamento de contabilidad
+        </p>
+        <span class="example-spacer"></span>
+        <p style="margin: 0; padding-top: 6px; font-size: small;">Administracion 2019 - 2023</p>
+        <span class="example-spacer"></span>
+        <p style="margin: 0; padding: 6px 12px 0px 0px; font-size: small;">Contáctos: 062918495 – 062918815</p>
+    </div>
+</footer>
