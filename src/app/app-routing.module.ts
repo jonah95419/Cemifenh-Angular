@@ -24,7 +24,8 @@ import { SecureInnerPagesGuard } from './core/guard/secure-inner-pages.guard';
 import { AuthGuard } from './core/guard/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+  //{ path: '', redirectTo: 'consultas', pathMatch: 'full' },
+  {path: '', component: CallbackComponent, pathMatch: 'full'},
   {
     path: 'inicio', component: InicioComponent, canActivate: [AuthGuard],
     children: [
@@ -76,8 +77,7 @@ const routes: Routes = [
     ]
   },
   { path: 'si-admin', component: IngresoComponent },
-  {
-    path: 'callback', component: CallbackComponent}
+
 ];
 
 @NgModule({
