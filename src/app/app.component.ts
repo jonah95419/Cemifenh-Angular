@@ -5,6 +5,7 @@ import { SectorService } from './admin/service/sector.service';
 import { ValoresService } from './admin/service/valores.service';
 import { AuthenticationService } from './core/service/authentication.service';
 import { tap } from 'rxjs/operators';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -12,14 +13,16 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'cementerio';
+  title: string = 'cementerio';
 
   constructor(
     public authenticationService: AuthenticationService,
     private apiSitios: SitioService,
     private apiValores: ValoresService,
     private apiRepresentantes: RepresentanteService,
-    private apiSectores: SectorService) {
+    private apiSectores: SectorService,
+    private titlePage: Title) {
+      //this.titlePage.setTitle("Some title");
     authenticationService.user$.pipe(
       tap((x: any) => {
         const accessToken = localStorage.getItem('access_token');
