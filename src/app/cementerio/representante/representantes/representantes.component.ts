@@ -21,6 +21,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
+
   displayedColumns: string[] = ['nombre', 'cedula'];
 
   dataSource: MatTableDataSource<RepresentanteI>;
@@ -49,6 +50,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
     this.obtenerValoresRepresentantes();
     this.cdRef.detectChanges();
   }
@@ -71,7 +73,6 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(DialogRegistroRepresentante, { width: '600px', panelClass: "my-class" });
     dialogRef.afterClosed().subscribe();
   }
-
 
   eliminarRepresentante = () => {
     this.apiRepresentantes.eliminarRepresentante(this.representante.id).pipe(
@@ -96,6 +97,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
   }
 
   private obtenerValoresRepresentantes(): void {
+    this.apiRepresentantes.listarRepresentantesTodo();
     this.apiRepresentantes.representantes.pipe(
       tap((data: RepresentanteI[]) => this.cargarValoresRepresentantes(data)),
     ).toPromise();
