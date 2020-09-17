@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { AngularModule } from '../angular.module';
 import { MatInputModule } from '@angular/material/input';
 import { CallbackComponent } from '../callback/callback.component';
+import { CallbackService } from '../callback/callback.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,9 @@ import { CallbackComponent } from '../callback/callback.component';
     MatFormFieldModule,
     MatInputModule,
   ],
-
+  providers:[
+    CallbackService
+  ],
 })
 
 export class UserModule { }
