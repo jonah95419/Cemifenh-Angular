@@ -228,7 +228,7 @@ export class PDFClass {
   }
 
   private getLogo = () => {
-    this.http.get('/assets/images/logoCementerio.jpg', { responseType: 'blob' })
+    this.http.get('/assets/images/logoCementerio_reporte.jpg', { responseType: 'blob' })
       .subscribe(res => {
         const reader = new FileReader();
         reader.readAsDataURL(res);
