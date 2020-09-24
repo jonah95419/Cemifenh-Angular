@@ -12,7 +12,6 @@ import { AdministracionComponent } from './administracion/administracion.compone
 import { CopiaSeguridadComponent } from './copia-seguridad/copia-seguridad.component';
 import { ImportacionComponent } from './importacion/importacion.component';
 import { PreciosComponent } from './precios/precios.component';
-import { LineChart1Component } from '../chart/line-chart1/line-chart1.component';
 
 
 @NgModule({
@@ -21,7 +20,6 @@ import { LineChart1Component } from '../chart/line-chart1/line-chart1.component'
     CopiaSeguridadComponent,
     ImportacionComponent,
     PreciosComponent,
-    LineChart1Component
   ],
   imports: [
     AppRoutingModule,
