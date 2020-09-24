@@ -35,7 +35,7 @@ export class PDFClass {
         header.col_4 ? row.push(header.col_4) : '';
         header.col_5 ? row.push(header.col_5) : '';
         header.col_6 ? row.push(header.col_6) : '';
-        if (tipo === 'abonos_y_cargos' || tipo === 'sitios'){
+        if (tipo === 'abonos_y_cargos' || tipo === 'sitios') {
           header.col_7 ? row.push(header.col_7) : '';
         }
         this.body.push(row);
@@ -52,11 +52,11 @@ export class PDFClass {
         row.push(d.sector.toString());
         row.push(d.descripcion.toString());
         if (d.estado_cuenta === 'cargo') {
-          row.push({ text: d.cantidad, alignment: 'center' });
+          row.push({ text: (Math.round(d.cantidad * 100) / 100).toFixed(2), alignment: 'center' });
           row.push({ text: '', alignment: 'center' });
         } else {
           row.push({ text: '', alignment: 'center' });
-          row.push({ text: d.cantidad, alignment: 'center' });
+          row.push({ text: (Math.round(d.cantidad * 100) / 100).toFixed(2), alignment: 'center' });
         }
       }
 
@@ -66,10 +66,10 @@ export class PDFClass {
         row.push(d.motivo.toString());
         row.push(d.sector.toString());
         row.push(d.descripcion.toString());
-        row.push({ text: d.cantidad, alignment: 'center' });
+        row.push({ text: (Math.round(d.cantidad * 100) / 100).toFixed(2), alignment: 'center' });
       }
 
-      if(tipo === 'sitios') {
+      if (tipo === 'sitios') {
         row.push(d.num.toString());
         row.push(d.representante.toString());
         row.push(d.cedula.toString());
@@ -82,8 +82,51 @@ export class PDFClass {
       this.body.push(row);
     })
 
+    if (tipo === 'abonos_y_cargos') {
+      var row = new Array();
+      row.push("");
+      row.push("");
+      row.push("");
+      row.push("");
+      row.push({ text: 'Total', alignment: 'right', bold: true });
+      row.push({ text: this.totalCantidadCargos(datos), alignment: 'center', bold: true });
+      row.push({ text: this.totalCantidadAbonos(datos), alignment: 'center', bold: true });
+      this.body.push(row);
+    }
+
+    if (tipo === 'abonos' || tipo === 'cargos') {
+      var row = new Array();
+      row.push('');
+      row.push('');
+      row.push('');
+      row.push('');
+      row.push({ text: 'Total', alignment: 'right', bold: true });
+      row.push({ text: this.totalCantidad(datos), alignment: 'center', bold: true });
+      this.body.push(row);
+    }
+
     this.generatePdf(opcion_pdf);
   }
+
+  private totalCantidad = (data: []): string => (Math
+    .round(data
+      .map((x: any) => Number(x.cantidad))
+      .reduce((a, b) => a + b, 0) * 100) / 100)
+    .toFixed(2);
+
+  private totalCantidadAbonos = (data: []): string => (Math
+    .round(data
+      .map((x: any) => { if (x.estado_cuenta === 'abono') return Number(x.cantidad) })
+      .filter(Boolean)
+      .reduce((a, b) => a + b, 0) * 100) / 100)
+    .toFixed(2);
+
+  private totalCantidadCargos = (data: []): string => (Math
+    .round(data
+      .map((x: any) => { if (x.estado_cuenta === 'cargo') return Number(x.cantidad) })
+      .filter(Boolean)
+      .reduce((a, b) => a + b, 0) * 100) / 100)
+    .toFixed(2);
 
   private cargarHeaders(tipo) {
 
@@ -134,6 +177,7 @@ export class PDFClass {
         }];
       },
       footer: {
+        margin: [20, 10, 20, 20],
         columns: [
           [{ text: "Calle Chiriboga Y Abdón Calderón, Parque Central", alignment: 'center', fontSize: 8, margin: [8, 8] }],
           [{ text: "062918495 – 062918815", alignment: 'center', fontSize: 8, margin: [8, 8] }],
@@ -147,8 +191,9 @@ export class PDFClass {
             this.getProfilePicObject(),
             {
               width: 'auto',
-              text: 'GOBIERNO AUTÓNOMO DESCENTRALIZADO PARROQUIAL RURAL INTERCULTURAL PLURINACIONAL SAN PABLO DEL LAGO \n OTAVALO - IMBABURA',
+              text: 'GOBIERNO AUTÓNOMO DESCENTRALIZADO PARROQUIAL RURAL SAN PABLO DEL LAGO \nOTAVALO - IMBABURA',
               alignment: 'center',
+              fontSize: 16,
             }],
           columnGap: 10
         },
@@ -159,7 +204,7 @@ export class PDFClass {
         {
           columns: [
             [{
-              text: this.cabecera.nombre,
+              text: 'Emitido por: Junta parroquial',
               bold: true,
             },
             {
@@ -205,7 +250,7 @@ export class PDFClass {
       info: {
         title: 'Reporte_GADSPL',
         author: "Grupo Feleniah",
-        subject: 'Jhonatan Stalin Salazar Hurtado',
+        subject: 'Junta parroquial',
         keywords: 'GAN San Pablo',
       },
       styles: {
