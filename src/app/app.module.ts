@@ -6,8 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CabeceraComponent } from './cabecera/cabecera.component';
 import { HttpClientModule} from '@angular/common/http';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-import { NgxAutoScrollModule } from "ngx-auto-scroll";
 
 import { registerLocaleData } from '@angular/common';
 import localeES from '@angular/common/locales/es-EC';
@@ -27,7 +25,6 @@ import { CoreModule } from './core/core.module';
 
 registerLocaleData(localeES, 'es');
 const AUTH_SERVER = environment.baseUrl
-const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
 
 @NgModule({
   declarations: [
@@ -41,7 +38,6 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
     AppRoutingModule,
     BrowserAnimationsModule,
     MatMomentDateModule,
-    NgxAutoScrollModule,
     FallecidoModule,
     RepresentanteModule,
     SitioModule,
@@ -50,7 +46,6 @@ const config: SocketIoConfig = { url: AUTH_SERVER, options: {} };
     ReportesModule,
     UserModule,
     CoreModule,
-    SocketIoModule.forRoot(config),
     HttpClientModule,
         TranslateModule.forRoot({
             loader: {
