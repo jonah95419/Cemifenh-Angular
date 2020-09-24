@@ -8,7 +8,7 @@ import { SectorI } from '../../../admin/model/sector';
 import { ServiceC } from '../service-c/sitio-serviceC';
 import { SectorService } from '../../../admin/service/sector.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Route } from '@angular/compiler/src/core';
+
 @Component({
   selector: 'app-sitio-detalles-informacion',
   templateUrl: './sitio-detalles-informacion.component.html',
@@ -17,19 +17,19 @@ import { Route } from '@angular/compiler/src/core';
 export class SitioDetallesInformacionComponent implements OnInit {
 
   listaSectores: SectorI[];
-  listaTipo: string[] = ['arriendo', 'compra', 'donacion', 'Arriendo', 'Compra', 'Donación'];
-  listaDescripcion: string[] = ['boveda', 'lote propio', 'piso', 'Boveda', 'Bóveda', 'Lote propio', 'Piso'];
+  listaTipo: string[] = ['Arriendo', 'Compra', 'Donación'];
+  listaDescripcion: string[] = ['Bóveda', 'Lote propio', 'Piso'];
 
   id_sitio: string = "";
 
   sitioForm = this.fb.group({
     id: new FormControl(''),
     sector: new FormControl({ value: '' }),
-    nombre: new FormControl({ value: '', disabled: true }),
+    nombre: new FormControl({ value: '', disabled: false }),
     observaciones: new FormControl(''),
-    tipo: new FormControl({ value: '', disabled: true }),
-    descripcion: new FormControl({ value: '', disabled: true }),
-    adquisicion: new FormControl({ value: '', disabled: true }),
+    tipo: new FormControl({ value: '', disabled: false }),
+    descripcion: new FormControl({ value: '', disabled: false }),
+    adquisicion: new FormControl({ value: '', disabled: false }),
   })
 
   constructor(
@@ -96,7 +96,21 @@ export class SitioDetallesInformacionComponent implements OnInit {
   }
 
   private cargarValores(data: SitioI) {
-    if (data) { this.sitioForm.patchValue(data); }
+    if (data) {
+      if(data.tipo.toLowerCase() === 'donacion' || data.tipo.toLowerCase() === 'donación' ) data.tipo = 'Donación';
+
+      if(data.tipo.toLowerCase() === 'arriendo' ) data.tipo = 'Arriendo';
+
+      if(data.tipo.toLowerCase() === 'compra' ) data.tipo = 'Compra';
+
+      if(data.descripcion.toLowerCase() === 'boveda' || data.descripcion.toLowerCase() === 'bóveda') data.descripcion = 'Bóveda';
+
+      if(data.descripcion.toLowerCase() === 'lote propio') data.descripcion = 'Lote propio';
+
+      if(data.descripcion.toLowerCase() === 'piso') data.descripcion = 'Piso';
+
+      this.sitioForm.patchValue(data);
+    }
   }
 
   private openSnackBar = (message: string, action: string) => {
