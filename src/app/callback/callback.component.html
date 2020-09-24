@@ -25,12 +25,14 @@
                 <input type="text" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
             </mat-form-field>
             <mat-form-field appearance="outline" style="width: 100%;" *ngIf="condicion == '1'">
-                <input min="0" type="number" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
+                <input min="0" type="text" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
             </mat-form-field>
         </mat-card-content>
         <mat-card-actions style="padding: 0px 16px 16px 16px;" align=end>
-            <button *ngIf="condicion == '1'" [disabled]="parametro <= 999999999" (click)="buscarRepresentante()" mat-raised-button style="border-radius: 18px;">Buscar</button>
-            <button *ngIf="condicion == '2'" [disabled]="parametro.length < 4" (click)="buscarRepresentante()" mat-raised-button style="border-radius: 18px;">Buscar </button>
+            <button *ngIf="condicion == '1'" (click)="buscarRepresentante()" mat-raised-button style="border-radius: 18px;">Buscar</button>
+            <!-- [disabled]="parametro <= 999999999" -->
+            <button *ngIf="condicion == '2'" (click)="buscarRepresentante()" mat-raised-button style="border-radius: 18px;">Buscar </button>
+            <!-- [disabled]="parametro.length < 4" -->
         </mat-card-actions>
     </mat-card>
 </div>

@@ -26,3 +26,7 @@ mat-card {
     margin: 24px auto auto auto;
     width: fit-content;
 }
+
+.mat-colunm-nombre {
+    width: fit-content;
+}
