@@ -10,6 +10,7 @@ import { PrintLayoutComponent } from './print-layout/print-layout.component';
 import { PrintService } from './service/print.service';
 import { AppComponent } from '../app.component';
 import { ReportesService } from './service/reportes.service';
+import { ExcelService } from '../utilidades/excel';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { ReportesService } from './service/reportes.service';
     MatFormFieldModule,
     MatInputModule,
   ],
-  providers: [PrintService, ReportesService],
+  providers: [PrintService, ReportesService, ExcelService],
   bootstrap: [AppComponent]
 })
 

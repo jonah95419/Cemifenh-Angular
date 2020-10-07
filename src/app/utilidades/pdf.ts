@@ -110,21 +110,22 @@ export class PDFClass {
 
   private totalCantidad = (data: []): string => (Math
     .round(data
-      .map((x: any) => Number(x.cantidad))
+      .filter((x: any) => (new Date(x.fecha) > new Date('2001/01/01')))
+      .map((x: any) => Number(x.cantidad) )
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);
 
   private totalCantidadAbonos = (data: []): string => (Math
     .round(data
-      .map((x: any) => { if (x.estado_cuenta === 'abono') return Number(x.cantidad) })
-      .filter(Boolean)
+      .filter((x: any) => x.estado_cuenta === 'abono' && (new Date(x.fecha) > new Date('2001/01/01')))
+      .map((x: any) =>  Number(x.cantidad) )
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);
 
   private totalCantidadCargos = (data: []): string => (Math
     .round(data
-      .map((x: any) => { if (x.estado_cuenta === 'cargo') return Number(x.cantidad) })
-      .filter(Boolean)
+      .filter((x: any) => x.estado_cuenta === 'cargo' && (new Date(x.fecha) > new Date('2001/01/01')))
+      .map((x: any) => Number(x.cantidad))
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);
 

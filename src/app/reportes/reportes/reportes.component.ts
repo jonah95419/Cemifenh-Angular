@@ -8,6 +8,7 @@ import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/materia
 import { MatTable } from '@angular/material/table';
 import { PDFClass } from '../../utilidades/pdf';
 import { HttpClient } from '@angular/common/http';
+import { ExcelService } from '../../utilidades/excel';
 
 @Component({
   selector: 'app-reportes',
@@ -41,9 +42,10 @@ export class ReportesComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
+    private excelService: ExcelService,
     private _snackBar: MatSnackBar,
     private apiReportes: ReportesService) {
-      this.pdf = new PDFClass(http);
+    this.pdf = new PDFClass(http);
   }
 
   ngOnInit(): void {
@@ -55,17 +57,17 @@ export class ReportesComponent implements OnInit {
 
   submit = () => {
     if (this.reporteForm.valid) {
-      if(this.reporteForm.value.tipo === "abonos_y_cargos") {
-        this.columnsToDisplay= ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos', 'abonos'];
+      if (this.reporteForm.value.tipo === "abonos_y_cargos") {
+        this.columnsToDisplay = ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos', 'abonos'];
       }
-      if(this.reporteForm.value.tipo === "abonos") {
-        this.columnsToDisplay= ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'abonos'];
+      if (this.reporteForm.value.tipo === "abonos") {
+        this.columnsToDisplay = ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'abonos'];
       }
-      if(this.reporteForm.value.tipo === "cargos") {
-        this.columnsToDisplay= ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos'];
+      if (this.reporteForm.value.tipo === "cargos") {
+        this.columnsToDisplay = ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos'];
       }
-      if(this.reporteForm.value.tipo === "sitios") {
-        this.columnsToDisplay= ['num','representante', 'cedula', 'lugar', 'motivo', 'sector', 'fecha'];
+      if (this.reporteForm.value.tipo === "sitios") {
+        this.columnsToDisplay = ['num', 'representante', 'cedula', 'lugar', 'motivo', 'sector', 'fecha'];
       }
       this.apiReportes.reporteTransacciones(this.getDate(this.reporteForm.value.desde), this.getDate(this.reporteForm.value.hasta), this.reporteForm.value.tipo)
         .pipe(
@@ -74,7 +76,7 @@ export class ReportesComponent implements OnInit {
               this.data_body = x.data;
               this.table.renderRows();
             }
-            else {this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");}
+            else { this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok"); }
           })
         ).toPromise();
     }
@@ -98,15 +100,19 @@ export class ReportesComponent implements OnInit {
     this.reporteForm.controls.hasta.patchValue(new Date());
   }
 
-  getTotalAbonos = ():number => this.data_body
-    ?.filter((x: any) => x.estado_cuenta === 'abono')
+  getTotalAbonos = (): number => this.data_body
+    ?.filter((x: any) => x.estado_cuenta === 'abono' && (new Date(x.fecha) > new Date('2001/01/01')))
     ?.map((x: any) => Number(x.cantidad))
     .reduce((a, b) => a + b, 0);
 
-  getTotalCargos = ():number => this.data_body
-    ?.filter((x: any) => x.estado_cuenta === 'cargo')
+  getTotalCargos = (): number => this.data_body
+    ?.filter((x: any) => x.estado_cuenta === 'cargo' && (new Date(x.fecha) > new Date('2001/01/01')))
     ?.map((x: any) => Number(x.cantidad))
     .reduce((a, b) => a + b, 0);
+
+  generateExcel() {
+    this.excelService.generateExcel(this.data_body, this.reporteForm.value.tipo);
+  }
 
   private getDate = (fecha: Date): string => {
     fecha = new Date(fecha);
