@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CallbackService } from './callback.service';
 import { Observable } from 'rxjs';
@@ -14,6 +14,7 @@ import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { PDFClass } from '../utilidades/pdf';
 import { HttpClient } from '@angular/common/http';
 import { EstadoCuentaH } from '../cementerio/representante/model/estadoCuentaR';
+import { AuthenticationService } from '../core/service/authentication.service';
 
 @Component({
   selector: 'app-callback',
@@ -29,7 +30,7 @@ import { EstadoCuentaH } from '../cementerio/representante/model/estadoCuentaR';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class CallbackComponent implements OnInit {
+export class CallbackComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatTable) table: MatTable<any>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -55,6 +56,7 @@ export class CallbackComponent implements OnInit {
   pdf: PDFClass;
 
   private _translate;
+  private _authPromise;
 
   constructor(
     private http: HttpClient,
@@ -62,15 +64,23 @@ export class CallbackComponent implements OnInit {
     private translate: TranslateService,
     private apiCallback: CallbackService,
     private apiRepresentante: RepresentanteService,
+    private apiAuth: AuthenticationService,
     private cdRef: ChangeDetectorRef) {
-      this.pdf = new PDFClass(http);
-    }
+    this.pdf = new PDFClass(http);
+    this._authPromise = this.apiAuth.user$.subscribe(user => user ? this.apiAuth.logout() : null);
+  }
 
   ngOnInit(): void {
     this.locale = this.translate.currentLang;
-    this._translate = this.translate.onLangChange.pipe(
-      tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
-    ).toPromise();
+    this._translate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang);
+  }
+
+  ngOnDestroy(): void {
+    try {
+      this._authPromise.unsubscribe();
+      this._translate.unsubscribe();
+    } catch (error) {
+    }
   }
 
   nuevaConsulta = () => window.location.reload();
@@ -80,14 +90,14 @@ export class CallbackComponent implements OnInit {
   cambioCondicion = (event: MatRadioChange) => this.parametro = "";
 
   buscarRepresentante = () => {
-    if(this.parametro === "") {
-      return;
-    }
+    if (this.parametro === "") return;
+
     this.step = 1;
-    if(this.condicion === "2") {
+
+    if (this.condicion === "2") {
       this.representantes$ = this.apiCallback.listarRepresentantesNombre(this.parametro);
     }
-    if(this.condicion === "1") {
+    if (this.condicion === "1") {
       this.representantes$ = this.apiCallback.listarRepresentantesCI(this.parametro);
     }
   }
@@ -96,10 +106,10 @@ export class CallbackComponent implements OnInit {
     this.step = 2;
     this.representante = row;
     this.estadoCuenta$ = this.apiRepresentante.obtenerEstadoCuentaRepresentante(row.id)
-    .pipe(
-      map((value: any) => value.ok? value.data:[]),
-      tap((value: EstadoCuentaH[]) => this.estadoCunta = value)
-    )
+      .pipe(
+        map((value: any) => value.ok ? value.data : []),
+        tap((value: EstadoCuentaH[]) => this.estadoCunta = value)
+      )
   }
 
   comprobante = () => {
