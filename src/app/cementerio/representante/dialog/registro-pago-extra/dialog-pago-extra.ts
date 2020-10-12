@@ -4,16 +4,14 @@ import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/materia
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { SitioService } from '../../../sitio/service/sitio.service';
-import { tap } from 'rxjs/operators';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { ResponseSitioI, SitioI, DeudaSitioI, ResponseDeudaSitioI } from '../../../sitio/model/sitio';
+import { ResponseSitioI, SitioI } from '../../../sitio/model/sitio';
 import { MatSelectChange } from '@angular/material/select';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatTable } from '@angular/material/table';
-import { ValoresService } from '../../../../admin/service/valores.service';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ServiceC } from '../../../sitio/service-c/sitio-serviceC';
-import { SelectionChange } from '@angular/cdk/collections';
+import { SelectionModel } from '@angular/cdk/collections';
+import { ResponseCargosSitioI, CargoSitioI } from '../../model/deuda';
 
 @Component({
   selector: 'dialog-pago-extra',
@@ -29,16 +27,20 @@ import { SelectionChange } from '@angular/cdk/collections';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class DialogPagoExtra implements OnInit {
+export class DialogPagoExtra implements OnInit, OnDestroy {
 
-  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild('table', { static: false }) table: MatTable<any>;
 
   sitios: SitioI[] = [];
-  listaPagos: deudaComprobante[] = [];
-  columnsToDisplay: string[] = ['sitio','descripcion', 'cantidad', 'accion'];
+
+  columnsToDisplayCargos: string[] = ['select', 'fecha', 'descripcion', 'deuda', 'pendiente'];
+  columnsToDisplayCargosPagar: string[] = ['sitio', 'fecha', 'descripcion', 'deuda', 'pendiente', 'accion'];
+  dataSourceCargos = new MatTableDataSource<CargoSitioI>([]);
+
+  selection = new SelectionModel<CargoSitioI>(true, []);
+  seleccion: CargoSitioI[] = [];
 
   locale: string;
-  otros: boolean = false;
   sitio: SitioI;
   fecha: Date = new Date();
 
@@ -47,6 +49,11 @@ export class DialogPagoExtra implements OnInit {
     descripcion: new FormControl(''),
     cantidad: new FormControl('', [Validators.required, Validators.min(0)]),
   })
+
+  private _cargosSitio: any;
+  private _transate: any;
+  private _sitios: any;
+  private _abonos: any;
 
   constructor(
     private translate: TranslateService,
@@ -59,97 +66,83 @@ export class DialogPagoExtra implements OnInit {
     this.cargarSitios(data.id);
   }
 
-  onNoClick(): void { this.dialogRef.close(); }
+  onNoClick = (): void => this.dialogRef.close();
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
-    this.translate.onLangChange.pipe( tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })).toPromise();
+    this._transate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang);
   }
 
-  submit(): void {
-    if(!this.pagoForm.valid) {
-      return
-    }
-    const value = this.pagoForm.value;
-    let descripcion: string = value.deuda;
-    if(this.otros) {
-      if(value.descripcion === "" || value.cantidad === "") {
-        this.openSnackBar("Faltan campos por llenar", "ok");
-        return;
-      } else {
-        descripcion = value.descripcion;
-      }
-    }
-
-    this.listaPagos.push({
-      descripcion,
-      cantidad: value.cantidad,
-      sitio: this.sitio.id
-    });
-
-    this.table.renderRows();
-    this.pagoForm.reset();
+  ngOnDestroy(): void {
+    try {
+      this._cargosSitio.unsubscribe();
+      this._transate.unsubscribe();
+      this._sitios.unsubscribe();
+      this._abonos.unsubscribe();
+    } catch (error) { }
   }
 
-  motivoAbono = (event: MatSelectChange): void => {
-    this.otros = event.value == 'otro' ? true : false;
-  }
-
-  eliminarPago(row: deudaComprobante): void {
-    this.listaPagos = this.listaPagos.filter((d: deudaComprobante) => d !== row);
-    this.table.renderRows();
-  }
-
-  getTotalCost = (): number => this.listaPagos?.map((t: deudaComprobante) => Number(t.cantidad)).reduce((acc, value) => acc + value, 0);
+  get getTotalCost(): number { return this.seleccion.map((data: CargoSitioI) => Number(data.abono)).reduce((a, b) => a + b, 0) }
 
   sitioSeleccionado(event: MatSelectChange): void {
     const value = event.source.value;
     if (value !== null) {
       this.sitio = value;
+      this._cargosSitio = this.apiSitio.obtenerCargosCuenta(this.sitio.id)
+        .subscribe((result: ResponseCargosSitioI) => {
+          if (result.ok) {
+            this.dataSourceCargos.data = result.data;
+          } else {
+            this.openSnackBar(result.message, "ok");
+          }
+        })
     }
   }
 
-  enviarPago(): void {
-    if (this.fecha !== undefined && this.listaPagos.length !== 0) {
-      let registros = this.listaPagos.map((v: deudaComprobante) => {
-        let nuevo: any = v;
-        nuevo.fecha = this.fecha;
-        return nuevo;
-      });
+  seleccionToggle = (row: CargoSitioI): any => {
+    if (this.rowSelected(row)) {
+      this.seleccion = this.seleccion.filter((value: CargoSitioI) => value.id !== row.id)
+    } else {
+      let aux: any = row;
+      aux.abono = row.pendiente;
+      this.seleccion.push(aux);
+    }
 
-      this.apiSitio.agregarPago(registros)
-        .pipe( tap(data => {
-            if (data.ok) {
-              this.notSitio.emitActualizarHistorialChange();
-              this.openSnackBar("Abono registrado!! ", "ok");
-            } else {
-              this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente ", "ok");
-            }
-            this.dialogRef.close();
-          })).toPromise();
+    this.table.renderRows();
+  }
+
+
+  rowSelected = (row: CargoSitioI): boolean => this.seleccion.filter((value: CargoSitioI) => value.id === row.id).length !== 0;
+
+  enviarPago(): void {
+    if (this.fecha !== undefined && this.seleccion.length !== 0) {
+      this._abonos = this.apiSitio.agregarPago({fecha: this.fecha, data: this.seleccion})
+        .subscribe((data) => {
+          if (data.ok) {
+            this.notSitio.emitActualizarHistorialChange();
+            this.openSnackBar("Abono registrado!! ", "ok");
+          } else {
+            this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente ", "ok");
+          }
+          this.dialogRef.close();
+        });
     } else {
       this.openSnackBar("Faltan campos por llenar", "ok");
     }
-
   }
 
   private cargarSitios(id: string): void {
-    this.apiSitio.listarSitios(id).pipe(
-      tap((data: ResponseSitioI) => {
-        if (data.ok) { this.sitios = data.data; }
-        else { console.log(data.message); }
-      })
-    ).toPromise();
+    this._sitios = this.apiSitio.listarSitios(id)
+      .subscribe((data: ResponseSitioI) => {
+        if (data.ok) {
+          this.sitios = data.data;
+        } else {
+          this.openSnackBar(data.message, "ok");
+        }
+      });
   }
 
-  private openSnackBar = (message: string, action: string) => {
-    this._snackBar.open(message, action, { duration: 5000 });
-  }
+  private openSnackBar = (m: string, a: string) => this._snackBar.open(m, a, { duration: 5000 });
 
-}
 
-interface deudaComprobante {
-  descripcion: string;
-  cantidad: number;
-  sitio: number;
 }

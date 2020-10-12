@@ -3,16 +3,34 @@ mat-form-field {
     width: 280px;
 }
 
+.example-form-field {
+    width: 40px;
+}
+
 .example-section {
     margin: 12px 0px 12px 12px;
 }
 
-table {
-    width: 100%;
+.example-first-header-row th {
+    border-bottom: none;
+    font-weight: bold;
 }
 
-tr.mat-footer-row {
+.example-first-footer-row {
     font-weight: bold;
+}
+
+.example-second-footer-row td {
+    color: #900000;
+    font-size: smaller;
+    font-weight: 300;
+    background-color: whitesmoke;
+    border-bottom: none;
+}
+
+table {
+    width: 450px !important;
+    max-width: 460 !important;
 }
 
 mat-icon {
@@ -20,10 +38,29 @@ mat-icon {
     font-size: large;
 }
 
-.mat-column-cantidad {
-    margin-left: 16px;
+.mat-column-accion {
+    width: 20px;
+    text-align: end;
 }
 
-.mat-column-accion {
-    text-align: end;
+.mat-column-descripcion {
+    padding-right: 3px;
+}
+
+.mat-column-fecha {
+    padding-right: 3px;
+}
+
+.mat-column-deuda {
+    text-align: center;
+    padding-right: 3px;
+}
+
+.mat-column-pendiente {
+    text-align: center;
+}
+
+.mat-column-sitio,
+.mat-column-select {
+    padding: 0px 6px;
 }
