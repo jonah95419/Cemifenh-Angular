@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
@@ -23,15 +23,14 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class DialogEstadoCuenta implements OnInit {
+export class DialogEstadoCuenta implements OnInit, OnDestroy {
 
   locale: any;
 
-  estadoForm = this.fb.group({
-    pago: new FormControl(''),
-    fecha: new FormControl(''),
-    cantidad: new FormControl('', Validators.min(0)),
-  })
+  estadoForm: any;
+
+  private _transalate: any;
+  private _actualizar: any;
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -41,14 +40,34 @@ export class DialogEstadoCuenta implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogEstadoCuenta>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      this.estadoForm.patchValue(data);
+      if (data.estado_cuenta === "abono") {
+        this.estadoForm = this.fb.group({
+          pago: new FormControl({value:'', disabled: true}),
+          fecha: new FormControl('', ),
+          cantidad: new FormControl('', Validators.min(0)),
+        })
+      } else {
+        this.estadoForm = this.fb.group({
+          pago: new FormControl(''),
+          fecha: new FormControl('', ),
+          cantidad: new FormControl('', Validators.min(0)),
+        })
+      }
+    this.estadoForm.patchValue(data);
   }
 
   onNoClick = (): void => this.dialogRef.close();
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
-    this.translate.onLangChange.pipe(tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })).toPromise();
+    this._transalate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang);
+  }
+
+  ngOnDestroy(): void {
+    try {
+      this._transalate.unsubscribe();
+      this._actualizar.unsubscribe();
+    } catch (error) { }
   }
 
   submit = () => {
@@ -62,21 +81,19 @@ export class DialogEstadoCuenta implements OnInit {
       fecha: value.fecha,
       descripcion: value.pago
     }
-    this.apiSitio.actualizarSitioEstadoCuenta(data).pipe(
-      tap(r => {
-        if(r.ok) {
+    this._actualizar = this.apiSitio.actualizarSitioEstadoCuenta(data)
+      .subscribe(r => {
+        if (r.ok) {
           this.notSitio.emitActualizarHistorialChange();
           this.openSnackBar("Registro actualizado", "ok");
+        } else {
+          this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
         }
-        else this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
-
         this.dialogRef.close();
       })
-    ).toPromise();
+      ;
   }
 
-  private openSnackBar = (message: string, action: string) => {
-    this._snackBar.open(message, action, { duration: 5000 });
-  }
+  private openSnackBar = (m: string, a: string) => this._snackBar.open(m, a, { duration: 5000 })
 
 }

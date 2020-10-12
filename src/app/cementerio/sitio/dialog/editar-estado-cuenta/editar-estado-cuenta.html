@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Editar {{data.estado_cuenta == 'ingreso' ? 'abono':'cargo'}}</h1>
+<h1 mat-dialog-title>Editar {{data.estado_cuenta}}</h1>
 <div mat-dialog-content>
     <form [formGroup]="estadoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
         <div class="fields-container">
@@ -12,7 +12,7 @@
             </p>
             <p>
                 Fecha:
-                <mat-icon style="font-size: small !important; margin-top: 10px;" matTooltip="Fecha en la que se realizó {{data.estado_cuenta == 'ingreso' ? 'abono':'cargo'}}">help</mat-icon>
+                <mat-icon style="font-size: small !important; margin-top: 10px;" matTooltip="Fecha en la que se realizó {{data.estado_cuenta}}">help</mat-icon>
 
                 <mat-form-field style="width: 75px;">
                     <input formControlName="fecha" matInput [matDatepicker]="picker" (focus)="picker.open()" readonly>
