@@ -1,3 +1,14 @@
+export interface CargoSitioI {
+  id: number;
+  descripcion: string;
+  transaccion: number;
+  fecha: Date;
+  deuda: number;
+  pendiente: number;
+  sitio: number;
+  abono?: number;
+}
+
 export interface DeudaI {
   valor: string;
   descripcion: string;
@@ -6,6 +17,14 @@ export interface DeudaI {
   observaciones: string;
   tipo: string;
 }
+
+export interface ResponseCargosSitioI {
+  ok: boolean;
+  data?: CargoSitioI[];
+  message?: string;
+  cant?: number;
+}
+
 
 export interface DeudaRepresentanteI {
   cantidad: string;
@@ -26,5 +45,5 @@ export interface ResponseDeudaRepresentanteI {
   ok: boolean;
   data?: DeudaRepresentanteI[];
   message?: string;
-  cant: number;
+  cant?: number;
 }

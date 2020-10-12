@@ -7,4 +7,7 @@ export interface EstadoCuentaH {
   sector?: string;
   estado_cuenta?: string;
   pago?: string;
+  sitio?: number;
+  pendiente?: number;
+
 }
