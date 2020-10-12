@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { FechasI, FechasResponse } from '../model/fechas';
 import { ResponseSitioI, ResponseDeudaSitioI, SitioI, ResponseEstadoCuentaSitioI } from '../model/sitio';
+import { ResponseCargosSitioI } from '../../representante/model/deuda';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -80,6 +81,12 @@ export class SitioService {
       .pipe(catchError(this.handleError));
   }
 
+  obtenerCargosCuenta(sitioId: any): Observable<ResponseCargosSitioI> {
+    return this.httpClient
+      .get<ResponseCargosSitioI>(`${AUTH_SERVER}/sitio/cargos/${sitioId}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
   eliminarEstadoCuenta(data: any): Observable<any> {
     return this.httpClient
       .patch<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(data), this.httpOptions)
@@ -88,8 +95,8 @@ export class SitioService {
 
   eliminarSitio(sitio: any): Observable<any> {
     return this.httpClient
-    .delete<any>(`${AUTH_SERVER}/sitio/${sitio}`, this.httpOptions)
-    .pipe(catchError(this.handleError));
+      .delete<any>(`${AUTH_SERVER}/sitio/${sitio}`, this.httpOptions)
+      .pipe(catchError(this.handleError));
   }
 
 
