@@ -13,7 +13,6 @@ import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-
 import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
 import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
 import { DialogRegistroDeuda } from '../../cementerio/representante/dialog/registro-deuda/dialog-registro-deuda';
-import { SelectionModel } from '@angular/cdk/collections';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ServiceC } from '../../cementerio/sitio/service-c/sitio-serviceC';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -42,10 +41,9 @@ export class HistorialComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = [ 'fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'acciones']; //'select'
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'pendientes', 'acciones']; //'select'
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
-  selection = new SelectionModel<EstadoCuentaH>(true, []);
 
   listaEstadoCuenta: EstadoCuentaH[] = [];
   representante: RepresentanteI;
@@ -58,7 +56,10 @@ export class HistorialComponent implements OnInit, OnDestroy {
 
   pdf: PDFClass;
 
-  private _translate;
+  private _translate: any;
+  private _cargarHistorial: any;
+  private _cargarRepresentante: any;
+  private _cargosSitio: any;
 
   constructor(
     private http: HttpClient,
@@ -85,26 +86,20 @@ export class HistorialComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.locale = this.translate.currentLang;
     this._translate = this.translate.onLangChange
-      .subscribe((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
+      .subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang)
   }
 
   ngOnDestroy(): void {
-    if (this._translate !== undefined) {
+    try {
       this._translate.unsubscribe();
+      this._cargarHistorial.unsubscribe();
+      this._cargarRepresentante.unsubscribe();
+      this._cargosSitio.unsubscribe();
+    } catch (error) {
+
     }
   }
 
-  isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSourceEC.data.length;
-    return numSelected === numRows;
-  }
-
-  masterToggle(): void {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSourceEC.data.forEach(row => this.selection.select(row));
-  }
 
   imprimirLista = (): void =>
     this.pdf.jojo(this.procesarDatosImprimir(this.listaEstadoCuenta), 'print', {
@@ -114,7 +109,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
       tipo: 'Comprobante',
       descripcion: 'Estado de cuenta',
       codigo: ''
-    }, 'abonos_y_cargos')
+    }, 'abonos y cargos')
 
 
   imprimir = (row: EstadoCuentaH): void =>
@@ -123,57 +118,51 @@ export class HistorialComponent implements OnInit, OnDestroy {
       representante: this.representante?.nombre,
       cedula: this.representante?.cedula,
       tipo: 'Comprobante',
-      descripcion: row.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
+      descripcion: row.estado_cuenta,
       codigo: ''
-    }, row.estado_cuenta === 'deuda' ? 'cargos' : 'abonos')
+    }, row.estado_cuenta)
 
 
-  editar = (row: any) => {
+  editar = (row: any): void => {
     row.pago = String(row.pago).toLowerCase();
     const dialogRef = this.dialog.open(DialogEstadoCuenta, { width: '350px', panelClass: "my-class", data: row });
     dialogRef.afterClosed().subscribe();
   }
 
-  eliminarLista = (): void => this.eliminar(this.selection.selected);
-
   eliminarEstadoCuenta = (row: any): void => this.eliminar([row]);
 
-  agregarSitio = () => {
+  agregarSitio = (): void => {
     const dialogRef = this.dialog.open(DialogRegistrarSitio, { width: '500px', panelClass: "my-class", data: this.id });
     dialogRef.afterClosed().subscribe();
   }
 
   agregarDeuda(): void {
-    const dialogRef = this.dialog.open(DialogRegistroDeuda, {
-      width: '500px',
-      panelClass: "my-class",
-      data: { id: this.id }
-    });
-
+    const dialogRef = this.dialog.open(DialogRegistroDeuda, { width: '500px', panelClass: "my-class", data: { id: this.id } });
     dialogRef.afterClosed().subscribe();
   }
 
   agregarPago(): void {
-    const dialogRef = this.dialog.open(DialogPagoExtra, {
-      width: '500px',
-      panelClass: "my-class",
-      data: { id: this.id }
-    });
-
+    const dialogRef = this.dialog.open(DialogPagoExtra, { panelClass: "my-class", data: { id: this.id } });
     dialogRef.afterClosed().subscribe();
   }
 
   getDeudas = (): number => this.listaEstadoCuenta
     .filter(t =>
-      t.estado_cuenta.toLowerCase() === 'deuda' &&
+      t.estado_cuenta.toLowerCase() === 'cargo' &&
       (new Date(t.fecha) > new Date('2001/01/01')))
     .reduce((a, b) => a + Number(b.cantidad), 0);
 
   getPagos = (): number => this.listaEstadoCuenta
     .filter(t =>
-      t.estado_cuenta.toLowerCase() !== 'deuda' &&
+      t.estado_cuenta.toLowerCase() === 'abono' &&
       (new Date(t.fecha) > new Date('2001/01/01')))
     .reduce((a, b) => a + Number(b.cantidad), 0);
+
+  getPendiente = (): number => this.listaEstadoCuenta
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'cargo' &&
+      (new Date(t.fecha) > new Date('2001/01/01')))
+    .reduce((a, b) => a + Number(b.pendiente), 0);
 
   private procesarDatosImprimir = (data: EstadoCuentaH[]) =>
     data.map((x: EstadoCuentaH) => {
@@ -183,7 +172,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
         motivo: x.descripcion,
         sector: x.sector,
         descripcion: x.pago,
-        estado_cuenta: x.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
+        estado_cuenta: x.estado_cuenta,
         cantidad: x.cantidad
       }
     })
@@ -204,37 +193,33 @@ export class HistorialComponent implements OnInit, OnDestroy {
   private obtenerHistorial(): void {
     if (!this.id) return;
     this.sitios = 0;
-    this.selection.clear();
     this.cargarHistorial(this.id);
     this.cargarSitios(this.id);
     this.cargarRepresentante(this.id);
   }
 
   private cargarRepresentante(id: string): void {
-    this.apiRepresentante.obtenerRepresentante(id).pipe(
-      tap((data: RepresentantesResponse) => {
+    this._cargarRepresentante = this.apiRepresentante.obtenerRepresentante(id)
+      .subscribe((data: RepresentantesResponse) => {
         if (data.ok) { this.representante = data.data[0]; }
         else { console.log(data.message); }
-      })
-    ).toPromise();
+      });
   }
 
   private cargarHistorial(id: string): void {
-    this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
-      tap((data: any) => {
+    this._cargarHistorial = this.apiRepresentante.obtenerEstadoCuentaRepresentante(id)
+      .subscribe((data: any) => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
         else { console.log(data.message); }
-      })
-    ).toPromise();
+      });
   }
 
   private cargarSitios(id: string): void {
-    this.apiSitio.listarSitios(id).pipe(
-      tap((data: ResponseSitioI) => {
+    this._cargosSitio = this.apiSitio.listarSitios(id)
+      .subscribe((data: ResponseSitioI) => {
         if (data.ok) { this.sitios = data.cant; }
         else { console.log(data.message); }
-      })
-    ).toPromise();
+      });
   }
 
   private cargarValoresEstadoCuenta(data: EstadoCuentaH[]): void {
@@ -249,8 +234,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this.dataSourceEC.sort = this.sort;
   }
 
-  private openSnackBar = (message: string, action: string) => {
-    this._snackBar.open(message, action, { duration: 5000 });
-  }
+  private openSnackBar = (m: string, a: string) => this._snackBar.open(m, a, { duration: 5000 });
+
 
 }
