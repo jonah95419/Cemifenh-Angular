@@ -109,7 +109,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
       tipo: 'Comprobante',
       descripcion: 'Estado de cuenta',
       codigo: ''
-    }, 'abonos y cargos')
+    }, 'abonos_y_cargos')
 
 
   imprimir = (row: EstadoCuentaH): void =>
@@ -173,7 +173,8 @@ export class HistorialComponent implements OnInit, OnDestroy {
         sector: x.sector,
         descripcion: x.pago,
         estado_cuenta: x.estado_cuenta,
-        cantidad: x.cantidad
+        cantidad: x.cantidad,
+        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente
       }
     })
 
