@@ -40,6 +40,7 @@ export class DialogEstadoCuenta implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogEstadoCuenta>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
+      console.log(data);
       if (data.estado_cuenta === "abono") {
         this.estadoForm = this.fb.group({
           pago: new FormControl({value:'', disabled: true}),

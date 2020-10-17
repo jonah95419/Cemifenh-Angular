@@ -1,52 +1,43 @@
-<h1 mat-dialog-title>Registro cargo</h1>
+<h1 mat-dialog-title>Registro cargo - {{sitio_id}}</h1>
 <div mat-dialog-content>
-
     <div style="display: flex; flex-direction: row;">
-        <mat-form-field style="width: 120px;">
+        <mat-form-field style="width: 110px;">
             <mat-label>Fecha:</mat-label>
             <input [(ngModel)]="fecha" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
         </mat-form-field>
         <mat-datepicker #picker2></mat-datepicker>
 
-        <mat-form-field style="width: 250px;">
-            <mat-label>Sitio:</mat-label>
-            <mat-select (selectionChange)="sitioSeleccionado($event);">
-                <mat-option *ngFor="let sitio of sitios" [value]="sitio">
-                    {{sitio.id}} {{sitio.tipo}}: {{sitio.descripcion}}, {{sitio.sector}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
+        <form [formGroup]="pagoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
+            <div class="fields-container">
+                <div *ngIf="sitio_id; else sitioE;">
 
-    <form [formGroup]="pagoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
-        <div class="fields-container">
-            <div *ngIf="sitio; else sitioE;">
+                    <div style="display: flex; flex-direction: row;">
 
-                <div style="display: flex; flex-direction: row;">
+                        <mat-form-field style="width: 120px;">
+                            <mat-label>Motivo:</mat-label>
+                            <mat-select formControlName="deuda" (selectionChange)="motivoAbono($event);">
+                                <mat-option value="servicio"> Servicio </mat-option>
+                                <mat-option value="mantenimiento"> Mantenimiento </mat-option>
+                                <!-- <mat-option value="otro"> Otro </mat-option> -->
+                            </mat-select>
+                        </mat-form-field>
 
-                    <mat-form-field style="width: 120px;">
-                        <mat-label>Motivo:</mat-label>
-                        <mat-select formControlName="deuda" (selectionChange)="motivoAbono($event);">
-                            <mat-option value="servicio"> Servicio </mat-option>
-                            <mat-option value="mantenimiento"> Mantenimiento </mat-option>
-                            <!-- <mat-option value="otro"> Otro </mat-option> -->
-                        </mat-select>
-                    </mat-form-field>
+                        <mat-form-field *ngIf="otros">
+                            <mat-label>Descripción:</mat-label>
+                            <input formControlName="descripcion" type="text" matInput>
+                        </mat-form-field>
 
-                    <mat-form-field *ngIf="otros">
-                        <mat-label>Descripción:</mat-label>
-                        <input formControlName="descripcion" type="text" matInput>
-                    </mat-form-field>
-
-                    <mat-form-field style="width: 120px;">
-                        <mat-label>Monto:</mat-label>
-                        <input matInput formControlName="cantidad" type="number" min="0">
-                    </mat-form-field>
-                    <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px; background: white;">agregar</button>
+                        <mat-form-field style="width: 80px;">
+                            <mat-label>Monto:</mat-label>
+                            <input matInput formControlName="cantidad" type="number" min="0">
+                        </mat-form-field>
+                        <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px; background: white;">agregar</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+
 
     <table #table mat-table [dataSource]="listaDeudas" style="margin-top: 12px;">
         <ng-container matColumnDef="sitio">

@@ -20,23 +20,30 @@ tr:hover {
 }
 
 .mat-column-fecha {
-    min-width: 120px;
-    width: 120px;
-    max-width: 120px;
+    min-width: 115px;
+    width: 115px;
+    max-width: 115px;
 }
 
 .mat-column-abonos,
-.mat-column-cargos {
+.mat-column-cargos,
+.mat-column-pendientes {
     text-align: center;
-    min-width: 80px;
-    max-width: 80px;
-    width: 80px;
+    min-width: 60px;
+    /* border-right: 1px solid #e0e0e0; */
+    /* border-left: 1px solid #e0e0e0; */
+    padding: 0px 3px;
 }
 
 .mat-column-acciones {
-    width: 80px;
-    max-width: 80px;
-    min-width: 80px;
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+}
+
+.mat-column-descripcion {
+    min-width: 200px;
+    padding-left: 6px;
 }
 
 h4 {

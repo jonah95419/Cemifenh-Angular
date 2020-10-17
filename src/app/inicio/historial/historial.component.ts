@@ -41,7 +41,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'pendientes', 'acciones']; //'select'
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'pendientes', 'acciones'];
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
 
@@ -60,6 +60,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
   private _cargarHistorial: any;
   private _cargarRepresentante: any;
   private _cargosSitio: any;
+  private _eliminar: any;
 
   constructor(
     private http: HttpClient,
@@ -76,6 +77,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
         const representante = data.get("id");
         this.id = atob(representante);
         this.obtenerHistorial();
+        console.log('obtener historial');
       })
     ).toPromise();
     notsitio.actualizarHistorial$.pipe(
@@ -95,11 +97,8 @@ export class HistorialComponent implements OnInit, OnDestroy {
       this._cargarHistorial.unsubscribe();
       this._cargarRepresentante.unsubscribe();
       this._cargosSitio.unsubscribe();
-    } catch (error) {
-
-    }
+    } catch (error) { }
   }
-
 
   imprimirLista = (): void =>
     this.pdf.jojo(this.procesarDatosImprimir(this.listaEstadoCuenta), 'print', {
@@ -179,16 +178,15 @@ export class HistorialComponent implements OnInit, OnDestroy {
     })
 
   private eliminar(data): void {
-    this.apiSitio.eliminarEstadoCuenta(data).pipe(
-      tap((x: any) => {
+    this._eliminar = this.apiSitio.eliminarEstadoCuenta(data)
+      .subscribe((x: any) => {
         if (x.ok) {
           this.obtenerHistorial();
           this.openSnackBar("Registros eliminados correctamente", "ok");
         } else {
           this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
         }
-      })
-    ).toPromise();
+      });
   }
 
   private obtenerHistorial(): void {
@@ -203,7 +201,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this._cargarRepresentante = this.apiRepresentante.obtenerRepresentante(id)
       .subscribe((data: RepresentantesResponse) => {
         if (data.ok) { this.representante = data.data[0]; }
-        else { console.log(data.message); }
+        else { this.openSnackBar(data.message, "ok"); }
       });
   }
 
@@ -211,7 +209,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this._cargarHistorial = this.apiRepresentante.obtenerEstadoCuentaRepresentante(id)
       .subscribe((data: any) => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
-        else { console.log(data.message); }
+        else { this.openSnackBar(data.message, "ok"); }
       });
   }
 
@@ -219,7 +217,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this._cargosSitio = this.apiSitio.listarSitios(id)
       .subscribe((data: ResponseSitioI) => {
         if (data.ok) { this.sitios = data.cant; }
-        else { console.log(data.message); }
+        else { this.openSnackBar(data.message, "ok"); }
       });
   }
 

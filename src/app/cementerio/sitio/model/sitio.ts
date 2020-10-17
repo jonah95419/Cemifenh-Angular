@@ -34,12 +34,15 @@ export interface ResponseDeudaSitioI {
 
 export interface EstadoCuentaI {
   id: number;
-  estado_cuenta: string;
+  tipo: string;
   descripcion: string;
-  desde: Date;
-  hasta: Date;
   fecha: Date;
   cantidad: string;
+  sector?: string;
+  estado_cuenta?: string;
+  pago?: string;
+  sitio?: number;
+  pendiente?: number;
 }
 
 export interface ResponseEstadoCuentaSitioI {

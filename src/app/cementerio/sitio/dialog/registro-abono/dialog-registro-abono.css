@@ -1,0 +1,66 @@
+mat-form-field {
+    margin-left: 6px;
+    width: 280px;
+}
+
+.example-form-field {
+    width: 40px;
+}
+
+.example-section {
+    margin: 12px 0px 12px 12px;
+}
+
+.example-first-header-row th {
+    border-bottom: none;
+    font-weight: bold;
+}
+
+.example-first-footer-row {
+    font-weight: bold;
+}
+
+.example-second-footer-row td {
+    color: #900000;
+    font-size: smaller;
+    font-weight: 300;
+    background-color: whitesmoke;
+    border-bottom: none;
+}
+
+table {
+    width: 450px !important;
+    max-width: 460 !important;
+}
+
+mat-icon {
+    color: #757575;
+    font-size: large;
+}
+
+.mat-column-accion {
+    width: 20px;
+    text-align: end;
+}
+
+.mat-column-descripcion {
+    padding-right: 3px;
+}
+
+.mat-column-fecha {
+    padding-right: 3px;
+}
+
+.mat-column-deuda {
+    text-align: center;
+    padding-right: 3px;
+}
+
+.mat-column-pendiente {
+    text-align: center;
+}
+
+.mat-column-sitio,
+.mat-column-select {
+    padding: 0px 6px;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
@@ -35,15 +35,14 @@ import { PDFClass } from '../../../utilidades/pdf';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class EstadoCuentaComponent implements OnInit {
+export class EstadoCuentaComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'acciones']; //'select',
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'pendientes', 'acciones'];
 
   dataSourceEC: MatTableDataSource<EstadoCuentaH>;
-  selection = new SelectionModel<EstadoCuentaH>(true, []);
 
   listaEstadoCuenta: EstadoCuentaH[] = [];
   representante: RepresentanteI;
@@ -54,7 +53,11 @@ export class EstadoCuentaComponent implements OnInit {
 
   pdf: PDFClass;
 
-  private _translate;
+  private _translate: any;
+  private _params: any;
+  private _estado_cuenta: any;
+  private _representante: any;
+  private _eliminar_estado_cuenta: any;
 
   constructor(
     private http: HttpClient,
@@ -66,13 +69,13 @@ export class EstadoCuentaComponent implements OnInit {
     private dialog: MatDialog,
     private route: ActivatedRoute) {
     this.pdf = new PDFClass(http);
-    route.parent.params.pipe(tap((data: Params) => {
+    this._params = route.parent.params.subscribe((data: Params) => {
       if (data.id) {
         const representante = data.id;
         this.id = representante;
         this.obtenerHistorial();
       }
-    })).toPromise();
+    });
     notsitio.actualizarHistorial$.pipe(
       tap((x: any) => this.obtenerHistorial())
     ).toPromise();
@@ -80,21 +83,18 @@ export class EstadoCuentaComponent implements OnInit {
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
-    this._translate = this.translate.onLangChange.pipe(
-      tap((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
-    ).toPromise();
+    this._translate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang);
   }
 
-  isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSourceEC.data.length;
-    return numSelected === numRows;
-  }
-
-  masterToggle(): void {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSourceEC.data.forEach(row => this.selection.select(row));
+  ngOnDestroy(): void {
+    try {
+      this._translate.unsubscribe();
+      this._params.unsubscribe();
+      this._estado_cuenta.unsubscribe();
+      this._representante.unsubscribe();
+      this._eliminar_estado_cuenta.unsubscribe();
+    } catch (error) {
+    }
   }
 
   imprimirLista = (): void =>
@@ -113,17 +113,15 @@ export class EstadoCuentaComponent implements OnInit {
       representante: this.representante?.nombre,
       cedula: this.representante?.cedula,
       tipo: 'Comprobante',
-      descripcion: row.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
+      descripcion: row.estado_cuenta,
       codigo: ''
-    }, row.estado_cuenta === 'deuda' ? 'cargos' : 'abonos')
+    }, row.estado_cuenta)
 
   editar = (row: any) => {
     row.pago = String(row.pago).toLowerCase();
     const dialogRef = this.dialog.open(DialogEstadoCuenta, { width: '350px', panelClass: "my-class", data: row });
     dialogRef.afterClosed().subscribe();
   }
-
-  eliminarLista = (): void => this.eliminar(this.selection.selected);
 
   eliminarEstadoCuenta = (row: any): void => this.eliminar([row]);
 
@@ -139,7 +137,6 @@ export class EstadoCuentaComponent implements OnInit {
 
   agregarPago(): void {
     const dialogRef = this.dialog.open(DialogPagoExtra, {
-      width: '500px',
       panelClass: "my-class",
       data: { id: this.id }
     });
@@ -149,15 +146,21 @@ export class EstadoCuentaComponent implements OnInit {
 
   getDeudas = (): number => this.listaEstadoCuenta
     .filter(t =>
-      t.estado_cuenta.toLowerCase() === 'deuda' &&
+      t.estado_cuenta.toLowerCase() === 'cargo' &&
       (new Date(t.fecha) > new Date('2001/01/01')))
     .reduce((a, b) => a + Number(b.cantidad), 0);
 
   getPagos = (): number => this.listaEstadoCuenta
     .filter(t =>
-      t.estado_cuenta.toLowerCase() !== 'deuda' &&
+      t.estado_cuenta.toLowerCase() === 'abono' &&
       (new Date(t.fecha) > new Date('2001/01/01')))
     .reduce((a, b) => a + Number(b.cantidad), 0);
+
+  getPendiente = (): number => this.listaEstadoCuenta
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'cargo' &&
+      (new Date(t.fecha) > new Date('2001/01/01')))
+    .reduce((a, b) => a + Number(b.pendiente), 0);
 
   private procesarDatosImprimir = (data: EstadoCuentaH[]) =>
     data.map((x: EstadoCuentaH) => {
@@ -167,48 +170,44 @@ export class EstadoCuentaComponent implements OnInit {
         motivo: x.descripcion,
         sector: x.sector,
         descripcion: x.pago,
-        estado_cuenta: x.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
-        cantidad: x.cantidad
+        estado_cuenta: x.estado_cuenta,
+        cantidad: x.cantidad,
+        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente
       }
     })
 
   private eliminar(data): void {
-    this.apiSitio.eliminarEstadoCuenta(data).pipe(
-      tap((x: any) => {
+    this._eliminar_estado_cuenta = this.apiSitio.eliminarEstadoCuenta(data)
+      .subscribe((x: any) => {
         if (x.ok) {
           this.obtenerHistorial();
           this.openSnackBar("Registros eliminados correctamente", "ok");
-        } else {
-          this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
         }
-      })
-    ).toPromise();
+        else { this.openSnackBar(x.message, "ok"); }
+      });
   }
 
   private obtenerHistorial(): void {
     if (!this.id) return;
     this.notsitio.emitIdSitioDetalleChange(null);
-    this.selection.clear();
     this.cargarHistorial(this.id);
     this.cargarRepresentante(this.id);
   }
 
   private cargarRepresentante(id: string): void {
-    this.apiRepresentante.obtenerRepresentante(id).pipe(
-      tap((data: RepresentantesResponse) => {
+    this._representante = this.apiRepresentante.obtenerRepresentante(id)
+      .subscribe((data: RepresentantesResponse) => {
         if (data.ok) { this.representante = data.data[0]; }
-        else { console.log(data.message); }
-      })
-    ).toPromise();
+        else { this.openSnackBar(data.message, "ok"); }
+      });
   }
 
   private cargarHistorial(id: string): void {
-    this.apiRepresentante.obtenerEstadoCuentaRepresentante(id).pipe(
-      tap((data: any) => {
+    this._estado_cuenta = this.apiRepresentante.obtenerEstadoCuentaRepresentante(id)
+      .subscribe((data: any) => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
-        else { console.log(data.message); }
-      })
-    ).toPromise();
+        else { this.openSnackBar(data.message, "ok"); }
+      });
   }
 
   private cargarValoresEstadoCuenta(data: EstadoCuentaH[]): void {
@@ -223,9 +222,7 @@ export class EstadoCuentaComponent implements OnInit {
     this.dataSourceEC.sort = this.sort;
   }
 
-  private openSnackBar = (message: string, action: string) => {
-    this._snackBar.open(message, action, { duration: 5000 });
-  }
+  private openSnackBar = (m: string, a: string) => this._snackBar.open(m, a, { duration: 5000 });
 
 }
 

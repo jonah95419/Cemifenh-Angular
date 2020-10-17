@@ -1,0 +1,35 @@
+mat-form-field {
+    margin-left: 6px;
+}
+
+.tabla-precios {
+    margin: 0px 6px;
+    font-size: small;
+    display: flex;
+    flex-direction: column;
+}
+
+.tabla-titulo {
+    font-size: x-small;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+mat-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.mat-column-sitio {
+    padding: 0px 6px;
+}
+
+.mat-column-motivo {
+    padding: 0px 6px;
+}
+
+.mat-column-descripcion {
+    padding: 0px 6px;
+}
+
+.mat-column-cantidad {
+    padding: 0px 6px;
+}

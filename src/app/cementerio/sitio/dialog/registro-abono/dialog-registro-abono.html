@@ -1,0 +1,189 @@
+<h1 mat-dialog-title>Registro abono - {{sitio}}</h1>
+<div mat-dialog-content>
+
+    <div style="display: flex; flex-direction: row;">
+        <mat-form-field style="width: 120px;">
+            <mat-label>Fecha:</mat-label>
+            <input [(ngModel)]="fecha" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
+        </mat-form-field>
+        <mat-datepicker #picker2></mat-datepicker>
+    </div>
+
+    <div style="display: flex; flex-direction: row;">
+        <table mat-table [dataSource]="dataSourceCargos" style="margin: 3px;">
+
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef> </th>
+                <td mat-cell *matCellDef="let row">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? seleccionToggle(row) : null" [checked]="rowSelected(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fecha">
+                <th mat-header-cell *matHeaderCellDef> fecha</th>
+                <td mat-cell *matCellDef="let element"> {{element.fecha | date : 'MMM d, y':undefined:locale}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="descripcion">
+                <th mat-header-cell *matHeaderCellDef> descripcion </th>
+                <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="deuda">
+                <th mat-header-cell *matHeaderCellDef> deuda </th>
+                <td mat-cell *matCellDef="let element"> {{element.deuda | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="pendiente">
+                <th mat-header-cell *matHeaderCellDef> pendiente </th>
+                <td mat-cell *matCellDef="let element"> {{element.pendiente | currency}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplayCargos; sticky: true"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: columnsToDisplayCargos;" (click)="seleccionToggle(row)">}</tr>
+
+        </table>
+
+        <table #table mat-table [dataSource]="seleccion" style="margin: 3px;">
+
+            <ng-container matColumnDef="sitio">
+                <th mat-header-cell *matHeaderCellDef> sitio </th>
+                <td mat-cell *matCellDef="let element"> {{element.sitio}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fecha">
+                <th mat-header-cell *matHeaderCellDef> fecha</th>
+                <td mat-cell *matCellDef="let element"> {{element.fecha | date : 'MMM d, y':undefined:locale}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="descripcion">
+                <th mat-header-cell *matHeaderCellDef> descripcion </th>
+                <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                <td mat-footer-cell *matFooterCellDef> Total</td>
+            </ng-container>
+
+            <ng-container matColumnDef="deuda">
+                <th mat-header-cell *matHeaderCellDef> pendiente </th>
+                <td mat-cell *matCellDef="let element"> {{element.pendiente | currency}} </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="pendiente">
+                <th mat-header-cell *matHeaderCellDef matTooltip="Recuerda, el valor del abono no puede ser mayor al valor pendiente.">
+                    abono
+                    <mat-icon style="font-size: small !important; color: gray; margin-top: 6px;">info</mat-icon>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <mat-form-field class="example-form-field">
+                        <input matInput type="number" [(ngModel)]="element.abono">
+                    </mat-form-field>
+                </td>
+                <td mat-footer-cell *matFooterCellDef> {{getTotalCost | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="accion">
+                <th mat-header-cell *matHeaderCellDef> </th>
+                <td mat-cell *matCellDef="let row">
+                    <mat-icon (click)="seleccionToggle(row)">clear</mat-icon>
+                </td>
+                <td mat-footer-cell *matFooterCellDef> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="header-row-cero-grupo_0">
+                <th mat-header-cell *matHeaderCellDef [attr.colspan]="6">Detalles del abono</th>
+            </ng-container>
+
+            <ng-container matColumnDef="pie-de-nota">
+                <td mat-footer-cell *matFooterCellDef colspan="6">
+                    <mat-icon>info</mat-icon>
+                    <span> Recuerda, el valor del abono no puede ser mayor al valor pendiente.</span>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo_0']; sticky: true" class="example-first-header-row"></tr>
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplayCargosPagar; sticky: true"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: columnsToDisplayCargosPagar;"> </tr>
+
+            <tr mat-footer-row *matFooterRowDef="columnsToDisplayCargosPagar" class="example-first-footer-row"></tr>
+            <!-- <tr mat-footer-row *matFooterRowDef="['pie-de-nota']" class="example-second-footer-row"></tr> -->
+
+        </table>
+    </div>
+
+    <!-- <form [formGroup]="pagoForm" (ngSubmit)="submit()" novalidate id="representanteForm">
+        <div class="fields-container">
+            <div *ngIf="sitio; else sitioE;">
+                <mat-form-field style="width: 120px;">
+                    <mat-label>Motivo:</mat-label>
+                    <mat-select formControlName="deuda" (selectionChange)="motivoAbono($event);">
+                        <mat-option value="servicio"> Servicio </mat-option>
+                        <mat-option value="mantenimiento"> Mantenimiento </mat-option>
+                        <mat-option value="otro"> Otro </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="otros">
+                    <mat-label>Descripción:</mat-label>
+                    <input formControlName="descripcion" type="text" matInput>
+                </mat-form-field>
+
+                <div style="display: flex; flex-direction: row;">
+                    <mat-form-field style="width: 120px;">
+                        <mat-label>Monto:</mat-label>
+                        <input matInput formControlName="cantidad" type="number" min="0" min="1">
+                    </mat-form-field>
+                    <button type="submit" mat-stroked-button style="height: max-content; margin: 3px 0px 0px 24px; background: white;">agregar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <table #table mat-table [dataSource]="listaPagos">
+
+        <ng-container matColumnDef="sitio">
+            <th mat-header-cell *matHeaderCellDef> Sitio </th>
+            <td mat-cell *matCellDef="let row"> {{row.sitio}} </td>
+            <td mat-footer-cell *matFooterCellDef> Total </td>
+        </ng-container>
+
+        <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+            <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+            <td mat-cell *matCellDef="let row"> {{row.cantidad | currency }}</td>
+            <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row" style="text-align: end;" matTooltip="Eliminar">
+                <button mat-icon-button (click)="eliminarPago(row)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
+    </table>
+
+    <ng-template #sitioE>
+        <p style="margin-left: 6px;">Debes seleccionar un sitio para ver los detalles...</p>
+    </ng-template> -->
+
+</div>
+<div mat-dialog-actions align=end>
+    <button mat-button (click)="onNoClick();">Cancelar</button>
+    <button mat-button [disabled]="seleccion.length === 0" (click)="enviarPago();" cdkFocusInitial>Guardar</button>
+</div>

@@ -28,7 +28,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
 
   representante: RepresentanteI;
 
-  sitio_id: number;
+  sitio_id: number = -1;
 
   private listaRepresentantes: RepresentanteI[] = [];
 
