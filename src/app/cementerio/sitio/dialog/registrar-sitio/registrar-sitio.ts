@@ -1,23 +1,23 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SitioService } from '../../service/sitio.service';
-import { ServiceC } from '../../service-c/sitio-serviceC';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { SectorI } from '../../../../admin/model/sector';
-import { SectorService } from '../../../../admin/service/sector.service';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable } from '@angular/material/table';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { tap } from 'rxjs/operators';
+import { SectorI } from '../../../../admin/model/sector';
 import { ValorI } from '../../../../admin/model/valor';
+import { SectorService } from '../../../../admin/service/sector.service';
+import { ValoresService } from '../../../../admin/service/valores.service';
+import { Importacion } from '../../../../utilidades/importarRegistros';
 import { DeudaI } from '../../../representante/model/deuda';
 import { SitioI } from '../../model/sitio';
-import { ValoresService } from '../../../../admin/service/valores.service';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Importacion } from '../../../../utilidades/importarRegistros';
+import { ServiceC } from '../../service-c/sitio-serviceC';
+import { SitioService } from '../../service/sitio.service';
 
 @Component({
   selector: 'registrar-sitio',
@@ -71,7 +71,9 @@ export class DialogRegistrarSitio implements OnInit {
 
   informacionSitio: SitioI;
 
-  private _translate;
+  private _translate: any;
+  private _valores: any;
+  private _sectores: any;
 
   constructor(
     private translate: TranslateService,
@@ -83,44 +85,42 @@ export class DialogRegistrarSitio implements OnInit {
     private notSitio: ServiceC,
     private dialogRef: MatDialogRef<DialogRegistrarSitio>,
     @Inject(MAT_DIALOG_DATA) private representante: any) {
-    apiValores.valores.pipe(tap((data: ValorI[]) => this.listaValores = data)).toPromise();
-    apiSectores.sectores.pipe(tap((data: SectorI[]) => this.listaSectores = data)).toPromise();
+    this._valores = apiValores.valores.subscribe((data: ValorI[]) => this.listaValores = data);
+    this._sectores = apiSectores.sectores.subscribe((data: SectorI[]) => this.listaSectores = data);
   }
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
     this._translate = this.translate.onLangChange
-      .subscribe((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
-
+      .subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang )
   }
 
   ngOnDestroy(): void {
-    if (this._translate !== undefined) {
+    try {
       this._translate.unsubscribe();
+      this._valores.unsubscribe();
+      this._sectores.unsubscribe();
+    } catch (error) { }
+  }
+
+  get statusSubmit() {
+    if (this.sitioForm.valid) {
+      if (this.registrarFallecido) {
+        if (this.fallecidoForm.valid) {
+          return true;
+        }
+      } else {
+        return true;
+      }
     }
+    return false;
   }
 
   submit(): void {
-    let nuevo_registro = {
-      representante: {},
-      sitio: null,
-      fallecido: null
-    }
-    if (this.sitioForm.valid) {
-      nuevo_registro.sitio = this.sitioForm.value;
-      if (this.registrarFallecido) {
-        if (this.fallecidoForm.valid) {
-          nuevo_registro.fallecido = this.fallecidoForm.value;
-          this.guardarRegistro(nuevo_registro);
-        } else {
-          this.openSnackBar("Faltan campos de llenar del fallecido", "");
-        }
-      } else {
-        this.guardarRegistro(nuevo_registro);
-      }
-    } else {
-      this.openSnackBar("Faltan campos de llenar del sitio", "");
-    }
+    this.guardarRegistro({
+      sitio: this.sitioForm.value,
+      fallecido: this.registrarFallecido ? this.fallecidoForm.value : null
+    });
   }
 
   onNoClick(): void { this.dialogRef.close(); }
@@ -132,8 +132,8 @@ export class DialogRegistrarSitio implements OnInit {
   prevStep(): void { this.step--; }
 
   generarDeudasSitios(event: MatCheckboxChange): void {
-    if(event.checked) {
-      if(this.sitioForm.controls['tipo'].value !== "Donación") {
+    if (event.checked) {
+      if (this.sitioForm.controls['tipo'].value !== "Donación") {
         this.generarListaDeudas(this.sitioForm.value);
       }
     } else {
@@ -143,13 +143,13 @@ export class DialogRegistrarSitio implements OnInit {
 
   tipoSeleccionado(event: MatSelectChange): void {
     const value = event.source.value;
-    if(value === "Arriendo") {
+    if (value === "Arriendo") {
       this.listaDescripcion = ['Bóveda', 'Piso'];
     }
-    if(value === "Compra") {
+    if (value === "Compra") {
       this.listaDescripcion = ['Lote propio'];
     }
-    if(value === "Donación" ) {
+    if (value === "Donación") {
       this.listaDescripcion = ['Bóveda', 'Piso'];
     }
   }
@@ -171,7 +171,7 @@ export class DialogRegistrarSitio implements OnInit {
       FechaInicio: null,
     }];
 
-    const importar:Importacion = new Importacion(this.listaSectores, this.listaValores);
+    const importar: Importacion = new Importacion(this.listaSectores, this.listaValores);
     this.listaDeudas = importar.generarDeudasRegistro(nuevo_registro);
   }
 
@@ -196,7 +196,7 @@ export class DialogRegistrarSitio implements OnInit {
         },
         deudas: this.listaDeudas
       };
-      if(fallecido) {
+      if (fallecido) {
         nuevo_registro.fallecido = null;
       }
       this.apiSitio.agregarSitio(nuevo_registro).pipe(
@@ -208,18 +208,18 @@ export class DialogRegistrarSitio implements OnInit {
   }
 
   private result = (x: any) => {
-    if(x.ok) {
+    if (x.ok) {
       this.openSnackBar("Sitio registrado", "ok");
       this.notSitio.emitActualizarHistorialChange();
-      this.dialogRef.close({ok: true});
+      this.dialogRef.close({ ok: true });
     } else {
       this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
-      this.dialogRef.close({ok: false});
+      this.dialogRef.close({ ok: false });
     }
   }
 
-  private obtenerSector (id: any): SectorI {
-    return this.listaSectores.filter ( sector => sector.id == id)[0];
+  private obtenerSector(id: any): SectorI {
+    return this.listaSectores.filter(sector => sector.id == id)[0];
   }
 
   private openSnackBar = (message: string, action: string): void => {

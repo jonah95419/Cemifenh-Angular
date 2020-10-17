@@ -134,7 +134,7 @@
                 <ng-container matColumnDef="valor">
                     <th mat-header-cell *matHeaderCellDef> Valor </th>
                     <td mat-cell *matCellDef="let row"> {{row.valor | currency}} </td>
-                    <td mat-footer-cell *matFooterCellDef> {{getTotalCost() | currency}} </td>
+                    <td mat-footer-cell *matFooterCellDef> {{totalCost | currency}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="accion">
@@ -204,5 +204,5 @@
 </div>
 <div mat-dialog-actions align=end>
     <button mat-button (click)="onNoClick()">Cancelar</button>
-    <button mat-button type="submit" (click)="submit()" cdkFocusInitial>Guardar</button>
+    <button mat-button type="submit" [disabled]="!statusSubmit" (click)="submit()" cdkFocusInitial>Guardar</button>
 </div>

@@ -168,5 +168,5 @@
 </div>
 <div mat-dialog-actions align=end>
     <button mat-button (click)="onNoClick()">Cancelar</button>
-    <button mat-button type="submit" (click)="submit()" cdkFocusInitial>Guardar</button>
+    <button mat-button type="submit" (click)="submit()" [disabled]="!statusSubmit" cdkFocusInitial>Guardar</button>
 </div>

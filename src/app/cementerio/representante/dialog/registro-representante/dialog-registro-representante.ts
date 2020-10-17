@@ -1,22 +1,22 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { SectorService } from '../../../../admin/service/sector.service';
-import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
-import { SectorI } from '../../../../admin/model/sector';
-import { Validators, FormControl, FormBuilder } from '@angular/forms';
-import { tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Importacion } from '../../../../utilidades/importarRegistros';
-import { ValoresService } from '../../../../admin/service/valores.service';
-import { ValorI } from '../../../../admin/model/valor';
-import { RepresentanteService } from '../../service/representante.service';
-import { MatSelectChange } from '@angular/material/select';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { DeudaI } from '../../model/deuda';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable } from '@angular/material/table';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { tap } from 'rxjs/operators';
+import { SectorI } from '../../../../admin/model/sector';
+import { ValorI } from '../../../../admin/model/valor';
+import { SectorService } from '../../../../admin/service/sector.service';
+import { ValoresService } from '../../../../admin/service/valores.service';
+import { Importacion } from '../../../../utilidades/importarRegistros';
 import { SitioI } from '../../../sitio/model/sitio';
+import { DeudaI } from '../../model/deuda';
+import { RepresentanteService } from '../../service/representante.service';
 
 @Component({
   selector: 'dialog-registro-representante',
@@ -99,54 +99,49 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this._translate !== undefined) {
+    try {
       this._translate.unsubscribe();
+    } catch (error) {
+
     }
   }
 
-  submit(): void {
-    let nuevo_registro = {
-      representante: {},
-      sitio: null,
-      fallecido: null
-    }
+  get statusSubmit() {
     if (this.representanteForm.valid) {
-      nuevo_registro.representante = this.representanteForm.value;
       if (this.registrarSitio) {
         if (this.sitioForm.valid) {
-          nuevo_registro.sitio = this.sitioForm.value;
           if (this.registrarFallecido) {
             if (this.fallecidoForm.valid) {
-              nuevo_registro.fallecido = this.fallecidoForm.value;
-              this.guardarRegistro(nuevo_registro);
-            } else {
-              this.openSnackBar("Faltan campos de llenar del fallecido", "");
+              return true;
             }
           } else {
-            this.guardarRegistro(nuevo_registro);
+            return true;
           }
-        } else {
-          this.openSnackBar("Faltan campos de llenar del sitio", "");
         }
       } else {
-        this.guardarRegistro(nuevo_registro);
+        return true;
       }
-    } else {
-      this.openSnackBar("Faltan campos de llenar del represenante", "");
     }
+    return false;
   }
+
+  submit = (): void => this.guardarRegistro({
+    representante: this.representanteForm.value,
+    sitio: this.registrarSitio ? this.sitioForm.value : null,
+    fallecido: this.registrarFallecido ? this.fallecidoForm.value : null
+  });
 
   onNoClick(): void { this.dialogRef.close(); }
 
-  setStep(index: number) { this.step = index; }
+  setStep(index: number): void { this.step = index; }
 
   nextStep(): void { this.step++; }
 
   prevStep(): void { this.step--; }
 
   generarDeudasSitios(event: MatCheckboxChange): void {
-    if(event.checked) {
-      if(this.sitioForm.controls['tipo'].value !== "Donación") {
+    if (event.checked) {
+      if (this.sitioForm.controls['tipo'].value !== "Donación") {
         this.generarListaDeudas(this.sitioForm.value);
       }
     } else {
@@ -156,18 +151,18 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
 
   tipoSeleccionado(event: MatSelectChange): void {
     const value = event.source.value;
-    if(value === "Arriendo") {
+    if (value === "Arriendo") {
       this.listaDescripcion = ['Bóveda', 'Piso'];
     }
-    if(value === "Compra") {
+    if (value === "Compra") {
       this.listaDescripcion = ['Lote propio'];
     }
-    if(value === "Donación" ) {
+    if (value === "Donación") {
       this.listaDescripcion = ['Bóveda', 'Piso'];
     }
   }
 
-  getTotalCost(): number {
+  get totalCost(): number {
     return this.listaDeudas?.map(t => Number(t.valor)).reduce((acc, value) => acc + value, 0);
   }
 
@@ -184,7 +179,7 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
       FechaInicio: null,
     }];
 
-    const importar:Importacion = new Importacion(this.listaSectores, this.listaValores);
+    const importar: Importacion = new Importacion(this.listaSectores, this.listaValores);
     this.listaDeudas = importar.generarDeudasRegistro(nuevo_registro);
   }
 
@@ -213,7 +208,7 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
         },
         deudas: this.listaDeudas
       };
-      if(fallecido) {
+      if (fallecido) {
         nuevo_registro.fallecido = null;
       }
 
@@ -225,8 +220,8 @@ export class DialogRegistroRepresentante implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  private obtenerSector (id: any): SectorI {
-    return this.listaSectores.filter ( sector => sector.id == id)[0];
+  private obtenerSector(id: any): SectorI {
+    return this.listaSectores.filter(sector => sector.id == id)[0];
   }
 
   private openSnackBar = (message: string, action: string): void => {

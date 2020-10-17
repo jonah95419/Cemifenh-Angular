@@ -1,26 +1,26 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
-import { EstadoCuentaH } from '../../cementerio/representante/model/estadoCuentaR';
-import { tap } from 'rxjs/operators';
-import { SitioService } from '../../cementerio/sitio/service/sitio.service';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-pago-extra/dialog-pago-extra';
-import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
-import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
-import { DialogRegistroDeuda } from '../../cementerio/representante/dialog/registro-deuda/dialog-registro-deuda';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ServiceC } from '../../cementerio/sitio/service-c/sitio-serviceC';
-import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { tap } from 'rxjs/operators';
+import { DialogRegistroDeuda } from '../../cementerio/representante/dialog/registro-deuda/dialog-registro-deuda';
+import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-pago-extra/dialog-pago-extra';
+import { EstadoCuentaH } from '../../cementerio/representante/model/estadoCuentaR';
+import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
+import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
 import { DialogEstadoCuenta } from '../../cementerio/sitio/dialog/editar-estado-cuenta/editar-estado-cuenta';
 import { DialogRegistrarSitio } from '../../cementerio/sitio/dialog/registrar-sitio/registrar-sitio';
+import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
+import { ServiceC } from '../../cementerio/sitio/service-c/sitio-serviceC';
+import { SitioService } from '../../cementerio/sitio/service/sitio.service';
 import { PDFClass } from '../../utilidades/pdf';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-historial',
