@@ -181,14 +181,16 @@ export class Importacion {
           let inicioM = new Date((inicio_servicio.getFullYear() + i), inicio_servicio.getMonth(), inicio_servicio.getDate());
           let finM = new Date((inicio_servicio.getFullYear() + (i + periodo_renovacion_mantenimiento)), inicio_servicio.getMonth(), inicio_servicio.getDate());
 
-          listaDeudas.push({
-            valor: valor_mantenimiento,
-            descripcion: 'Mantenimiento',
-            pagoDesde: inicioM,
-            pagoHasta: finM,
-            observaciones: '',
-            tipo: 'cargo'
-          });
+          if(inicioM.getFullYear() >= 2010) {
+            listaDeudas.push({
+              valor: valor_mantenimiento,
+              descripcion: 'Mantenimiento',
+              pagoDesde: inicioM,
+              pagoHasta: finM,
+              observaciones: '',
+              tipo: 'cargo'
+            });
+          }
 
           i = i + periodo_renovacion_mantenimiento;
           if ((inicio_servicio.getFullYear() + i) > new Date().getFullYear()) {

@@ -1,19 +1,19 @@
-import { Component, OnInit, OnDestroy, ViewChild, NgZone, AfterViewInit, ViewEncapsulation } from '@angular/core';
-import { SectorService } from '../service/sector.service';
-import { ValoresService } from '../service/valores.service';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { tap } from 'rxjs/operators';
+import * as XLSX from 'xlsx';
 import { Importacion } from '../../utilidades/importarRegistros';
 import { Limpieza } from '../../utilidades/limpiezaRegistros';
-import * as XLSX from 'xlsx';
-import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { ImportarService } from '../service/importar.service';
 import { SectorI } from '../model/sector';
 import { ValorI } from '../model/valor';
-import { tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ImportarService } from '../service/importar.service';
+import { SectorService } from '../service/sector.service';
+import { ValoresService } from '../service/valores.service';
 
 
 @Component({
@@ -22,58 +22,42 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./importacion.component.css'],
   encapsulation: ViewEncapsulation.None,
   providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'es-EC'},
+    { provide: MAT_DATE_LOCALE, useValue: 'es-EC' },
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
     },
-    {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
+    { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
 
 export class ImportacionComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  _translate: any;
   locale: string;
 
   file: File;
-  arrayBuffer: any;
 
-  listaSectores: SectorI[];
-  listaValores: ValorI[];
   listaImportacion;
-  listaRegistros = [];
   listaRegistros2 = [];
 
-  paso1 = true;
-  paso2 = false;
-  paso3 = false;
-  paso4 = false;
-  paso5 = false;
-  importando = true;
-  indicadorImportacion = false;
-  importacion = false;
-  generarGastosMantenimiento = true;
-  generarGastosServicio = true;
-  registrarDeudas = true;
-  registrarComprobante = true;
+  paso1: boolean = true;
+  paso2: boolean = false;
+  paso3: boolean = false;
+  paso4: boolean = false;
+  importando: boolean = true;
+  indicadorImportacion: boolean = false;
+  importacion: boolean = false;
+  generarGastosMantenimiento: boolean = true;
+  generarGastosServicio: boolean = true;
+  registrarDeudas: boolean = true;
+  registrarComprobante: boolean = true;
 
-  startDate = new Date(1975, 0, 1);
-  periodoInicio = new Date(1975,0,1);
+  periodoInicio = new Date(1975, 0, 1);
   periodoFinal = new Date();
-
-  dataset = [
-    {nombre:'servicio'},
-    {nombre:'mantenimiento'},
-    {nombre:'general'},
-  ]
-
-  cantidaRegistros = 0;
-  cantidadRegistros = 0;
 
   displayedColumns: string[] = [
     'nombre',
@@ -84,6 +68,18 @@ export class ImportacionComponent implements OnInit, OnDestroy {
     'cantidad'
   ];
 
+  private arrayBuffer: any;
+
+  private listaSectores: SectorI[];
+  private listaValores: ValorI[];
+
+  private listaRegistros = [];
+
+  private cantidaRegistros: number = 0;
+
+  private _translate: any;
+  private _guardar_registros: any;
+
   constructor(
     private translate: TranslateService,
     private _snackBar: MatSnackBar,
@@ -91,129 +87,128 @@ export class ImportacionComponent implements OnInit, OnDestroy {
     private valoresservice: ValoresService,
     private importarservice: ImportarService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.locale = this.translate.currentLang;
-    this._translate =  this.translate.onLangChange
-            .subscribe((langChangeEvent: LangChangeEvent) => {
-                this.locale = langChangeEvent.lang;
-            })
+    this._translate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang)
     this.obtenerValores();
   }
 
-
-  ngOnDestroy() {
-    this._translate.unsubscribe();
+  ngOnDestroy(): void {
+    try {
+      this._translate.unsubscribe();
+      this._guardar_registros.unsubscribe();
+    } catch (error) { }
   }
 
-  onFileChange(event) {
+  onFileChange(event): void {
     if (event.target.files.length > 0) {
-     this.file = event.target.files[0];
-     this.indicadorImportacion = true;
-     this.importacion = false;
-     this.Upload();
+      this.file = event.target.files[0];
+      this.indicadorImportacion = true;
+      this.importacion = false;
+      this.Upload();
     }
   }
 
-  Upload() {
+  Upload(): void {
     let fileReader = new FileReader();
     fileReader.onload = (e) => {
       this.arrayBuffer = fileReader.result;
       var data = new Uint8Array(this.arrayBuffer);
       var arr = new Array();
-      for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
       var bstr = arr.join("");
-      var workbook = XLSX.read(bstr, {type:"binary"});
+      var workbook = XLSX.read(bstr, { type: "binary" });
       var first_sheet_name = workbook.SheetNames[0];
       var worksheet = workbook.Sheets[first_sheet_name];
-      const exceljsondata: RegistroI[] = XLSX.utils.sheet_to_json(worksheet, {raw:true, defval:""});
+      const exceljsondata: RegistroI[] = XLSX.utils.sheet_to_json(worksheet, { raw: true, defval: "" });
       this.limpiarRegistros(exceljsondata);
     }
     fileReader.readAsArrayBuffer(this.file);
   }
 
-  obtenerRegistrosRepresentantes = () => this.listaRegistros2.length;
+  get obtenerRegistrosRepresentantes(): number { return this.listaRegistros2.length; }
 
-  obtenerRegistrosSitio = () => this.listaRegistros2.length;
+  get obtenerRegistrosSitio(): number { return this.listaRegistros2.length; }
 
-  obtenerRegistrosServicio() {
+  get obtenerRegistrosServicio(): number {
     let cantidad = 0;
-    this.listaRegistros2.map( registro => {
-      for (let j=0; j<registro.deudas.length; j++) {
-        if (registro.deudas[j].descripcion === 'Servicio') {
-          cantidad ++;
+    this.listaRegistros2.forEach(registro => {
+      registro.deudas.forEach(r => {
+        if (r.descripcion === 'Servicio') {
+          cantidad++;
         }
-      }
-    });
-    return cantidad;
-  }
-
-  obtenerRegistrosMantenimiento() {
-    let cantidad = 0;
-    for (let i=0; i<this.listaRegistros2.length; i++) {
-      for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Mantenimiento') {
-          cantidad ++;
-        }
-      }
-    }
-    return cantidad;
-  }
-
-  obtenerDeudasMantenimiento() {
-    let cantidad = 0;
-    for (let i=0; i<this.listaRegistros2.length; i++) {
-      for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Mantenimiento'  && new Date(this.listaRegistros2[i].deudas[j].pagoDesde).getFullYear() >= 2002) {
-          if (this.listaRegistros2[i].deudas[j].ingreso === undefined ) {
-            cantidad  += Number(this.listaRegistros2[i].deudas[j].valor);
-          } else {
-            let cant = Number(this.listaRegistros2[i].deudas[j].valor) - Number(this.listaRegistros2[i].deudas[j].ingreso.cant);
-            cantidad += cant;
-          }
-        }
-      }
-    }
-    return cantidad;
-  }
-
-  obtenerDeudasServicio() {
-    let cantidad = 0;
-    for (let i=0; i<this.listaRegistros2.length; i++) {
-      for (let j=0; j<this.listaRegistros2[i].deudas.length; j++) {
-        if (this.listaRegistros2[i].deudas[j].descripcion === 'Servicio' && new Date(this.listaRegistros2[i].deudas[j].pagoDesde).getFullYear() >= 2002) {
-          if (this.listaRegistros2[i].deudas[j].ingreso === undefined ) {
-            cantidad  += Number(this.listaRegistros2[i].deudas[j].valor);
-          } else {
-            let cant = Number(this.listaRegistros2[i].deudas[j].valor) - Number(this.listaRegistros2[i].deudas[j].ingreso.cant);
-            cantidad += cant;
-          }
-        }
-      }
-    }
-    return cantidad;
-  }
-
-  obtenerAbonos = (): number => {
-    let cantidad = 0;
-    this.listaRegistros2.forEach((value: any) => {
-      cantidad = cantidad + value.ingresos
-      .filter((x: any) => new Date(x.pagoDesde).getFullYear() >= 2002)
-      .map((x: any) => Number(x.valor))
-      .reduce((a, b) => a + b, 0)
+      })
     })
     return cantidad;
   }
 
-  indicarPeriodo() {
-    this.listaRegistros2 = this.listaRegistros.filter( registro =>
+  get obtenerRegistrosMantenimiento(): number {
+    let cantidad = 0;
+    this.listaRegistros2.forEach(registro => {
+      registro.deudas.forEach(r => {
+        if (r.descripcion === 'Mantenimiento') {
+          cantidad++;
+        }
+      })
+    })
+    return cantidad;
+  }
+
+  get obtenerDeudasMantenimiento(): number {
+    let cantidad = 0;
+    this.listaRegistros2.forEach(registro => {
+      registro.deudas.forEach(r => {
+        if (r.descripcion === 'Mantenimiento' && new Date(r.pagoDesde).getFullYear() >= 2002) {
+          if (r.ingreso === undefined) {
+            cantidad += Number(r.valor);
+          } else {
+            let cant = Number(r.valor) - Number(r.ingreso.cant);
+            cantidad += cant;
+          }
+        }
+      })
+    })
+    return cantidad;
+  }
+
+  get obtenerDeudasServicio(): number {
+    let cantidad = 0;
+    this.listaRegistros2.forEach(registro => {
+      registro.deudas.forEach(r => {
+        if (r.descripcion === 'Servicio' && new Date(r.pagoDesde).getFullYear() >= 2002) {
+          if (r.ingreso === undefined) {
+            cantidad += Number(r.valor);
+          } else {
+            let cant = Number(r.valor) - Number(r.ingreso.cant);
+            cantidad += cant;
+          }
+        }
+      })
+    })
+    return cantidad;
+  }
+
+  get obtenerAbonos(): number {
+    let cantidad = 0;
+    this.listaRegistros2.forEach((value: any) => {
+      cantidad = cantidad + value.ingresos
+        .filter((x: any) => new Date(x.pagoDesde).getFullYear() >= 2002)
+        .map((x: any) => Number(x.valor))
+        .reduce((a, b) => a + b, 0)
+    })
+    return cantidad;
+  }
+
+  indicarPeriodo(): void {
+    this.listaRegistros2 = this.listaRegistros.filter(registro =>
       new Date(registro.sitio.fechaAdquisicion) >= new Date(this.periodoInicio) &&
       new Date(registro.sitio.fechaAdquisicion) <= new Date(this.periodoFinal));
   }
 
-  verCantidadRegistros() {
-    this.listaRegistros2.forEach( registro => {
+  verCantidadRegistros(): void {
+    this.listaRegistros2.forEach(registro => {
       this.cantidaRegistros = this.cantidaRegistros + 4;
-      registro.deudas.forEach( deudas => {
+      registro.deudas.forEach(deudas => {
         if (deudas.ingreso != undefined) {
           this.cantidaRegistros = this.cantidaRegistros + 2;
         } else {
@@ -223,53 +218,48 @@ export class ImportacionComponent implements OnInit, OnDestroy {
     });
   }
 
-  guardarRegistros() {
+  guardarRegistros(): void {
     this.importando = false;
     this.guardarRegistrosImportacion();
   }
 
-  private guardarRegistrosImportacion() {
-    this.importarservice.agregarImportacion(this.listaRegistros2)
-    .pipe( tap(data => {
-      if(data.ok) {
-        window.location.reload();
-        this.openSnackBar("Registros importados exitosamente!!", "ok")}
-      else { this.openSnackBar("A ocurrido un error al momento de importar, puedes intentarlo nuevamente!!", "ok")}
-    })).toPromise()
+  private guardarRegistrosImportacion(): void {
+    this._guardar_registros = this.importarservice.agregarImportacion(this.listaRegistros2)
+      .subscribe(data => {
+        if (data.ok) {
+          window.location.reload();
+          this.openSnackBar("Registros importados exitosamente!!", "ok")
+        }
+        else {
+          this.openSnackBar(data.message, "ok")
+        }
+      });
   }
 
-  private limpiarRegistros( data: any) {
-   const limpiar: Limpieza = new Limpieza();
-   this.listaImportacion = limpiar.limpiarRegistros(data);
-   console.log(this.listaImportacion);
-   this.procesarInformacion();
-   this.indicadorImportacion = false;
-   this.importacion = true;
+  private limpiarRegistros(data: any): void {
+    const limpiar: Limpieza = new Limpieza();
+    this.listaImportacion = limpiar.limpiarRegistros(data);
+    this.procesarInformacion();
+    this.indicadorImportacion = false;
+    this.importacion = true;
   }
 
-  procesarInformacion() {
-    const importar:Importacion = new Importacion(this.listaSectores, this.listaValores);
+  procesarInformacion(): void {
+    const importar: Importacion = new Importacion(this.listaSectores, this.listaValores);
     this.listaRegistros = importar.generarDatosImporte(this.listaImportacion.registrosValidos);
     this.listaRegistros2 = this.listaRegistros;
-    console.log(this.listaRegistros2);
   }
 
-  private obtenerValores() {
-    this.sectorservice.sectores.pipe( tap(data => this.cargarValores(data)) ).toPromise();
-    this.valoresservice.valores.pipe( tap(data =>this.cargarValoresValor(data)) ).toPromise();
+  private obtenerValores(): void {
+    this.sectorservice.sectores.pipe(tap(data => this.cargarValores(data))).toPromise();
+    this.valoresservice.valores.pipe(tap(data => this.cargarValoresValor(data))).toPromise();
   }
 
-  private cargarValores( data: SectorI[]) {
-    this.listaSectores = data;
-  }
+  private cargarValores = (data: SectorI[]): void => { this.listaSectores = data; }
 
-  private cargarValoresValor( data: ValorI[]) {
-    this.listaValores = data;
-  }
+  private cargarValoresValor = (data: ValorI[]): void => { this.listaValores = data; }
 
-  private openSnackBar = (message: string, action: string): void => {
-    this._snackBar.open(message, action, { duration: 5000 });
-  }
+  private openSnackBar = (m: string, a: string): void => { this._snackBar.open(m, a, { duration: 5000 }); }
 
 }
 

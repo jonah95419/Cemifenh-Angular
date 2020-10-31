@@ -81,3 +81,20 @@ tr.mat-footer-row {
 i {
     font-size: 12px;
 }
+
+.detalles-right {
+    min-width: 50px;
+    text-align: right;
+}
+
+.detalles-center {
+    min-width: 50px;
+    text-align: center;
+}
+
+.detalles-header {
+    min-width: 50px;
+    text-align: center;
+    font-size: 12px;
+    color: rgb(141, 141, 141);
+}

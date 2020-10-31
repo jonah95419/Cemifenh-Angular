@@ -100,40 +100,40 @@
                     <div>
                         <div class="row">
                             <div class="col" style="min-width: 100px;"></div>
-                            <div class="col" style="min-width: 50px; text-align:center; font-size: 12px;  color: rgb(141, 141, 141);">Registros</div>
-                            <div class="col" style="min-width: 50px; text-align:center; font-size: 12px;  color: rgb(141, 141, 141);">Cargos</div>
-                            <div class="col" style="min-width: 50px; text-align:center; font-size: 12px;  color: rgb(141, 141, 141);">Abonos</div>
+                            <div class="col detalles-header">Registros</div>
+                            <div class="col detalles-header">Cargos</div>
+                            <div class="col detalles-header">Abonos</div>
                         </div>
                         <div class="row">
                             <div class="col" style="min-width: 100px;">Representantes</div>
-                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosRepresentantes()}}</div>
-                            <div class="col" style="min-width: 50px; text-align:center;"></div>
-                            <div class="col" style="min-width: 50px; text-align:center;"></div>
+                            <div class="col detalles-center">{{obtenerRegistrosRepresentantes}}</div>
+                            <div class="col detalles-center"></div>
+                            <div class="col detalles-center"></div>
                         </div>
                         <div class="row">
                             <div class="col" style="min-width: 100px; display: flex;">Sitios <i style="font-size: 12px;"> (total)</i></div>
-                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosSitio()}}</div>
-                            <div class="col" style="min-width: 50px; text-align:center;"></div>
-                            <div class="col" style="min-width: 50px; text-align:center;"></div>
+                            <div class="col detalles-center">{{obtenerRegistrosSitio}}</div>
+                            <div class="col detalles-center"></div>
+                            <div class="col detalles-center"></div>
                         </div>
                         <mat-divider style="margin-bottom: 12px; margin-top: 12px;"></mat-divider>
                         <div class="row">
                             <div class="col" style="min-width: 100px;">Servicio</div>
-                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosServicio()}}</div>
-                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerDeudasServicio() | currency}}</div>
-                            <div class="col" style="min-width: 50px; text-align:right;"></div>
+                            <div class="col detalles-center">{{obtenerRegistrosServicio}}</div>
+                            <div class="col detalles-right">{{obtenerDeudasServicio | currency}}</div>
+                            <div class="col detalles-right"></div>
                         </div>
                         <div class="row">
                             <div class="col" style="min-width: 100px;">Mantenimiento</div>
-                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosMantenimiento()}}</div>
-                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerDeudasMantenimiento() | currency}}</div>
-                            <div class="col" style="min-width: 50px; text-align:right;"></div>
+                            <div class="col detalles-center">{{obtenerRegistrosMantenimiento}}</div>
+                            <div class="col detalles-right">{{obtenerDeudasMantenimiento | currency}}</div>
+                            <div class="col detalles-right"></div>
                         </div>
                         <div class="row">
                             <div class="col" style="min-width: 100px;">Total</div>
-                            <div class="col" style="min-width: 50px; text-align:center;">{{obtenerRegistrosServicio() + obtenerRegistrosMantenimiento()}}</div>
-                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerDeudasServicio() + obtenerDeudasMantenimiento() | currency}}</div>
-                            <div class="col" style="min-width: 50px; text-align:right;">{{obtenerAbonos() | currency}}</div>
+                            <div class="col detalles-center">{{obtenerRegistrosServicio + obtenerRegistrosMantenimiento}}</div>
+                            <div class="col detalles-right">{{obtenerDeudasServicio + obtenerDeudasMantenimiento | currency}}</div>
+                            <div class="col detalles-right">{{obtenerAbonos | currency}}</div>
                         </div>
                     </div>
                 </div>
