@@ -1,25 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { InicioComponent } from './inicio/inicio/inicio.component';
-import { HistorialComponent } from './inicio/historial/historial.component';
-import { RepresentanteComponent } from './inicio/representante/representante.component';
 import { IngresoComponent } from './user/ingreso/ingreso.component';
 import { CallbackComponent } from './callback/callback.component';
 import { AuthGuard } from './core/guard/auth.guard';
 
 const routes: Routes = [
-  //{ path: '', redirectTo: 'consultas', pathMatch: 'full' },
   { path: '', component: CallbackComponent, pathMatch: 'full' },
   {
-    path: 'inicio', component: InicioComponent, canActivate: [AuthGuard],
-    children: [
-      {
-        path: 'representantes/:periodo', component: RepresentanteComponent, canActivate: [AuthGuard],
-        children: [
-          { path: 'historial/:id', component: HistorialComponent },
-        ]
-      },
-    ]
+    path: 'inicio',
+    loadChildren: () => import('./inicio/inicio.module').then(m => m.InicioModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'representantes',
