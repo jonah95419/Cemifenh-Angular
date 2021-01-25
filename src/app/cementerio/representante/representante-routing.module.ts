@@ -9,7 +9,6 @@ const routes: Routes = [
   {
     path: '',
     component: RepresentantesComponent,
-    pathMatch: 'full',
     children: [
       {
         path: 'registro/:id',

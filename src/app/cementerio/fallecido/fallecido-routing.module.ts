@@ -4,7 +4,7 @@ import { FallecidosComponent } from './fallecidos/fallecidos.component';
 
 const routes: Routes = [
   {
-    path: '', component: FallecidosComponent, pathMatch: 'full',
+    path: '', component: FallecidosComponent
   }
 ];
 @NgModule({

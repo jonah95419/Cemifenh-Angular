@@ -7,9 +7,7 @@ import { SitioDetallesEstadoCuentaComponent } from './sitio-detalles-estado-cuen
 
 const routes: Routes = [
   {
-    path: '',
-    component: SitiosComponent,
-    pathMatch: 'full',
+    path: '', component: SitiosComponent,
     children: [
       { path: 'informacion', component: SitioDetallesInformacionComponent },
       { path: 'fallecidos', component: SitioDetallesListaFallecidosComponent },

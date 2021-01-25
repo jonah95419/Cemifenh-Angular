@@ -7,9 +7,7 @@ import { CopiaSeguridadComponent } from './copia-seguridad/copia-seguridad.compo
 
 const routes: Routes = [
   {
-    path: '',
-    component: AdministracionComponent,
-    pathMatch: 'full',
+    path: '', component: AdministracionComponent,
     children: [
       { path: 'lista-valores', component: PreciosComponent },
       { path: 'importar-datos', component: ImportacionComponent },
