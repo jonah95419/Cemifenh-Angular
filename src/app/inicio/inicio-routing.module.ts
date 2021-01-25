@@ -7,7 +7,9 @@ import { HistorialComponent } from './historial/historial.component';
 
 const routes: Routes = [
   {
-    path: '', component: InicioComponent,
+    path: '',
+    component: InicioComponent,
+    pathMatch: 'full',
     children: [
       {
         path: 'representantes/:periodo', component: RepresentanteComponent, canActivate: [AuthGuard],
