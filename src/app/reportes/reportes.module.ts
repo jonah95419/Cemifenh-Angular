@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReportesComponent } from '../reportes/reportes/reportes.component';
-import { AppRoutingModule } from '../app-routing.module';
 import { AngularModule } from '../angular.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +10,7 @@ import { PrintService } from './service/print.service';
 import { AppComponent } from '../app.component';
 import { ReportesService } from './service/reportes.service';
 import { ExcelService } from '../utilidades/excel';
+import { ReportesRoutingModule } from './reportes-routing.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,7 @@ import { ExcelService } from '../utilidades/excel';
     PrintLayoutComponent
   ],
   imports: [
-    AppRoutingModule,
+    ReportesRoutingModule,
     CommonModule,
     AngularModule,
     FormsModule,

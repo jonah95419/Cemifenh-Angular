@@ -46,7 +46,6 @@ const AUTH_SERVER = environment.baseUrl
     ReportesModule,
     UserModule,
     CoreModule,
-    HttpClientModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

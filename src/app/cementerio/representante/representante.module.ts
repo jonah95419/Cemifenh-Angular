@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RepresentanteService } from './service/representante.service';
-import { AppRoutingModule } from '../../app-routing.module';
 import { AngularModule } from '../../angular.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +11,7 @@ import { DialogRegistroRepresentante } from './dialog/registro-representante/dia
 import { DialogPagoExtra } from './dialog/registro-pago-extra/dialog-pago-extra';
 import { DialogRegistroDeuda } from './dialog/registro-deuda/dialog-registro-deuda';
 import { RepresentantesComponent } from './representantes/representantes.component';
+import { RepresentanteRoutingModule } from './representante-routing.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,7 @@ import { RepresentantesComponent } from './representantes/representantes.compone
     RepresentantesComponent
   ],
   imports: [
-    AppRoutingModule,
+    RepresentanteRoutingModule,
     CommonModule,
     AngularModule,
     FormsModule,

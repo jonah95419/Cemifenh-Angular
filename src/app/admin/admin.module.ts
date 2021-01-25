@@ -12,6 +12,7 @@ import { AdministracionComponent } from './administracion/administracion.compone
 import { CopiaSeguridadComponent } from './copia-seguridad/copia-seguridad.component';
 import { ImportacionComponent } from './importacion/importacion.component';
 import { PreciosComponent } from './precios/precios.component';
+import { AdminRoutingModule } from './admin-routing.module';
 
 
 @NgModule({
@@ -22,7 +23,7 @@ import { PreciosComponent } from './precios/precios.component';
     PreciosComponent,
   ],
   imports: [
-    AppRoutingModule,
+    AdminRoutingModule,
     CommonModule,
     AngularModule,
     FormsModule,
