@@ -41,7 +41,7 @@ const AUTH_SERVER = environment.baseUrl
     FallecidoModule,
     RepresentanteModule,
     SitioModule,
-    AdminModule,
+    // AdminModule.forRoot(),
     InicioModule,
     ReportesModule,
     UserModule,

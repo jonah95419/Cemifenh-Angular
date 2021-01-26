@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from '../app-routing.module';
 import { AngularModule } from '../angular.module';
@@ -37,11 +37,32 @@ import { AdminRoutingModule } from './admin-routing.module';
     MatFormFieldModule,
     MatInputModule,
   ],
-  providers:[
-    ImportarService,
-    SectorService,
-    ValoresService
-  ]
+  // providers:[
+  //   ImportarService,
+  //   SectorService,
+  //   ValoresService
+  // ]
 })
 
-export class AdminModule { }
+export class AdminModule {
+
+  constructor(@Optional() @SkipSelf() parentModule?: AdminModule) {
+
+    if (parentModule) {
+      console.log(parentModule);
+      throw new Error(
+        'AdminModule is already loaded. Import it in the AppModule only');
+    }
+  }
+
+  static forRoot(): ModuleWithProviders<AdminModule> {
+    return {
+      ngModule: AdminModule,
+      providers: [
+        {provide: ImportarService },
+        {provide: SectorService },
+        {provide: ValoresService },
+      ]
+    };
+  }
+}
