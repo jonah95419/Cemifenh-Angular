@@ -1,11 +1,13 @@
 .container-inicio {
     display: flex;
     flex-direction: row;
+    height: calc(100vh - 64px);
+    width: 100vw;
 }
 
 .container-filtro-representante {
     min-width: 125px;
-    width: 125px;
+    width: 10vw;
     background-color: white;
     padding: 12px;
     margin: 2px 12px 6px 0px;

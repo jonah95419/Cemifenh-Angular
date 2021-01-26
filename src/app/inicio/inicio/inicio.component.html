@@ -6,19 +6,21 @@
 
             <ng-container *ngIf="fechas && fechas.length !== 0; else lenp;">
 
-                <a *ngFor="let item of fechas" class="navigation-item" [routerLink]="'./representantes/'+ item?.title" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
-                    <div class="item-filtro">
-                        <label>{{item.title}}</label>
-                        <div [ngClass]="{'indicador-filtro': rla2.isActive}"></div>
-                    </div>
-                </a>
-                <mat-divider style="margin: 12px;"></mat-divider>
-                <a class="navigation-item" routerLink="/inicio/representantes/todos" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
-                    <div class="item-filtro">
-                        <label>ver todo</label>
-                        <div [ngClass]="{'indicador-filtro': rla3.isActive}"></div>
-                    </div>
-                </a>
+                <div>
+                    <a *ngFor="let item of fechas" class="navigation-item" [routerLink]="'./representantes/'+ item?.title" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
+                        <div class="item-filtro">
+                            <label>{{item.title}}</label>
+                            <div [ngClass]="{'indicador-filtro': rla2.isActive}"></div>
+                        </div>
+                    </a>
+                    <mat-divider style="margin: 12px;"></mat-divider>
+                    <a class="navigation-item" routerLink="/inicio/representantes/todos" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
+                        <div class="item-filtro">
+                            <label>ver todo</label>
+                            <div [ngClass]="{'indicador-filtro': rla3.isActive}"></div>
+                        </div>
+                    </a>
+                </div>
 
             </ng-container>
 

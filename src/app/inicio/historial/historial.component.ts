@@ -77,7 +77,6 @@ export class HistorialComponent implements OnInit, OnDestroy {
         const representante = data.get("id");
         this.id = atob(representante);
         this.obtenerHistorial();
-        console.log('obtener historial');
       })
     ).toPromise();
     notsitio.actualizarHistorial$.pipe(

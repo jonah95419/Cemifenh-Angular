@@ -10,13 +10,16 @@
 }
 
 .container-historial {
-    width: 100%;
+    width: 60vw;
     margin: 0px 12px;
     padding: 12px 0px;
+    min-width: fit-content;
 }
 
 .container-representante-inicio {
     padding: 12px 0px;
+    width: 30vw;
+    min-width: fit-content;
 }
 
 th.mat-header-cell {
