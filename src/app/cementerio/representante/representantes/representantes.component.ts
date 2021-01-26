@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogRegistroRepresentante } from '../dialog/registro-representante/dialog-registro-representante';
 import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-representantes',
@@ -39,8 +40,10 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private sc: ServiceC,
     private _snackBar: MatSnackBar,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private titleService:Title
   ) {
+    this.titleService.setTitle("SIC - Representantes");
     this.representante = null;
     sc.sitioDetalle$.pipe(tap((sitio: number) => this.sitio_id = sitio)).toPromise();
   }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, ActivatedRouteSnapshot, UrlSegment } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -8,11 +8,11 @@ import { SitioService } from '../service/sitio.service';
 import { ResponseSitioI, SitioI } from '../model/sitio';
 import { ServiceC } from '../service-c/sitio-serviceC';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRegistrarSitio } from '../dialog/registrar-sitio/registrar-sitio';
+import { RepresentanteService } from '../../representante/service/representante.service';
 
 @Component({
   selector: 'app-sitios',
@@ -30,14 +30,14 @@ import { DialogRegistrarSitio } from '../dialog/registrar-sitio/registrar-sitio'
 })
 export class SitiosComponent implements OnInit {
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumns: string[] = [ 'sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
+  displayedColumns: string[] = ['sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
   listaSitios: SitioI[] = [];
 
   sitioId: number;
-  representante: number;
+  representante: number = null;
   locale: string;
   dataSource: MatTableDataSource<any>;
 
@@ -47,19 +47,19 @@ export class SitiosComponent implements OnInit {
     private route: ActivatedRoute,
     private sc: ServiceC,
     private dialog: MatDialog,
-    private apiSitios: SitioService) {
-      route.parent.params.pipe( tap((data: Params) => {
-        if(data.id) {
-          this.representante = data.id;
-          this.obtenerValores(data.id);
-        }
-      })).toPromise();
-      route.firstChild?.queryParams.pipe( tap((data: Params) => {
-        if(data.id) {
-          this.sitioId = data.id;
-        }
-      })).toPromise();
-    }
+    private apiSitios: SitioService,
+    private apiRepresentante: RepresentanteService) {
+    route.snapshot.pathFromRoot.forEach((v: ActivatedRouteSnapshot) => {
+      if (v.params.id) {
+        this.obtenerValores(v.params.id);
+      }
+    })
+    route.firstChild?.queryParams.pipe(tap((data: Params) => {
+      if (data.id) {
+        this.sitioId = data.id;
+      }
+    })).toPromise();
+  }
 
   ngOnInit() {
     this.locale = this.translate.currentLang;
@@ -69,10 +69,10 @@ export class SitiosComponent implements OnInit {
   }
 
   agregarSitio = () => {
-    const dialogRef = this.dialog.open(DialogRegistrarSitio,{ width: '500px', panelClass: "my-class", data: this.representante });
+    const dialogRef = this.dialog.open(DialogRegistrarSitio, { width: '500px', panelClass: "my-class", data: this.representante });
     dialogRef.afterClosed().pipe(
       tap(x => {
-        if(x.ok) { this.obtenerValores(this.representante); }
+        if (x.ok) { this.obtenerValores(this.representante); }
       })
     ).toPromise();
   }
@@ -80,7 +80,7 @@ export class SitiosComponent implements OnInit {
   verDetalles(sitio: any): void {
     this.sitioId = sitio.id;
     this.sc.emitIdSitioDetalleChange(this.sitioId);
-    this.router.navigate([`./representantes/registro/${this.representante}/sitios/informacion`], {queryParams: {id: this.sitioId}});
+    this.router.navigate([`./representantes/registro/${this.representante}/sitios/informacion`], { queryParams: { id: this.sitioId } });
   }
 
   private obtenerValores(id: number): void {

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, ActivatedRouteSnapshot } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { FallecidoService } from '../service/fallecido.service';
 import { ResponseFallecidoRepresentanteI, FallecidoRepresentanteI } from '../model/fallecido';
@@ -61,12 +61,12 @@ export class FallecidosComponent implements OnInit {
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
     private apiFallecido: FallecidoService) {
-    route.parent.params.pipe(tap((data: Params) => {
-      if (data.id) {
-        this.obtenerValores(data.id);
-        this.cargarSitios(data.id);
+    route.snapshot.pathFromRoot.forEach((v: ActivatedRouteSnapshot) => {
+      if (v.params.id) {
+        this.obtenerValores(v.params.id);
+        this.cargarSitios(v.params.id);
       }
-    })).toPromise();
+    })
   }
 
   ngOnInit() {
@@ -85,7 +85,7 @@ export class FallecidosComponent implements OnInit {
   }
 
   submit(): void {
-    if(this.fallecidoForm.valid) {
+    if (this.fallecidoForm.valid) {
       this.apiFallecido.agregarFallecido(this.fallecidoForm.value).pipe(
         tap(data => {
           if (data.ok) {
@@ -110,7 +110,7 @@ export class FallecidosComponent implements OnInit {
   }
 
   submitEdit(): void {
-    if(this.fallecidoEditForm.valid) {
+    if (this.fallecidoEditForm.valid) {
       this.apiFallecido.actualizarFallecido(this.fallecidoEditForm.value.id, this.fallecidoEditForm.value).pipe(
         tap(data => {
           if (data.ok) {
@@ -152,7 +152,7 @@ export class FallecidosComponent implements OnInit {
     ).toPromise();
   }
 
-  private obtenerValores(id: number):void {
+  private obtenerValores(id: number): void {
     this.id_representante = id;
     this.sc.emitIdSitioDetalleChange(null);
     this.apiFallecido.listarFallecidosRepresentante(id).pipe(
@@ -162,7 +162,7 @@ export class FallecidosComponent implements OnInit {
     ).toPromise();
   }
 
-  private cargarValores(data: FallecidoRepresentanteI[]):void {
+  private cargarValores(data: FallecidoRepresentanteI[]): void {
     this.listaFallecidos = data.map((data: FallecidoRepresentanteI) => {
       let nuevo: any = data;
       nuevo.hovered;
