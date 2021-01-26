@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-administracion',
@@ -10,7 +11,9 @@ export class AdministracionComponent implements OnInit, OnDestroy {
 
   admin;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private titleService:Title) {
+    this.titleService.setTitle("SIC - Admin");
+   }
 
   ngOnInit() {
     this.admin = this.router.url.split('/')[2];
