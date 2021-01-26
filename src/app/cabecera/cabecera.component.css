@@ -10,3 +10,7 @@
     font-size: medium;
     cursor: pointer;
 }
+
+label {
+    cursor: pointer;
+}
