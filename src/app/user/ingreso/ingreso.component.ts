@@ -3,6 +3,7 @@ import { AuthenticationService } from '../../core/service/authentication.service
 import { Router, ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-ingreso',
@@ -20,12 +21,14 @@ export class IngresoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private titleService:Title
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle("SICDMIN");
     this.subscription = this.authService.user$.subscribe((x) => {
-      if (this.route.snapshot.url[0].path === 'si-admin') {
+      if (this.route.snapshot.url[0].path === 'sicdmin') {
         const accessToken = localStorage.getItem('access_token');
         if (x && accessToken) {
           const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '';
