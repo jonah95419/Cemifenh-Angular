@@ -12,7 +12,7 @@ export class AdministracionComponent implements OnInit, OnDestroy {
   admin;
 
   constructor(private router: Router, private titleService:Title) {
-    this.titleService.setTitle("SIC - Admin");
+    this.titleService.setTitle("SICDMIN - Admin");
    }
 
   ngOnInit() {
@@ -20,6 +20,5 @@ export class AdministracionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
-
 
 }

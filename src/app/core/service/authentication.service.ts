@@ -47,7 +47,7 @@ export class AuthenticationService {
     this.clearLocalStorage();
     this._user.next(null);
     this.stopTokenTimer();
-    this.router.navigate(['si-admin']);
+    this.router.navigate(['sicdmin']);
     //     })
     //   )
     //   .subscribe();

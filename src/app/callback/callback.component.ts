@@ -13,8 +13,9 @@ import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FOR
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { PDFClass } from '../utilidades/pdf';
 import { HttpClient } from '@angular/common/http';
-import { EstadoCuentaH } from '../cementerio/representante/model/estadoCuentaR';
 import { AuthenticationService } from '../core/service/authentication.service';
+import { Title } from '@angular/platform-browser';
+import { ResponseDeudaRepresentanteI, EstadoCuentaH } from '../cementerio/representante/model/deuda';
 
 @Component({
   selector: 'app-callback',
@@ -37,7 +38,7 @@ export class CallbackComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   displayedColumns: string[] = ['nombre', 'cedula'];
-  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos']; //'select',
+  displayedColumnsEC: string[] = ['fecha', 'sector', 'descripcion', 'cargos', 'abonos', 'pendientes']; //'select',
 
   dataSource: MatTableDataSource<any>;
 
@@ -65,12 +66,14 @@ export class CallbackComponent implements OnInit, OnDestroy {
     private apiCallback: CallbackService,
     private apiRepresentante: RepresentanteService,
     private apiAuth: AuthenticationService,
+    private titleService:Title,
     private cdRef: ChangeDetectorRef) {
     this.pdf = new PDFClass(http);
     this._authPromise = this.apiAuth.user$.subscribe(user => user ? this.apiAuth.logout() : null);
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle("SIC - GADPRSPL");
     this.locale = this.translate.currentLang;
     this._translate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang);
   }
@@ -85,7 +88,7 @@ export class CallbackComponent implements OnInit, OnDestroy {
 
   nuevaConsulta = () => window.location.reload();
 
-  initLogin = () => this.router.navigate(["si-admin"]);
+  initLogin = () => this.router.navigate(["sicdmin"]);
 
   cambioCondicion = (event: MatRadioChange) => this.parametro = "";
 
@@ -107,7 +110,7 @@ export class CallbackComponent implements OnInit, OnDestroy {
     this.representante = row;
     this.estadoCuenta$ = this.apiRepresentante.obtenerEstadoCuentaRepresentante(row.id)
       .pipe(
-        map((value: any) => value.ok ? value.data : []),
+        map((value: ResponseDeudaRepresentanteI) => value.ok ? value.data : []),
         tap((value: EstadoCuentaH[]) => this.estadoCunta = value)
       )
   }
@@ -132,8 +135,9 @@ export class CallbackComponent implements OnInit, OnDestroy {
         motivo: x.descripcion,
         sector: x.sector,
         descripcion: x.pago,
-        estado_cuenta: x.estado_cuenta === 'deuda' ? 'cargo' : 'abono',
-        cantidad: x.cantidad
+        estado_cuenta: x.estado_cuenta,
+        cantidad: x.cantidad,
+        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente
       }
     })
 }

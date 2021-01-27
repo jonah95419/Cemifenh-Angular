@@ -43,7 +43,7 @@ export class RepresentantesComponent implements OnInit, AfterViewInit {
     private cdRef: ChangeDetectorRef,
     private titleService:Title
   ) {
-    this.titleService.setTitle("SIC - Representantes");
+    this.titleService.setTitle("SICDMIN - Representantes");
     this.representante = null;
     sc.sitioDetalle$.pipe(tap((sitio: number) => this.sitio_id = sitio)).toPromise();
   }

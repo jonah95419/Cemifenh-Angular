@@ -6,7 +6,8 @@
 }
 
 mat-card {
-    width: 540px;
+    width: 40vw;
+    min-width: 540px;
     padding: 0;
 }
 

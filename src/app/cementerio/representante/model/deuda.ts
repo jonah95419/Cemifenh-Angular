@@ -26,24 +26,23 @@ export interface ResponseCargosSitioI {
 }
 
 
-export interface DeudaRepresentanteI {
-  cantidad: string;
-  descripcion: string;
-  desde: string;
-  deuda_total?: string;
-  hasta: string;
+export interface EstadoCuentaH {
   id: number;
-  motivo: string;
-  nombre: string;
-  sector: string;
   tipo: string;
-  pago?: string;
+  descripcion: string;
+  fecha: Date;
+  cantidad: string;
+  sector?: string;
   estado_cuenta?: string;
+  pago?: string;
+  sitio?: number;
+  pendiente?: number;
 }
+
 
 export interface ResponseDeudaRepresentanteI {
   ok: boolean;
-  data?: DeudaRepresentanteI[];
+  data?: EstadoCuentaH[];
   message?: string;
   cant?: number;
 }

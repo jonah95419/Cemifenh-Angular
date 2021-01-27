@@ -15,11 +15,10 @@ import { SitioService } from '../../sitio/service/sitio.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPagoExtra } from '../dialog/registro-pago-extra/dialog-pago-extra';
 import { RepresentantesResponse, RepresentanteI } from '../model/representante';
-import { EstadoCuentaH } from '../model/estadoCuentaR';
-import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { HttpClient } from '@angular/common/http';
 import { PDFClass } from '../../../utilidades/pdf';
+import { EstadoCuentaH } from '../model/deuda';
 
 @Component({
   selector: 'app-estado-cuenta',

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../core/service/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { tap, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 @Component({

@@ -12,7 +12,6 @@ import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
 import { DialogRegistroDeuda } from '../../cementerio/representante/dialog/registro-deuda/dialog-registro-deuda';
 import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-pago-extra/dialog-pago-extra';
-import { EstadoCuentaH } from '../../cementerio/representante/model/estadoCuentaR';
 import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
 import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
 import { DialogEstadoCuenta } from '../../cementerio/sitio/dialog/editar-estado-cuenta/editar-estado-cuenta';
@@ -21,6 +20,7 @@ import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
 import { ServiceC } from '../../cementerio/sitio/service-c/sitio-serviceC';
 import { SitioService } from '../../cementerio/sitio/service/sitio.service';
 import { PDFClass } from '../../utilidades/pdf';
+import { EstadoCuentaH } from '../../cementerio/representante/model/deuda';
 
 @Component({
   selector: 'app-historial',

@@ -50,7 +50,7 @@
             <td mat-cell *matCellDef="let row" [style.color]="row.fecha
       < '2001-01-01' ? '#757575': 'red'">
                 {{ row.estado_cuenta === 'abono' ? '' : row.fecha >= '2001-01-01' ? ( row.pendiente
-                <=0 ? 'pagado' : row.pendiente | currency) : (row.pendiente + 'S.')}} </td>
+                <=0 ? 'pagado' : row.pendiente | currency) : ''}} </td>
                     <td mat-footer-cell *matFooterCellDef> {{getPendiente() | currency}} </td>
         </ng-container>
 

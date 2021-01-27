@@ -26,7 +26,7 @@ const routes: Routes = [
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
     canActivate: [AuthGuard]
   },
-  { path: 'si-admin', component: IngresoComponent },
+  { path: 'sicdmin', component: IngresoComponent },
 
 ];
 

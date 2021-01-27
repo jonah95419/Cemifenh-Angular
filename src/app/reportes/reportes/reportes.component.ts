@@ -11,6 +11,7 @@ import { ExcelService } from '../../utilidades/excel';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { merge, of, BehaviorSubject } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-reportes',
@@ -52,11 +53,13 @@ export class ReportesComponent implements OnInit {
     private fb: FormBuilder,
     private excelService: ExcelService,
     private _snackBar: MatSnackBar,
+    private titleService:Title,
     private apiReportes: ReportesService) {
     this.pdf = new PDFClass(http);
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle("SICDMIN - Reportes");
   }
 
   ngAfterViewInit() {

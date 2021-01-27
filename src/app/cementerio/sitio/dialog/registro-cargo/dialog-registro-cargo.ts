@@ -4,8 +4,6 @@ import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/materia
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { SitioService } from '../../service/sitio.service';
-import { ResponseSitioI, SitioI } from '../../model/sitio';
-import { tap } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
 import { MatTable } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
