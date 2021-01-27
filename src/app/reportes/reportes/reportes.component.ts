@@ -5,13 +5,12 @@ import { startWith, switchMap, tap, map, catchError } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
-import { MatTable } from '@angular/material/table';
 import { PDFClass } from '../../utilidades/pdf';
 import { HttpClient } from '@angular/common/http';
 import { ExcelService } from '../../utilidades/excel';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { merge, Observable, of, BehaviorSubject } from 'rxjs';
+import { merge, of, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-reportes',
@@ -113,7 +112,7 @@ export class ReportesComponent implements OnInit {
 
   generateExcel = () => this.excelService.generateExcel(this.data, this.tipo);
 
-  private definirColumnas = () => {
+  private definirColumnas = ():void => {
     if (this.tipo === "abonos_y_cargos") {
       this.columnsToDisplay = ['fecha', 'representante', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos', 'abonos'];
     }
@@ -122,9 +121,6 @@ export class ReportesComponent implements OnInit {
     }
     if (this.tipo === "cargos") {
       this.columnsToDisplay = ['fecha', 'representante', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos'];
-    }
-    if (this.tipo === "sitios") {
-      this.columnsToDisplay = ['num', 'representante', 'cedula', 'lugar', 'motivo', 'sector', 'fecha'];
     }
   }
 

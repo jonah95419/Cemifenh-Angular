@@ -20,6 +20,8 @@ span {
     padding: 12px;
     height: calc(100vh - 66px);
     overflow: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 

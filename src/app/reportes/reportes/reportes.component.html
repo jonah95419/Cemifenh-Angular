@@ -1,14 +1,13 @@
 <mat-sidenav-container class="example-container">
 
     <mat-sidenav opened mode="side" style="background-color: white; padding: 12px;">
-        <div class="fields-container" style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: column;">
             <mat-form-field style="width: 120px;">
                 <mat-label>Tipo reporte:</mat-label>
                 <mat-select [(ngModel)]="tipo" (ngModelChange)="tipoValue($event)">
                     <mat-option value="abonos_y_cargos"> Abonos y cargos </mat-option>
                     <mat-option value="abonos"> Abonos </mat-option>
                     <mat-option value="cargos"> Cargos </mat-option>
-                    <!-- <mat-option value="sitios"> Sitios </mat-option> -->
                 </mat-select>
             </mat-form-field>
 
@@ -28,25 +27,11 @@
 
     </mat-sidenav>
 
-    <mat-sidenav opened mode="side" position="end">
-        <div style="display: flex; flex-direction: column;">
-            <button mat-stroked-button (click)="generatePdf('open')">
-              <i class="material-icons">picture_as_pdf</i>
-              <span>Abrir PDF</span>
-            </button>
-            <button mat-stroked-button (click)="generatePdf('download')">
-              <i class="material-icons">cloud_download</i>
-              <span>Descargar PDF</span>
-            </button>
-            <button mat-stroked-button (click)="generateExcel()">
-              <i class="material-icons">cloud_download</i>
-              <span>Descargar EXCEL</span>
-            </button>
-        </div>
-    </mat-sidenav>
-
     <div class="container-detalles">
-
+        <button style="background-color: white; margin: 0 0 12px auto; width: max-content;" [disabled]="data.length == 0" mat-stroked-button (click)="generateExcel()">
+        <i class="material-icons">cloud_download</i>
+        <span>Descargar EXCEL</span>
+      </button>
         <div class=" mat-elevation-z2">
             <div class="example-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
                 <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
