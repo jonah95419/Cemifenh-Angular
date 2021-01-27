@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ReportesService } from '../service/reportes.service';
 import { FormBuilder, Validators, FormControl } from '@angular/forms';
-import { tap } from 'rxjs/operators';
+import { startWith, switchMap, tap, map, catchError } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -9,6 +9,9 @@ import { MatTable } from '@angular/material/table';
 import { PDFClass } from '../../utilidades/pdf';
 import { HttpClient } from '@angular/common/http';
 import { ExcelService } from '../../utilidades/excel';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { merge, Observable, of, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-reportes',
@@ -26,16 +29,22 @@ import { ExcelService } from '../../utilidades/excel';
 })
 export class ReportesComponent implements OnInit {
 
-  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
-  data_body = [];
-  columnsToDisplay: string[] = [];
+  columnsToDisplay: string[] = ['fecha', 'representante', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos', 'abonos'];
+  data: any[] = [];
 
-  reporteForm = this.fb.group({
-    tipo: new FormControl('abonos_y_cargos', Validators.required),
-    desde: new FormControl(new Date(), Validators.required),
-    hasta: new FormControl(new Date(), Validators.required),
-  })
+  resultsLength = 0;
+  isLoadingResults = true;
+  isRateLimitReached = false;
+
+  desde: Date = new Date();
+  hasta: Date = new Date();
+  tipo: string = "abonos_y_cargos";
+  desde$ = new BehaviorSubject(new Date());
+  hasta$ = new BehaviorSubject(new Date());
+  tipo$ = new BehaviorSubject("");
 
   pdf: PDFClass;
 
@@ -51,76 +60,77 @@ export class ReportesComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get reporteFormControl() {
-    return this.reporteForm.controls;
+  ngAfterViewInit() {
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    merge(this.desde$, this.hasta$, this.tipo$, this.sort.sortChange, this.paginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.apiReportes!.reporteTransacciones(
+            this.tipo, this.getDate(this.desde), this.getDate(this.hasta), this.sort.direction == 'desc' ? 0 : 1, this.paginator.pageIndex);
+        }),
+        map((data: any) => {
+          this.isLoadingResults = false;
+          this.isRateLimitReached = false;
+          this.resultsLength = data.cant;
+          this.definirColumnas();
+          return data.data;
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          this.isRateLimitReached = true;
+          return of([]);
+        })
+      ).subscribe((data: any) => this.data = data);
   }
 
-  submit = () => {
-    if (this.reporteForm.valid) {
-      if (this.reporteForm.value.tipo === "abonos_y_cargos") {
-        this.columnsToDisplay = ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos', 'abonos'];
-      }
-      if (this.reporteForm.value.tipo === "abonos") {
-        this.columnsToDisplay = ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'abonos'];
-      }
-      if (this.reporteForm.value.tipo === "cargos") {
-        this.columnsToDisplay = ['fecha', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos'];
-      }
-      if (this.reporteForm.value.tipo === "sitios") {
-        this.columnsToDisplay = ['num', 'representante', 'cedula', 'lugar', 'motivo', 'sector', 'fecha'];
-      }
-      this.apiReportes.reporteTransacciones(this.getDate(this.reporteForm.value.desde), this.getDate(this.reporteForm.value.hasta), this.reporteForm.value.tipo)
-        .pipe(
-          tap((x: any) => {
-            if (x.ok) {
-              this.data_body = x.data;
-              this.table.renderRows();
-            }
-            else { this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok"); }
-          })
-        ).toPromise();
-    }
-  }
+  desdeValue = (desde: Date) => this.desde$.next(desde);
+  hastaValue = (hasta: Date) => this.hasta$.next(hasta);
+  tipoValue = (tipo: string) => this.tipo$.next(tipo);
 
   generatePdf = (action = 'open') => {
-    this.pdf.jojo(this.data_body, action, {
+    this.pdf.jojo(this.data, action, {
       nombre: 'Jhonatan Stalin Salazar Hurtado',
       representante: '',
       cedula: '',
-      tipo: 'Reporte, ' + this.reporteForm.value.tipo,
-      descripcion: 'del ' + this.getDate(this.reporteForm.value.desde) + ' al ' + this.getDate(this.reporteForm.value.hasta),
+      tipo: 'Reporte, ' + this.tipo,
+      descripcion: 'del ' + this.getDate(this.desde) + ' al ' + this.getDate(this.hasta),
       codigo: ''
-    }, this.reporteForm.value.tipo)
+    }, this.tipo)
   }
 
-  resetForm() {
-    this.reporteForm.reset();
-    this.reporteForm.controls.tipo.patchValue('abonos_y_cargos');
-    this.reporteForm.controls.desde.patchValue(new Date());
-    this.reporteForm.controls.hasta.patchValue(new Date());
-  }
-
-  getTotalAbonos = (): number => this.data_body
+  getTotalAbonos = (): number => this.data
     ?.filter((x: any) => x.estado_cuenta === 'abono' && (new Date(x.fecha) > new Date('2001/01/01')))
     ?.map((x: any) => Number(x.cantidad))
     .reduce((a, b) => a + b, 0);
 
-  getTotalCargos = (): number => this.data_body
+  getTotalCargos = (): number => this.data
     ?.filter((x: any) => x.estado_cuenta === 'cargo' && (new Date(x.fecha) > new Date('2001/01/01')))
     ?.map((x: any) => Number(x.cantidad))
     .reduce((a, b) => a + b, 0);
 
-  generateExcel() {
-    this.excelService.generateExcel(this.data_body, this.reporteForm.value.tipo);
+  generateExcel = () => this.excelService.generateExcel(this.data, this.tipo);
+
+  private definirColumnas = () => {
+    if (this.tipo === "abonos_y_cargos") {
+      this.columnsToDisplay = ['fecha', 'representante', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos', 'abonos'];
+    }
+    if (this.tipo === "abonos") {
+      this.columnsToDisplay = ['fecha', 'representante', 'lugar', 'motivo', 'sector', 'descripcion', 'abonos'];
+    }
+    if (this.tipo === "cargos") {
+      this.columnsToDisplay = ['fecha', 'representante', 'lugar', 'motivo', 'sector', 'descripcion', 'cargos'];
+    }
+    if (this.tipo === "sitios") {
+      this.columnsToDisplay = ['num', 'representante', 'cedula', 'lugar', 'motivo', 'sector', 'fecha'];
+    }
   }
 
   private getDate = (fecha: Date): string => {
     fecha = new Date(fecha);
-    return "" + fecha.getFullYear() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
-  }
-
-  private openSnackBar = (message: string, action: string) => {
-    this._snackBar.open(message, action, { duration: 5000 });
+    return fecha.getUTCFullYear() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
   }
 
 }
