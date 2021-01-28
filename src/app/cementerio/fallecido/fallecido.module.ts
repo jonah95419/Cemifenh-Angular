@@ -19,12 +19,12 @@ import { FallecidosRoutingModule } from './fallecido-routing.module';
     MatInputModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
-  exports: [
-    AngularModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
+  // exports: [
+  //   AngularModule,
+  //   FormsModule,
+  //   MatFormFieldModule,
+  //   MatInputModule,
+  // ],
   providers:[
     FallecidoService
   ]

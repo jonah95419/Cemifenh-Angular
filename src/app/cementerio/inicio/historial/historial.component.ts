@@ -10,17 +10,17 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
-import { DialogRegistroDeuda } from '../../cementerio/representante/dialog/registro-deuda/dialog-registro-deuda';
-import { DialogPagoExtra } from '../../cementerio/representante/dialog/registro-pago-extra/dialog-pago-extra';
-import { RepresentanteI, RepresentantesResponse } from '../../cementerio/representante/model/representante';
-import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
-import { DialogEstadoCuenta } from '../../cementerio/sitio/dialog/editar-estado-cuenta/editar-estado-cuenta';
-import { DialogRegistrarSitio } from '../../cementerio/sitio/dialog/registrar-sitio/registrar-sitio';
-import { ResponseSitioI } from '../../cementerio/sitio/model/sitio';
-import { ServiceC } from '../../cementerio/sitio/service-c/sitio-serviceC';
-import { SitioService } from '../../cementerio/sitio/service/sitio.service';
-import { PDFClass } from '../../utilidades/pdf';
-import { EstadoCuentaH } from '../../cementerio/representante/model/deuda';
+import { EstadoCuentaH } from '../../representante/model/deuda';
+import { RepresentanteI, RepresentantesResponse } from '../../representante/model/representante';
+import { PDFClass } from '../../../utilidades/pdf';
+import { RepresentanteService } from '../../representante/service/representante.service';
+import { SitioService } from '../../sitio/service/sitio.service';
+import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
+import { DialogEstadoCuenta } from '../../sitio/dialog/editar-estado-cuenta/editar-estado-cuenta';
+import { DialogRegistrarSitio } from '../../sitio/dialog/registrar-sitio/registrar-sitio';
+import { DialogRegistroDeuda } from '../../representante/dialog/registro-deuda/dialog-registro-deuda';
+import { DialogPagoExtra } from '../../representante/dialog/registro-pago-extra/dialog-pago-extra';
+import { ResponseSitioI } from '../../sitio/model/sitio';
 
 @Component({
   selector: 'app-historial',

@@ -7,13 +7,13 @@ import { MatSort } from '@angular/material/sort';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import { Importacion } from '../../utilidades/importarRegistros';
-import { Limpieza } from '../../utilidades/limpiezaRegistros';
 import { SectorI } from '../model/sector';
 import { ValorI } from '../model/valor';
 import { ImportarService } from '../service/importar.service';
 import { SectorService } from '../service/sector.service';
 import { ValoresService } from '../service/valores.service';
+import { Limpieza } from '../../../utilidades/limpiezaRegistros';
+import { Importacion } from '../../../utilidades/importarRegistros';
 
 
 @Component({

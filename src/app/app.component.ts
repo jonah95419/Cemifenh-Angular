@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { SitioService } from './cementerio/sitio/service/sitio.service';
 import { RepresentanteService } from './cementerio/representante/service/representante.service';
-import { SectorService } from './admin/service/sector.service';
-import { ValoresService } from './admin/service/valores.service';
 import { AuthenticationService } from './core/service/authentication.service';
 import { tap } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
+import { ValoresService } from './cementerio/admin/service/valores.service';
+import { SectorService } from './cementerio/admin/service/sector.service';
 
 @Component({
   selector: 'app-root',

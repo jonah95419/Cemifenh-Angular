@@ -23,7 +23,7 @@ export class UnauthorizedInterceptor implements HttpInterceptor {
       catchError((err) => {
         if (err.status === 401) {
           this.authService.logout();
-          this.router.navigate(['/si-admin']);
+          this.router.navigate(['/sicdmin']);
         }
 
         if (!environment.production) {

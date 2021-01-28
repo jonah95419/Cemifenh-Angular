@@ -1,7 +1,5 @@
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AppRoutingModule } from '../app-routing.module';
-import { AngularModule } from '../angular.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +11,7 @@ import { CopiaSeguridadComponent } from './copia-seguridad/copia-seguridad.compo
 import { ImportacionComponent } from './importacion/importacion.component';
 import { PreciosComponent } from './precios/precios.component';
 import { AdminRoutingModule } from './admin-routing.module';
+import { AngularModule } from '../../angular.module';
 
 
 @NgModule({
@@ -31,17 +30,17 @@ import { AdminRoutingModule } from './admin-routing.module';
     MatInputModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
-  exports: [
-    AngularModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
-  // providers:[
-  //   ImportarService,
-  //   SectorService,
-  //   ValoresService
-  // ]
+  // exports: [
+  //   AngularModule,
+  //   FormsModule,
+  //   MatFormFieldModule,
+  //   MatInputModule,
+  // ],
+  // // providers:[
+  // //   ImportarService,
+  // //   SectorService,
+  // //   ValoresService
+  // // ]
 })
 
 export class AdminModule {

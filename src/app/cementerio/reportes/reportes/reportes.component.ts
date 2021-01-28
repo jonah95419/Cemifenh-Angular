@@ -5,13 +5,13 @@ import { startWith, switchMap, tap, map, catchError } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
-import { PDFClass } from '../../utilidades/pdf';
 import { HttpClient } from '@angular/common/http';
-import { ExcelService } from '../../utilidades/excel';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { merge, of, BehaviorSubject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
+import { ExcelService } from '../../../utilidades/excel';
+import { PDFClass } from '../../../utilidades/pdf';
 
 @Component({
   selector: 'app-reportes',

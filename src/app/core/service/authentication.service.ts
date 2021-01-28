@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription, Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { delay, finalize, map, tap, catchError } from 'rxjs/operators';
+import { delay, map, tap, catchError } from 'rxjs/operators';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -40,17 +40,10 @@ export class AuthenticationService {
   }
 
   logout() {
-    // this.http
-    //   .post<unknown>(`${AUTH_SERVER}/logout`, {})
-    //   .pipe(
-    //     finalize(() => {
     this.clearLocalStorage();
     this._user.next(null);
     this.stopTokenTimer();
     this.router.navigate(['sicdmin']);
-    //     })
-    //   )
-    //   .subscribe();
   }
 
   refreshToken() {
@@ -122,13 +115,12 @@ export class AuthenticationService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError('Algo a salido mal, puedes intentarlo nuevamente!' + error.message);
+    return throwError(error.message);
   }
 
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
-      //'authorization': `Bearer-${localStorage.getItem('access_token')}`
     })
   };
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { SitioService } from '../../cementerio/sitio/service/sitio.service';
 import { Title } from '@angular/platform-browser';
+import { SitioService } from '../../sitio/service/sitio.service';
 
 @Component({
   selector: 'app-inicio',

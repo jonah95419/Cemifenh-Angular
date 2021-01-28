@@ -18,7 +18,8 @@
                             "xlsx",
                             "socket.io-client",
                             "socket.io-parser",
-                            "debug"
+                            "debug",
+                            "file-saver"
                         ],
                         "outputPath": "dist/",
                         "index": "src/index.html",

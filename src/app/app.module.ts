@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CabeceraComponent } from './cabecera/cabecera.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -16,10 +15,12 @@ import { HttpClient } from '@angular/common/http';
 import { FallecidoModule } from './cementerio/fallecido/fallecido.module';
 import { RepresentanteModule } from './cementerio/representante/representante.module';
 import { SitioModule } from './cementerio/sitio/sitio.module';
-import { InicioModule } from './inicio/inicio.module';
-import { ReportesModule } from './reportes/reportes.module';
-import { UserModule } from './user/user.module';
 import { CoreModule } from './core/core.module';
+import { CabeceraComponent } from './cementerio/cabecera/cabecera.component';
+import { InicioModule } from './cementerio/inicio/inicio.module';
+import { ReportesModule } from './cementerio/reportes/reportes.module';
+import { UserModule } from './cementerio/ingreso/user.module';
+import { AngularModule } from './angular.module';
 
 registerLocaleData(localeES, 'es');
 
@@ -42,6 +43,7 @@ registerLocaleData(localeES, 'es');
     ReportesModule,
     UserModule,
     CoreModule,
+    AngularModule,
     // AdminModule.forRoot(),
     TranslateModule.forRoot({
       loader: {

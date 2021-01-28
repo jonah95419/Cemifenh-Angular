@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InicioComponent } from './inicio/inicio.component';
 import { RepresentanteComponent } from './representante/representante.component';
-import { AuthGuard } from '../core/guard/auth.guard';
 import { HistorialComponent } from './historial/historial.component';
+import { AuthGuard } from '../../core/guard/auth.guard';
 
 const routes: Routes = [
   {

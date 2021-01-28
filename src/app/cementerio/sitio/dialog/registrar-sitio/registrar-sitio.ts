@@ -9,15 +9,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable } from '@angular/material/table';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
-import { SectorI } from '../../../../admin/model/sector';
-import { ValorI } from '../../../../admin/model/valor';
-import { SectorService } from '../../../../admin/service/sector.service';
-import { ValoresService } from '../../../../admin/service/valores.service';
 import { Importacion } from '../../../../utilidades/importarRegistros';
 import { DeudaI } from '../../../representante/model/deuda';
 import { SitioI } from '../../model/sitio';
 import { ServiceC } from '../../service-c/sitio-serviceC';
 import { SitioService } from '../../service/sitio.service';
+import { SectorI } from '../../../admin/model/sector';
+import { ValorI } from '../../../admin/model/valor';
+import { SectorService } from '../../../admin/service/sector.service';
+import { ValoresService } from '../../../admin/service/valores.service';
 
 @Component({
   selector: 'registrar-sitio',

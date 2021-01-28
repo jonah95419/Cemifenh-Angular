@@ -7,10 +7,10 @@ import { tap, map, filter } from 'rxjs/operators';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RepresentanteI } from 'src/app/cementerio/representante/model/representante';
-import { FechasI } from '../../cementerio/sitio/model/fechas';
-import { RepresentanteService } from '../../cementerio/representante/service/representante.service';
-import { SitioService } from '../../cementerio/sitio/service/sitio.service';
-import { DialogRegistroRepresentante } from '../../cementerio/representante/dialog/registro-representante/dialog-registro-representante';
+import { FechasI } from '../../sitio/model/fechas';
+import { RepresentanteService } from '../../representante/service/representante.service';
+import { SitioService } from '../../sitio/service/sitio.service';
+import { DialogRegistroRepresentante } from '../../representante/dialog/registro-representante/dialog-registro-representante';
 
 @Component({
   selector: 'app-representante',

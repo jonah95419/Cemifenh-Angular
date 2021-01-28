@@ -1,6 +1,6 @@
-import { SectorI } from '../admin/model/sector';
 import { DeudaI } from '../cementerio/representante/model/deuda';
 import { RegistroI } from './model/registro';
+import { SectorI } from '../cementerio/admin/model/sector';
 
 export class Importacion {
 

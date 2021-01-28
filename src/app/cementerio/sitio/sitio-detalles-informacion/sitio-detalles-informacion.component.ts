@@ -4,10 +4,10 @@ import { tap } from 'rxjs/operators';
 import { SitioService } from '../service/sitio.service';
 import { SitioI, ResponseSitioI } from '../model/sitio';
 import { FormControl, FormBuilder } from '@angular/forms';
-import { SectorI } from '../../../admin/model/sector';
 import { ServiceC } from '../service-c/sitio-serviceC';
-import { SectorService } from '../../../admin/service/sector.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SectorI } from '../../admin/model/sector';
+import { SectorService } from '../../admin/service/sector.service';
 
 @Component({
   selector: 'app-sitio-detalles-informacion',

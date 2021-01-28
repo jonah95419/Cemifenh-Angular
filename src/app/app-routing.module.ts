@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { IngresoComponent } from './user/ingreso/ingreso.component';
-import { CallbackComponent } from './callback/callback.component';
+import { CallbackComponent } from './public/callback.component';
 import { AuthGuard } from './core/guard/auth.guard';
+import { IngresoComponent } from './cementerio/ingreso/ingreso.component';
 
 const routes: Routes = [
   { path: '', component: CallbackComponent, pathMatch: 'full' },
   {
     path: 'inicio',
-    loadChildren: () => import('./inicio/inicio.module').then(m => m.InicioModule),
+    loadChildren: () => import('./cementerio/inicio/inicio.module').then(m => m.InicioModule),
     canActivate: [AuthGuard]
   },
   {
@@ -18,12 +18,12 @@ const routes: Routes = [
   },
   {
     path: 'reportes',
-    loadChildren: () => import('./reportes/reportes.module').then(m => m.ReportesModule),
+    loadChildren: () => import('./cementerio/reportes/reportes.module').then(m => m.ReportesModule),
     canActivate: [AuthGuard]
   },
   {
     path: 'administracion',
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+    loadChildren: () => import('./cementerio/admin/admin.module').then(m => m.AdminModule),
     canActivate: [AuthGuard]
   },
   { path: 'sicdmin', component: IngresoComponent },
