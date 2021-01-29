@@ -1,3 +1,9 @@
+<div class="example-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+        Se ha alcanzado el límite de la tasa API de SIC. Se restablecerá en un minuto.
+    </div>
+</div>
 <div class="container-inicio">
     <div class="container-filtro-representante">
         <p matTooltip="Lista a los representantes con un sitio adquirido">Representantes</p>
