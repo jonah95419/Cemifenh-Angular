@@ -76,3 +76,10 @@
 ::ng-deep mat-icon {
     font-size: medium !important;
 }
+
+::ng-deep .header-table {
+    /* background-color: #00589D !important;
+    color: aliceblue !important; */
+    font-weight: 500 !important;
+    text-align: center !important;
+}

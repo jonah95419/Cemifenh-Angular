@@ -47,7 +47,7 @@ export class AdminModule {
       providers: [
         {provide: ImportarService },
         {provide: SectorService },
-        {provide: ValoresService },
+        {provide: ValoresService }
       ]
     };
   }

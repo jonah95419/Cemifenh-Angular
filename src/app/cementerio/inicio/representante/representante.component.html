@@ -27,11 +27,11 @@
                 </ng-container>
 
                 <ng-container matColumnDef="header-row-cero-grupo">
-                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="2">Lista representantes</th>
+                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="header-table">Lista representantes</th>
                 </ng-container>
 
                 <ng-container matColumnDef="header-row-uno-grupo">
-                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" style="text-align: center;"><button mat-icon-button matTooltip="Refrescar registros" (click)="refrescarRegistros();"><mat-icon>refresh</mat-icon></button></th>
+                    <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" class="header-table"><button mat-icon-button matTooltip="Refrescar registros" class="header-table" (click)="refrescarRegistros();"><mat-icon>refresh</mat-icon></button></th>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="['header-row-cero-grupo', 'header-row-uno-grupo']; sticky: true"></tr>
