@@ -13,25 +13,26 @@ import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class UnauthorizedInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthenticationService, private router: Router) {}
+  constructor(private authService: AuthenticationService, private router: Router) { }
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    return next.handle(request).pipe(
-      catchError((err) => {
-        if (err.status === 401) {
-          this.authService.logout();
-          this.router.navigate(['/sicdmin']);
-        }
+    return next.handle(request)
+      .pipe(
+        catchError((err) => {
+          if (err.status === 401) {
+            this.authService.logout();
+            this.router.navigate(['/sicdmin']);
+          }
 
-        if (!environment.production) {
-          console.error(err);
-        }
-        const error = (err && err.error && err.error.message) || err.statusText;
-        return throwError(error);
-      })
-    );
+          if (!environment.production) {
+            console.error(err);
+          }
+          const error = (err && err.error && err.error.message) || err.statusText;
+          return throwError(error);
+        })
+      );
   }
 }

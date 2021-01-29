@@ -12,13 +12,8 @@ import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-transla
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 
-import { FallecidoModule } from './cementerio/fallecido/fallecido.module';
-import { RepresentanteModule } from './cementerio/representante/representante.module';
-import { SitioModule } from './cementerio/sitio/sitio.module';
 import { CoreModule } from './core/core.module';
 import { CabeceraComponent } from './cementerio/cabecera/cabecera.component';
-import { InicioModule } from './cementerio/inicio/inicio.module';
-import { ReportesModule } from './cementerio/reportes/reportes.module';
 import { UserModule } from './cementerio/ingreso/user.module';
 import { AngularModule } from './angular.module';
 
@@ -33,17 +28,12 @@ registerLocaleData(localeES, 'es');
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     MatMomentDateModule,
-    FallecidoModule,
-    RepresentanteModule,
-    SitioModule,
-    InicioModule,
-    ReportesModule,
     UserModule,
     CoreModule,
     AngularModule,
+    AppRoutingModule,
     // AdminModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -54,7 +44,7 @@ registerLocaleData(localeES, 'es');
     }),
   ],
   providers: [
-    { provide: LocationStrategy, useClass: PathLocationStrategy }
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
   ],
   bootstrap: [AppComponent],
 

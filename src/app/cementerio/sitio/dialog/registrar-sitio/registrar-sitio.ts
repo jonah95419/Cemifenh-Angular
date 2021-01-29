@@ -14,10 +14,10 @@ import { DeudaI } from '../../../representante/model/deuda';
 import { SitioI } from '../../model/sitio';
 import { ServiceC } from '../../service-c/sitio-serviceC';
 import { SitioService } from '../../service/sitio.service';
-import { SectorI } from '../../../admin/model/sector';
-import { ValorI } from '../../../admin/model/valor';
-import { SectorService } from '../../../admin/service/sector.service';
-import { ValoresService } from '../../../admin/service/valores.service';
+import { SectorI } from '../../../../cementerio/admin/model/sector';
+import { ValorI } from '../../../../cementerio/admin/model/valor';
+import { ValoresService } from '../../../../cementerio/admin/service/valores.service';
+import { SectorService } from '../../../../cementerio/admin/service/sector.service';
 
 @Component({
   selector: 'registrar-sitio',

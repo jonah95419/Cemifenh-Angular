@@ -13,7 +13,6 @@ import { PreciosComponent } from './precios/precios.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AngularModule } from '../../angular.module';
 
-
 @NgModule({
   declarations: [
     AdministracionComponent,
@@ -29,18 +28,7 @@ import { AngularModule } from '../../angular.module';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
-  ],
-  // exports: [
-  //   AngularModule,
-  //   FormsModule,
-  //   MatFormFieldModule,
-  //   MatInputModule,
-  // ],
-  // // providers:[
-  // //   ImportarService,
-  // //   SectorService,
-  // //   ValoresService
-  // // ]
+  ]
 })
 
 export class AdminModule {
@@ -48,7 +36,6 @@ export class AdminModule {
   constructor(@Optional() @SkipSelf() parentModule?: AdminModule) {
 
     if (parentModule) {
-      console.log(parentModule);
       throw new Error(
         'AdminModule is already loaded. Import it in the AppModule only');
     }

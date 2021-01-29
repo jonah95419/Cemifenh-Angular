@@ -31,12 +31,6 @@ import { RepresentanteRoutingModule } from './representante-routing.module';
     MatInputModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
-  // exports: [
-  //   AngularModule,
-  //   FormsModule,
-  //   MatFormFieldModule,
-  //   MatInputModule,
-  // ],
   providers:[
     RepresentanteService
   ],

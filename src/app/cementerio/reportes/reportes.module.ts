@@ -26,12 +26,6 @@ import { AngularModule } from '../../angular.module';
     MatInputModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
-  // exports: [
-  //   AngularModule,
-  //   FormsModule,
-  //   MatFormFieldModule,
-  //   MatInputModule,
-  // ],
   providers: [PrintService, ReportesService, ExcelService],
   bootstrap: [AppComponent]
 })

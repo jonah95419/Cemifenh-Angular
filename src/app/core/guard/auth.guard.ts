@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     return this.authService.user$.pipe(
       map((user) => {
         if (!user) {
-          this.router.navigate(['si-admin']);
+          this.router.navigate(['sicdmin']);
           return false;
         }
         return true;

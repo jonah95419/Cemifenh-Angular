@@ -4,7 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { FechasI, FechasResponse } from '../model/fechas';
-import { ResponseSitioI, ResponseDeudaSitioI, SitioI, ResponseEstadoCuentaSitioI } from '../model/sitio';
+import { ResponseSitioI, SitioI, ResponseEstadoCuentaSitioI } from '../model/sitio';
 import { ResponseCargosSitioI } from '../../representante/model/deuda';
 
 const AUTH_SERVER = environment.baseUrl;
@@ -52,13 +52,12 @@ export class SitioService {
 
   listarFechasSitios = () => {
     this.httpClient
-      .get<FechasResponse>(`${AUTH_SERVER}/sitio/fechas/`, this.httpOptions)
+      .get<FechasResponse>(`${AUTH_SERVER}/sitio/fechas/`)
+      .pipe(catchError(this.handleError))
       .subscribe((data: FechasResponse) => {
         if (data.ok) {
           this.dataStore.fechas = data.data;
           this._fechas.next(Object.assign({}, this.dataStore).fechas);
-        } else {
-          console.log("mostar mensaje de error");
         }
       })
   }
@@ -101,7 +100,7 @@ export class SitioService {
 
 
   private handleError(error: HttpErrorResponse) {
-    return throwError('Algo a salido mal, puedes intentarlo nuevamente!');
+    return throwError(error);
   }
 
   private httpOptions = {

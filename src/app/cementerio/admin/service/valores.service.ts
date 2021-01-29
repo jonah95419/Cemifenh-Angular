@@ -3,7 +3,7 @@ import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http
 import { throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ValorI, ValorResponse } from '../model/valor';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -26,8 +26,6 @@ export class ValoresService {
         if (data.ok) {
           this.dataStore.valores = data.data;
           this._valores.next(Object.assign({}, this.dataStore).valores);
-        } else {
-          console.log("mostar mensaje de error");
         }
       });
   }
@@ -44,8 +42,6 @@ export class ValoresService {
         if (data.ok) {
           this.dataStoreExtra.id = data.data.id;
           this._valorExtra.next(Object.assign({}, this.dataStoreExtra).id);
-        } else {
-          console.log(data.message);
         }
       });
   }

@@ -6,8 +6,8 @@ import { SitioI, ResponseSitioI } from '../model/sitio';
 import { FormControl, FormBuilder } from '@angular/forms';
 import { ServiceC } from '../service-c/sitio-serviceC';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SectorI } from '../../admin/model/sector';
-import { SectorService } from '../../admin/service/sector.service';
+import { SectorI } from '../../../cementerio/admin/model/sector';
+import { SectorService } from '../../../cementerio/admin/service/sector.service';
 
 @Component({
   selector: 'app-sitio-detalles-informacion',

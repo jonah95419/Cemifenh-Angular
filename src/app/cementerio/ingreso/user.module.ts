@@ -5,7 +5,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { IngresoComponent } from './ingreso.component';
 import { CallbackComponent } from '../../public/callback.component';
-import { AppRoutingModule } from '../../app-routing.module';
 import { AngularModule } from '../../angular.module';
 import { CallbackService } from '../../public/callback.service';
 
@@ -15,7 +14,6 @@ import { CallbackService } from '../../public/callback.service';
     CallbackComponent
   ],
   imports: [
-    AppRoutingModule,
     CommonModule,
     AngularModule,
     FormsModule,
@@ -23,12 +21,6 @@ import { CallbackService } from '../../public/callback.service';
     MatInputModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
-  // exports: [
-  //   AngularModule,
-  //   FormsModule,
-  //   MatFormFieldModule,
-  //   MatInputModule,
-  // ],
   providers:[
     CallbackService
   ],

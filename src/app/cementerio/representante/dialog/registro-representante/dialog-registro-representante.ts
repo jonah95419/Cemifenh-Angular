@@ -13,10 +13,10 @@ import { Importacion } from '../../../../utilidades/importarRegistros';
 import { SitioI } from '../../../sitio/model/sitio';
 import { DeudaI } from '../../model/deuda';
 import { RepresentanteService } from '../../service/representante.service';
-import { SectorI } from '../../../admin/model/sector';
-import { ValorI } from '../../../admin/model/valor';
-import { SectorService } from '../../../admin/service/sector.service';
-import { ValoresService } from '../../../admin/service/valores.service';
+import { SectorI } from '../../../../cementerio/admin/model/sector';
+import { ValorI } from '../../../../cementerio/admin/model/valor';
+import { SectorService } from '../../../../cementerio/admin/service/sector.service';
+import { ValoresService } from '../../../../cementerio/admin/service/valores.service';
 
 @Component({
   selector: 'dialog-registro-representante',

@@ -3,7 +3,7 @@ import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http
 import { throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SectorI, SectorResponse } from '../model/sector';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 
 const AUTH_SERVER = environment.baseUrl;
 
@@ -21,20 +21,18 @@ export class SectorService {
   //revisar imprtacion
   listarSectores = () => {
     this.httpClient
-    .get<SectorResponse>(`${AUTH_SERVER}/sector`, this.httpOptions)
+    .get<SectorResponse>(`${AUTH_SERVER}/sector`)
     .pipe( catchError(this.handleError) )
     .subscribe((data: SectorResponse) => {
       if(data.ok) {
         this.dataStore.sectores = data.data;
         this._sectores.next(Object.assign({}, this.dataStore).sectores);
-      } else {
-        console.log("mostar mensaje de error");
       }
     })
   }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError('Algo a salido mal, puedes intentarlo nuevamente!');
+    return throwError(error);
   }
 
   private httpOptions = {
