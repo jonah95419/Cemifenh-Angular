@@ -104,7 +104,7 @@ export class RepresentanteService {
 
   private cargarRegistro(registro, result) {
     return {
-      id: result.data.r,
+      id: result.id,
       nombre: registro.representante.nombre,
       cedula: registro.representante.cedula,
       observaciones: "",
