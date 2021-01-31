@@ -137,7 +137,7 @@ export class ExcelService {
           this.profilePic = reader.result as string;
         };
         reader.onerror = (error) => {
-          console.log('Error: ', error);
+          throw new Error(error + "");
         };
       });
   }

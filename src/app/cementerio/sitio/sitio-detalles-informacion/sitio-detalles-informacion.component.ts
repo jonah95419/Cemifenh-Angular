@@ -90,7 +90,7 @@ export class SitioDetallesInformacionComponent implements OnInit {
         if (data.ok) {
           this.cargarValores(data.data[0]);
         } else {
-          console.log(data.message);
+          throw new Error(data.message);
         }
       })).toPromise();
   }

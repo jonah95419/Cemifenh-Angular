@@ -186,7 +186,7 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
         if (data.ok) {
           this.cargarValoresFallecidos(data.data);
         } else {
-          console.log(data.message);
+          throw new Error(data.message);
         }
       })).toPromise();
   }

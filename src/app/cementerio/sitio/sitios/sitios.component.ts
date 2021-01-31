@@ -87,7 +87,7 @@ export class SitiosComponent implements OnInit {
     this.representante = id;
     this.apiSitios.listarSitios(id).pipe(
       tap((data: ResponseSitioI) => {
-        if (data.ok) { this.cargarValores(data.data); } else { console.log(data.message); }
+        if (data.ok) { this.cargarValores(data.data); } else { throw new Error(data.message); }
       })
     ).toPromise();
   }

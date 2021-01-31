@@ -147,7 +147,7 @@ export class FallecidosComponent implements OnInit {
     this.apiSitio.listarSitios(id).pipe(
       tap((data: ResponseSitioI) => {
         if (data.ok) { this.sitios = data.data; }
-        else { console.log(data.message); }
+        else { throw new Error(data.message); }
       })
     ).toPromise();
   }
@@ -157,7 +157,7 @@ export class FallecidosComponent implements OnInit {
     this.sc.emitIdSitioDetalleChange(null);
     this.apiFallecido.listarFallecidosRepresentante(id).pipe(
       tap((data: ResponseFallecidoRepresentanteI) => {
-        if (data.ok) { this.cargarValores(data.data); } else { console.log(data.message); }
+        if (data.ok) { this.cargarValores(data.data); } else { throw new Error(data.message); }
       })
     ).toPromise();
   }
