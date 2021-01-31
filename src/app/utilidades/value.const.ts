@@ -1,0 +1,10 @@
+export const TITLE = "SIC - ADMIN";
+export const TITLE_REPORTE = "REPORTE ESTADO DE CUENTA \nSICDMIN";
+export const TITLE_PUBLICO = "SISTEMA INFORMACION CEMENTERIO";
+export const TITLE_TAG =  'SIC - FELENIAH';
+export const FOOTER_REPORTE_DIRECCION = "Calle Roca y Quito";
+export const FOOTER_REPORTE_TELEFONO = "0967267606";
+export const FOOTER_REPORTE_CIUDAD = "Otavalo - Ecuador";
+export const FOOTER_REPORTE_URL = "www.feleniah.com";
+export const LOGO =  '/assets/images/lion.jpg';
+export const LOGO_SVG =  '/assets/images/lion.svg';

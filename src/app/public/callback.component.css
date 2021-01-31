@@ -31,3 +31,9 @@ mat-card {
 .mat-colunm-nombre {
     width: fit-content;
 }
+
+img {
+    width: 60px;
+    height: 60px;
+    margin: auto 1rem auto 0;
+}

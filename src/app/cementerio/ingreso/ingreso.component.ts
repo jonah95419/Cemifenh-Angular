@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
+import { TITLE, LOGO } from '../../utilidades/value.const';
 
 @Component({
   selector: 'app-ingreso',
@@ -16,6 +17,9 @@ export class IngresoComponent implements OnInit {
   username = '';
   password = '';
   loginError = false;
+  logo: string = LOGO;
+  title: string = TITLE;
+
   private subscription: Subscription;
 
   constructor(

@@ -11,6 +11,14 @@
     cursor: pointer;
 }
 
+img {
+    border-radius: 100%;
+    background-color: white;
+    width: 60px;
+    height: 60px;
+    margin: auto 1rem auto 0;
+}
+
 label {
     cursor: pointer;
 }

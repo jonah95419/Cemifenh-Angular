@@ -1,7 +1,7 @@
 <mat-toolbar class="mat-elevation-z1" style="background-color: #00589D; color: white;">
     <span class="example-spacer"></span>
-    <div mat-card-avatar [style.background-image]=" 'url(assets/images/logoCementerio.jpg)' " (click)="initLogin();" class="example-header-image "></div>
-    <div style="margin-left: 12px;">GAD Parroquial Rural San Pablo del Lago</div>
+    <img (click)="initLogin();" class="mb-4 rounded-circle" [src]="logo" alt="logo" loading="lazy" />
+    <div style="margin-left: 12px;">{{title}}</div>
     <span class="example-spacer"></span>
 </mat-toolbar>
 <div *ngIf="step == 0" class="contenedor-step">

@@ -3,6 +3,7 @@ import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
+import { LogoClass } from './logo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +13,12 @@ export class ExcelService {
   profilePic: string;
   datePipe = new DatePipe('es-EC');
 
+  private logoApi: LogoClass;
 
   constructor(private http: HttpClient) {
-    this.getLogo();
+    this.logoApi = new LogoClass(http);
+    this.logoApi.getLogo();
+    this.logoApi.logo.subscribe(img => this.profilePic = img)
   }
 
   generateExcel(data_: any[], tipo: string) {
@@ -128,17 +132,4 @@ export class ExcelService {
 
   }
 
-  private getLogo = () => {
-    this.http.get('/assets/images/logoCementerio_reporte.jpg', { responseType: 'blob' })
-      .subscribe(res => {
-        const reader = new FileReader();
-        reader.readAsDataURL(res);
-        reader.onload = () => {
-          this.profilePic = reader.result as string;
-        };
-        reader.onerror = (error) => {
-          throw new Error(error + "");
-        };
-      });
-  }
 }

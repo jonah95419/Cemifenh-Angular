@@ -1,10 +1,12 @@
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { HttpClient } from '@angular/common/http';
+import { TITLE_REPORTE, FOOTER_REPORTE_DIRECCION, FOOTER_REPORTE_TELEFONO, FOOTER_REPORTE_CIUDAD, FOOTER_REPORTE_URL } from './value.const';
+import { LogoClass } from './logo.service';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
-export class PDFClass {
+export class PDFClass  {
 
   private cabecera: any;
   private profilePic: string;
@@ -17,8 +19,12 @@ export class PDFClass {
   private historico: boolean = false;
   private headersRows: number = 2;
 
+  private logoApi: LogoClass;
+
   constructor(private http: HttpClient) {
-    this.getLogo();
+    this.logoApi = new LogoClass(http);
+    this.logoApi.getLogo();
+    this.logoApi.logo.subscribe(img => this.profilePic = img)
   }
 
   jojo = (datos, opcion_pdf: string, cabecera_data: any, tipo: string) => {
@@ -256,10 +262,10 @@ export class PDFClass {
       footer: {
         margin: [15, 10, 15, 20],
         columns: [
-          [{ text: "Calle Chiriboga Y Abdón Calderón, Parque Central", alignment: 'center', fontSize: 8, margin: [8, 4] }],
-          [{ text: "062918495 – 062918815", alignment: 'center', fontSize: 8, margin: [8, 8] }],
-          [{ text: "Otavalo - Ecuador", alignment: 'center', fontSize: 8, margin: [8, 8] }],
-          [{ text: "www.sanpablodellago.gob.ec", alignment: 'center', fontSize: 8, margin: [8, 8] }],
+          [{ text: FOOTER_REPORTE_DIRECCION, alignment: 'center', fontSize: 8, margin: [8, 4] }],
+          [{ text: FOOTER_REPORTE_TELEFONO, alignment: 'center', fontSize: 8, margin: [8, 8] }],
+          [{ text: FOOTER_REPORTE_CIUDAD, alignment: 'center', fontSize: 8, margin: [8, 8] }],
+          [{ text: FOOTER_REPORTE_URL, alignment: 'center', fontSize: 8, margin: [8, 8] }],
         ]
       },
       content: [
@@ -267,8 +273,8 @@ export class PDFClass {
           columns: [
             this.getProfilePicObject(),
             {
-              width: 'auto',
-              text: 'GOBIERNO AUTÓNOMO DESCENTRALIZADO PARROQUIAL RURAL SAN PABLO DEL LAGO \nOTAVALO - IMBABURA',
+              // width: 'auto',
+              text: TITLE_REPORTE,
               alignment: 'center',
               fontSize: 16,
             }],
@@ -309,7 +315,6 @@ export class PDFClass {
           style: 'header'
         },
         {
-          //layout: 'headerLineOnly', //lightHorizontalLines
           layout: {
             defaultBorder: false,
           },
@@ -334,20 +339,16 @@ export class PDFClass {
             body: this.body_historico,
           }
         },
-        // {
-        //   text: 'Sucres (S)',
-        //   style: { fontSize: 8, margin: [20] }
-        // },
         {
           text: '',
           style: 'header'
         },
       ],
       info: {
-        title: 'Reporte_GADSPL',
-        author: "Grupo Feleniah",
-        subject: 'Junta parroquial',
-        keywords: 'GAN San Pablo',
+        title: 'Reporte_SICDMIN',
+        author: "Grupo FELENIAH",
+        subject: 'SICDMIN',
+        keywords: 'FELENIAH',
       },
       styles: {
         header: {
@@ -367,20 +368,6 @@ export class PDFClass {
         }
       }
     };
-  }
-
-  private getLogo = () => {
-    this.http.get('/assets/images/logoCementerio_reporte.jpg', { responseType: 'blob' })
-      .subscribe(res => {
-        const reader = new FileReader();
-        reader.readAsDataURL(res);
-        reader.onload = () => {
-          this.profilePic = reader.result as string;
-        };
-        reader.onerror = (error) => {
-          throw new Error(error + "");
-        };
-      });
   }
 
   private getProfilePicObject() {

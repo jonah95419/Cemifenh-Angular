@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../core/service/authentication.service';
+import { TITLE, LOGO } from '../../utilidades/value.const';
 
 @Component({
   selector: 'app-cabecera',
@@ -8,8 +9,8 @@ import { AuthenticationService } from '../../core/service/authentication.service
 })
 export class CabeceraComponent implements OnInit {
 
-  title = 'Cementerio';
-  logo: string = "assets/images/logoCementerio.jpg";
+  title = TITLE;
+  logo: string = LOGO;
 
   constructor(public apiAuth: AuthenticationService) { }
 

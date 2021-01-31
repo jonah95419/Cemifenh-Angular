@@ -1,7 +1,6 @@
 <mat-toolbar class="mat-elevation-z1" style="background-color: white;">
 
-    <div mat-card-avatar [style.background-image]=" 'url('+ logo + ')' " (click)="apiAuth.logout()" class="example-header-image "></div>
-    GAD San Pablo del Lago
+    <img (click)="apiAuth.logout();" class="mb-4 rounded-circle" [src]="logo" alt="logo" loading="lazy" /> {{title}}
 
     <!-- <strong class="navigation-item" style="color: rgb(39, 39, 39); cursor: pointer;" routerLink="/inicio">{{title}}</strong> -->
     <span class="example-spacer"></span>

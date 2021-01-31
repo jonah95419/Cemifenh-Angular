@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../core/service/authentication.service';
 import { Title } from '@angular/platform-browser';
 import { ResponseDeudaRepresentanteI, EstadoCuentaH } from '../cementerio/representante/model/deuda';
+import { TITLE_PUBLICO, LOGO_SVG, TITLE_TAG } from '../utilidades/value.const';
 
 @Component({
   selector: 'app-callback',
@@ -42,6 +43,9 @@ export class CallbackComponent implements OnInit, OnDestroy {
 
   dataSource: MatTableDataSource<any>;
 
+  title: string = TITLE_PUBLICO;
+  title_tag: string = TITLE_TAG;
+  logo: string = LOGO_SVG;
   condicion: string = "1";
   parametro: any = "";
   step: number = 0;
@@ -73,7 +77,7 @@ export class CallbackComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.titleService.setTitle("SIC - GADPRSPL");
+    this.titleService.setTitle(this.title_tag);
     this.locale = this.translate.currentLang;
     this._translate = this.translate.onLangChange.subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang);
   }
