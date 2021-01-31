@@ -30,22 +30,6 @@ export class ValoresService {
       });
   }
 
-  private _valorExtra = new BehaviorSubject<number>(-1);
-  private dataStoreExtra: { id: number } = { id: -1 };
-  readonly valorExtra = this._valorExtra.asObservable();
-
-  listarValorPagoExtra(): void {
-    this.httpClient
-      .get<any>(`${AUTH_SERVER}/valores/extra`, this.httpOptions)
-      .pipe(catchError(this.handleError))
-      .subscribe((data: any) => {
-        if (data.ok) {
-          this.dataStoreExtra.id = data.data.id;
-          this._valorExtra.next(Object.assign({}, this.dataStoreExtra).id);
-        }
-      });
-  }
-
   private handleError(error: HttpErrorResponse) {
     return throwError('Algo a salido mal, puedes intentarlo nuevamente!');
   }
