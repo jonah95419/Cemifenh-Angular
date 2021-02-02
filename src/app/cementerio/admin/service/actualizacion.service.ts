@@ -15,7 +15,7 @@ export class ActualizacionService {
 
   listarActualizacion = (): Observable<any> => {
     return this.httpClient
-    .get<any>(`${AUTH_SERVER}/sync`)
+    .get<any>(`${AUTH_SERVER}/api/sync`)
     .pipe( catchError(this.handleError) )
   }
 

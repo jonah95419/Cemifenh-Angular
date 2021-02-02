@@ -20,7 +20,7 @@ export class ValoresService {
 
   listarValores(): void {
     this.httpClient
-      .get<ValorResponse>(`${AUTH_SERVER}/valores/`, this.httpOptions)
+      .get<ValorResponse>(`${AUTH_SERVER}/api/valores/`, this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe((data: ValorResponse) => {
         if (data.ok) {

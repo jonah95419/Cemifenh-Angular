@@ -22,7 +22,7 @@ export class RepresentanteService {
 
   listarRepresentantesTodo = (): void => {
     this.httpClient
-      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/`, this.httpOptions)
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/api/representante/`, this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe((data: RepresentantesResponse) => {
         if (data.ok) {
@@ -36,7 +36,7 @@ export class RepresentanteService {
 
   listarRepresentantesPeriodo = (desde: string, hasta: string): void => {
     this.httpClient
-      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/periodo/${desde}&${hasta}`, this.httpOptions)
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/api/representante/periodo/${desde}&${hasta}`, this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe((data: RepresentantesResponse) => {
         if (data.ok) {
@@ -50,19 +50,19 @@ export class RepresentanteService {
 
   obtenerEstadoCuentaRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
     return this.httpClient
-      .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/representante/estado-cuenta/${id}`, this.httpOptions)
+      .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/api/representante/estado-cuenta/${id}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   obtenerRepresentante(representanteId: string): Observable<RepresentantesResponse> {
     return this.httpClient
-      .get<RepresentantesResponse>(`${AUTH_SERVER}/representante/${representanteId}`, this.httpOptions)
+      .get<RepresentantesResponse>(`${AUTH_SERVER}/api/representante/${representanteId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   agregarRepresentante(representante: any) {
     this.httpClient
-      .post<any>(`${AUTH_SERVER}/representante/`, JSON.stringify(representante), this.httpOptions)
+      .post<any>(`${AUTH_SERVER}/api/representante/`, JSON.stringify(representante), this.httpOptions)
       .pipe(catchError(this.handleError))
       .subscribe(data => {
         if(data.ok) {
@@ -78,7 +78,7 @@ export class RepresentanteService {
 
   actualizarRepresentante(id, datos) {
     this.httpClient
-    .put<any>(`${AUTH_SERVER}/representante/${id}`, JSON.stringify(datos), this.httpOptions)
+    .put<any>(`${AUTH_SERVER}api//representante/${id}`, JSON.stringify(datos), this.httpOptions)
     .pipe(catchError(this.handleError))
     .subscribe((data: RepresentantesResponse) => {
       if (data.ok) {
@@ -98,7 +98,7 @@ export class RepresentanteService {
 
   eliminarRepresentante(representante: any): Observable<any> {
     return this.httpClient
-    .delete<any>(`${AUTH_SERVER}/representante/${representante}`, this.httpOptions)
+    .delete<any>(`${AUTH_SERVER}/api/representante/${representante}`, this.httpOptions)
     .pipe(catchError(this.handleError));
   }
 

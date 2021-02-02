@@ -16,31 +16,31 @@ export class FallecidoService {
 
   agregarFallecido(fallecido: FallecidoI): Observable<any> {
     return this.httpClient
-    .post<any>(`${AUTH_SERVER}/fallecido/`, JSON.stringify(fallecido), this.httpOptions)
+    .post<any>(`${AUTH_SERVER}/api/fallecido/`, JSON.stringify(fallecido), this.httpOptions)
     .pipe(catchError(this.handleError));
   }
 
   actualizarFallecido(id: number, fallecido: any): Observable<any> {
     return this.httpClient
-    .put<any>(`${AUTH_SERVER}/fallecido/${id}`, JSON.stringify(fallecido), this.httpOptions)
+    .put<any>(`${AUTH_SERVER}/api/fallecido/${id}`, JSON.stringify(fallecido), this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
 
   eliminarFallecido(id: number): Observable<any> {
     return this.httpClient
-    .delete<any>(`${AUTH_SERVER}/fallecido/${id}`, this.httpOptions)
+    .delete<any>(`${AUTH_SERVER}/api/fallecido/${id}`, this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
 
   listarFallecidosRepresentante(representanteId: number): Observable<ResponseFallecidoRepresentanteI> {
     return this.httpClient
-    .get<ResponseFallecidoRepresentanteI>(`${AUTH_SERVER}/representante/listar-fallecidos/${representanteId}`, this.httpOptions)
+    .get<ResponseFallecidoRepresentanteI>(`${AUTH_SERVER}/api/representante/listar-fallecidos/${representanteId}`, this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
 
   listarFallecidos(sitioId: string): Observable<ResponseFallecidoI> {
     return this.httpClient
-    .get<ResponseFallecidoI>(`${AUTH_SERVER}/fallecido/${sitioId}`, this.httpOptions)
+    .get<ResponseFallecidoI>(`${AUTH_SERVER}/api/fallecido/${sitioId}`, this.httpOptions)
     .pipe( catchError(this.handleError) );
   }
 

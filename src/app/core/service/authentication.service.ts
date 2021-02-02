@@ -27,7 +27,7 @@ export class AuthenticationService {
 
   login(mail: string, password: string) {
     return this.http
-      .post<any>(`${AUTH_SERVER}/account/ingreso`, { mail, password }, this.httpOptions)
+      .post<any>(`${AUTH_SERVER}/auth/account/ingreso`, { mail, password }, this.httpOptions)
       .pipe(
         catchError(this.handleError),
         map((x) => {
@@ -54,7 +54,7 @@ export class AuthenticationService {
     }
 
     return this.http
-      .post<any>(`${AUTH_SERVER}/account/refresh-token`, { refreshToken })
+      .post<any>(`${AUTH_SERVER}/auth/account/refresh-token`, { refreshToken })
       .pipe(
         map((x) => {
           this._user.next(x.usuario);

@@ -15,7 +15,7 @@ export class ReportesService {
 
   reporteTransacciones(tipo: string, desde: string, hasta: string, sort: number, page: number): Observable<any> {
     return this.httpClient
-      .get<any>(`${AUTH_SERVER}/reportes/${tipo}/${desde}&${hasta}&${sort}&${page}`, this.httpOptions)
+      .get<any>(`${AUTH_SERVER}/api/reportes/${tipo}/${desde}&${hasta}&${sort}&${page}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 

@@ -22,37 +22,37 @@ export class SitioService {
 
   agregarSitio(sitio: SitioI): Observable<any> {
     return this.httpClient
-      .post<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+      .post<any>(`${AUTH_SERVER}/api/sitio/`, JSON.stringify(sitio), this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   agregarPago(pago: any): Observable<any> {
     return this.httpClient
-      .post<any>(`${AUTH_SERVER}/sitio/pago`, JSON.stringify(pago), this.httpOptions)
+      .post<any>(`${AUTH_SERVER}/api/sitio/pago`, JSON.stringify(pago), this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   agregarDeuda(deuda: any): Observable<any> {
     return this.httpClient
-      .post<any>(`${AUTH_SERVER}/sitio/deuda/`, JSON.stringify(deuda), this.httpOptions)
+      .post<any>(`${AUTH_SERVER}/api/sitio/deuda/`, JSON.stringify(deuda), this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   actualizarSitio(sitio: any): Observable<any> {
     return this.httpClient
-      .put<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(sitio), this.httpOptions)
+      .put<any>(`${AUTH_SERVER}/api/sitio/`, JSON.stringify(sitio), this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   actualizarSitioEstadoCuenta(sitio: any): Observable<any> {
     return this.httpClient
-      .put<any>(`${AUTH_SERVER}/sitio/estado-cuenta`, JSON.stringify(sitio), this.httpOptions)
+      .put<any>(`${AUTH_SERVER}/api/sitio/estado-cuenta`, JSON.stringify(sitio), this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   listarFechasSitios = () => {
     this.httpClient
-      .get<FechasResponse>(`${AUTH_SERVER}/sitio/fechas/`)
+      .get<FechasResponse>(`${AUTH_SERVER}/api/sitio/fechas/`)
       .pipe(catchError(this.handleError))
       .subscribe((data: FechasResponse) => {
         if (data.ok) {
@@ -64,37 +64,37 @@ export class SitioService {
 
   listarSitios(representanteId: any): Observable<ResponseSitioI> {
     return this.httpClient
-      .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/representante/${representanteId}`, this.httpOptions)
+      .get<ResponseSitioI>(`${AUTH_SERVER}/api/sitio/representante/${representanteId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   obtenerSitio(sitioId: string): Observable<ResponseSitioI> {
     return this.httpClient
-      .get<ResponseSitioI>(`${AUTH_SERVER}/sitio/${sitioId}`, this.httpOptions)
+      .get<ResponseSitioI>(`${AUTH_SERVER}/api/sitio/${sitioId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   obtenerEstadoCuenta(sitioId: string): Observable<ResponseEstadoCuentaSitioI> {
     return this.httpClient
-      .get<ResponseEstadoCuentaSitioI>(`${AUTH_SERVER}/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
+      .get<ResponseEstadoCuentaSitioI>(`${AUTH_SERVER}/api/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   obtenerCargosCuenta(sitioId: any): Observable<ResponseCargosSitioI> {
     return this.httpClient
-      .get<ResponseCargosSitioI>(`${AUTH_SERVER}/sitio/cargos/${sitioId}`, this.httpOptions)
+      .get<ResponseCargosSitioI>(`${AUTH_SERVER}/api/sitio/cargos/${sitioId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   eliminarEstadoCuenta(data: any): Observable<any> {
     return this.httpClient
-      .patch<any>(`${AUTH_SERVER}/sitio/`, JSON.stringify(data), this.httpOptions)
+      .patch<any>(`${AUTH_SERVER}/api/sitio/`, JSON.stringify(data), this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   eliminarSitio(sitio: any): Observable<any> {
     return this.httpClient
-      .delete<any>(`${AUTH_SERVER}/sitio/${sitio}`, this.httpOptions)
+      .delete<any>(`${AUTH_SERVER}/api/sitio/${sitio}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 

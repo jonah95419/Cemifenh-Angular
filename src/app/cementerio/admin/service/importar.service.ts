@@ -14,8 +14,7 @@ export class ImportarService {
   constructor(private httpClient: HttpClient) { }
 
   agregarImportacion(registros: any): Observable<any> {
-    return this.httpClient.post<any>(`${AUTH_SERVER}/importar/`, JSON.stringify(registros), this.httpOptions)
-      //.timeout(3000, new Error('timeout exceeded'))
+    return this.httpClient.post<any>(`${AUTH_SERVER}/api/importar/`, JSON.stringify(registros), this.httpOptions)
       .pipe(
         timeout(3000000),
         catchError(this.handleError),

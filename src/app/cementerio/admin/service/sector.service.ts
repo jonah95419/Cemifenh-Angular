@@ -21,7 +21,7 @@ export class SectorService {
   //revisar imprtacion
   listarSectores = () => {
     this.httpClient
-    .get<SectorResponse>(`${AUTH_SERVER}/sector`)
+    .get<SectorResponse>(`${AUTH_SERVER}/api/sector`)
     .pipe( catchError(this.handleError) )
     .subscribe((data: SectorResponse) => {
       if(data.ok) {
