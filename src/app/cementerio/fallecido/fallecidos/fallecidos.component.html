@@ -14,7 +14,6 @@
                     <mat-label>Nombre:</mat-label>
                     <input formControlName="nombre" type="text" matInput required>
                     <mat-error *ngIf="fallecidoFormControl.nombre.errors?.required">El nombre es necesario *</mat-error>
-                    }
                 </mat-form-field>
 
                 <mat-form-field>
@@ -26,7 +25,6 @@
                     <mat-label>Fecha:</mat-label>
                     <input formControlName="fecha" matInput [matDatepicker]="picker" (focus)="picker.open()" required>
                     <mat-error *ngIf="fallecidoFormControl.fecha.errors?.required">La fecha es necesaria *</mat-error>
-                    }
                 </mat-form-field>
                 <mat-datepicker #picker></mat-datepicker>
 
