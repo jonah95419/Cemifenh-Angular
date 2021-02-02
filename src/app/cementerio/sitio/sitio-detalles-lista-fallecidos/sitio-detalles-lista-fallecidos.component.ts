@@ -9,7 +9,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAccordion } from '@angular/material/expansion';
-import { FormControl, FormBuilder } from '@angular/forms';
+import { FormControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
@@ -46,18 +46,18 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
 
   fallecidoForm = this.fb.group({
     sitio: this.id_sitio,
-    nombre: new FormControl(''),
+    nombre: new FormControl('', Validators.required),
     cedula: new FormControl(''),
-    fecha: new FormControl(),
+    fecha: new FormControl(Validators.required),
     observaciones: new FormControl(''),
   })
 
   fallecidoForm2 = this.fb.group({
     id: new FormControl(''),
     sitio: new FormControl(''),
-    nombre: new FormControl(''),
+    nombre: new FormControl('', Validators.required),
     cedula: new FormControl(''),
-    fecha: new FormControl(),
+    fecha: new FormControl(Validators.required),
     observaciones: new FormControl(''),
   })
 
@@ -106,6 +106,14 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
         }
       })
     ).toPromise();
+  }
+
+  get fallecidoFormControl() {
+    return this.fallecidoForm.controls;
+  }
+
+  get fallecidoEditFormControl() {
+    return this.fallecidoForm2.controls;
   }
 
   cancelarSubmit(): void {

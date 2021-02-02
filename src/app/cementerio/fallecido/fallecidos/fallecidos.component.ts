@@ -36,18 +36,18 @@ export class FallecidosComponent implements OnInit {
 
   fallecidoForm = this.fb.group({
     sitio: new FormControl('', Validators.required),
-    nombre: new FormControl(''),
+    nombre: new FormControl('', Validators.required),
     cedula: new FormControl(''),
-    fecha: new FormControl(''),
+    fecha: new FormControl('', Validators.required),
     observaciones: new FormControl(''),
   })
 
   fallecidoEditForm = this.fb.group({
     id: '',
     sitio: new FormControl('', Validators.required),
-    nombre: new FormControl(''),
+    nombre: new FormControl('', Validators.required),
     cedula: new FormControl(''),
-    fecha: new FormControl(''),
+    fecha: new FormControl('', Validators.required),
     observaciones: new FormControl(''),
   })
 

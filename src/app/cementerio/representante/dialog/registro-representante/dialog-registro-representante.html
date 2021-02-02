@@ -187,7 +187,8 @@
 
                     <mat-form-field>
                         <mat-label>Fecha fallecimiento</mat-label>
-                        <input formControlName="fecha_fallecimiento" matInput [matDatepicker]="picker2" (focus)="picker2.open()" readonly>
+                        <input formControlName="fecha_fallecimiento" matInput [matDatepicker]="picker2" (focus)="picker2.open()" required>
+                        <mat-error *ngIf="fallecidoForm.controls['fecha_fallecimiento'].hasError('required')">La fecha es requerida</mat-error>
                     </mat-form-field>
                     <mat-datepicker #picker2></mat-datepicker>
 

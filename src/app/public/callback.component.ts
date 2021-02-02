@@ -16,7 +16,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthenticationService } from '../core/service/authentication.service';
 import { Title } from '@angular/platform-browser';
 import { ResponseDeudaRepresentanteI, EstadoCuentaH } from '../cementerio/representante/model/deuda';
-import { TITLE_PUBLICO, LOGO_SVG, TITLE_TAG } from '../utilidades/value.const';
+import { TITLE_PUBLICO, LOGO_SVG, TITLE_TAG, DEPARTAMENTO, ADMINISTRACION, CONTACTO } from '../utilidades/value.const';
 
 @Component({
   selector: 'app-callback',
@@ -46,6 +46,9 @@ export class CallbackComponent implements OnInit, OnDestroy {
   title: string = TITLE_PUBLICO;
   title_tag: string = TITLE_TAG;
   logo: string = LOGO_SVG;
+  departamento: string = DEPARTAMENTO;
+  administracion: string = ADMINISTRACION;
+  contacto: string = CONTACTO;
   condicion: string = "1";
   parametro: any = "";
   step: number = 0;
