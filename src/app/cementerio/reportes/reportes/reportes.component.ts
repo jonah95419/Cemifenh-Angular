@@ -1,17 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ReportesService } from '../service/reportes.service';
-import { FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { startWith, switchMap, tap, map, catchError } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
-import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { merge, of, BehaviorSubject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { ExcelService } from '../../../utilidades/excel';
-import { PDFClass } from '../../../utilidades/pdf';
 
 @Component({
   selector: 'app-reportes',
@@ -46,16 +44,12 @@ export class ReportesComponent implements OnInit {
   hasta$ = new BehaviorSubject(new Date());
   tipo$ = new BehaviorSubject("");
 
-  pdf: PDFClass;
-
   constructor(
-    private http: HttpClient,
     private fb: FormBuilder,
     private excelService: ExcelService,
     private _snackBar: MatSnackBar,
     private titleService:Title,
     private apiReportes: ReportesService) {
-    this.pdf = new PDFClass(http);
   }
 
   ngOnInit(): void {
@@ -91,17 +85,6 @@ export class ReportesComponent implements OnInit {
   desdeValue = (desde: Date) => this.desde$.next(desde);
   hastaValue = (hasta: Date) => this.hasta$.next(hasta);
   tipoValue = (tipo: string) => this.tipo$.next(tipo);
-
-  generatePdf = (action = 'open') => {
-    this.pdf.jojo(this.data, action, {
-      nombre: 'Jhonatan Stalin Salazar Hurtado',
-      representante: '',
-      cedula: '',
-      tipo: 'Reporte, ' + this.tipo,
-      descripcion: 'del ' + this.getDate(this.desde) + ' al ' + this.getDate(this.hasta),
-      codigo: ''
-    }, this.tipo)
-  }
 
   getTotalAbonos = (): number => this.data
     ?.filter((x: any) => x.estado_cuenta === 'abono' && (new Date(x.fecha) > new Date('2001/01/01')))

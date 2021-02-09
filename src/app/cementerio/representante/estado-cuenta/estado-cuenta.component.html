@@ -58,9 +58,6 @@
             <th mat-header-cell *matHeaderCellDef> </th>
             <td mat-cell *matCellDef="let row">
                 <div style="display: flex; flex-direction: row; width: max-content;">
-                    <button mat-icon-button matTooltip="Imprimir" (click)="imprimir(row);">
-                <mat-icon [style.opacity]="row.hovered? '1':'0'">print</mat-icon>
-                </button>
                     <button mat-icon-button matTooltip="Editar" (click)="editar(row);">
                 <mat-icon [style.opacity]="row.hovered? '1':'0'">edit</mat-icon>
                 </button>

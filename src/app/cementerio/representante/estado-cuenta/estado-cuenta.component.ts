@@ -97,24 +97,15 @@ export class EstadoCuentaComponent implements OnInit, OnDestroy {
   }
 
   imprimirLista = (): void =>
-    this.pdf.jojo(this.procesarDatosImprimir(this.listaEstadoCuenta), 'print', {
+    this.pdf.jojo(this.procesarDatosImprimir(this.listaEstadoCuenta), {
       nombre: 'Jhonatan Stalin Salazar Hurtado',
       representante: this.representante?.nombre,
       cedula: this.representante?.cedula,
       tipo: 'Comprobante',
       descripcion: 'Estado de cuenta',
       codigo: ''
-    }, 'abonos_y_cargos')
+    })
 
-  imprimir = (row: EstadoCuentaH): void =>
-    this.pdf.jojo(this.procesarDatosImprimir([row]), 'print', {
-      nombre: 'Jhonatan Stalin Salazar Hurtado',
-      representante: this.representante?.nombre,
-      cedula: this.representante?.cedula,
-      tipo: 'Comprobante',
-      descripcion: row.estado_cuenta,
-      codigo: ''
-    }, row.estado_cuenta)
 
   editar = (row: any) => {
     row.pago = String(row.pago).toLowerCase();
@@ -171,7 +162,8 @@ export class EstadoCuentaComponent implements OnInit, OnDestroy {
         descripcion: x.pago,
         estado_cuenta: x.estado_cuenta,
         cantidad: x.cantidad,
-        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente
+        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente,
+        sitio: x.sitio
       }
     })
 

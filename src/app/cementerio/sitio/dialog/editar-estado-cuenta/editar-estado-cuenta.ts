@@ -25,7 +25,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 export class DialogEstadoCuenta implements OnInit, OnDestroy {
 
   locale: any;
-
+  data: any;
   estadoForm: any;
 
   private _transalate: any;
@@ -38,21 +38,24 @@ export class DialogEstadoCuenta implements OnInit, OnDestroy {
     private notSitio: ServiceC,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DialogEstadoCuenta>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-      if (data.estado_cuenta === "abono") {
+    @Inject(MAT_DIALOG_DATA) private _data: any) {
+      this.data = _data;
+      this.data.fecha = _data.fecha.replaceAll('/', '-');
+
+      if (this.data.estado_cuenta === "abono") {
         this.estadoForm = this.fb.group({
           pago: new FormControl({value:'', disabled: true}),
-          fecha: new FormControl('', ),
+          fecha: new FormControl(this.data.fecha, ),
           cantidad: new FormControl('', Validators.min(0)),
         })
       } else {
         this.estadoForm = this.fb.group({
           pago: new FormControl(''),
-          fecha: new FormControl('', ),
+          fecha: new FormControl(this.data.fecha, ),
           cantidad: new FormControl('', Validators.min(0)),
         })
       }
-    this.estadoForm.patchValue(data);
+    this.estadoForm.patchValue(this.data);
   }
 
   onNoClick = (): void => this.dialogRef.close();

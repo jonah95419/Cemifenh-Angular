@@ -123,15 +123,14 @@ export class CallbackComponent implements OnInit, OnDestroy {
   }
 
   comprobante = () => {
-
-    this.pdf.jojo(this.procesarDatosImprimir(this.estadoCunta), 'print', {
+    this.pdf.jojo(this.procesarDatosImprimir(this.estadoCunta), {
       nombre: 'Consulta externa',
       representante: this.representante?.nombre,
       cedula: this.representante?.cedula,
       tipo: 'Comprobante',
       descripcion: 'Estado de cuenta',
       codigo: '--- --- - ---'
-    }, 'abonos_y_cargos')
+    })
   }
 
   private procesarDatosImprimir = (data: EstadoCuentaH[]) =>
@@ -144,7 +143,8 @@ export class CallbackComponent implements OnInit, OnDestroy {
         descripcion: x.pago,
         estado_cuenta: x.estado_cuenta,
         cantidad: x.cantidad,
-        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente
+        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente,
+        sitio: x.sitio
       }
     })
 }

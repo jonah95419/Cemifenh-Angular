@@ -6,10 +6,15 @@ import { LogoClass } from './logo.service';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
-export class PDFClass  {
+const fillColor = '#eeeeee';
+const color = '#000000';
+const bold = true;
+
+export class PDFClass {
 
   private cabecera: any;
   private profilePic: string;
+  private content = [];
   private body = [];
   private body_historico = [];
   private widths = [];
@@ -17,7 +22,6 @@ export class PDFClass  {
   private headers;
   private headers_historicos;
   private historico: boolean = false;
-  private headersRows: number = 2;
 
   private logoApi: LogoClass;
 
@@ -27,117 +31,228 @@ export class PDFClass  {
     this.logoApi.logo.subscribe(img => this.profilePic = img)
   }
 
-  jojo = (datos, opcion_pdf: string, cabecera_data: any, tipo: string) => {
+  jojo = (datos, cabecera_data: any) => {
     this.cabecera = cabecera_data;
-    this.establecerHeaders(tipo);
-    this.cargarHeaders(tipo);
-    this.cargarDatos(datos, opcion_pdf, tipo);
+    datos = datos.map((d: any) => { d.descripcion = d.descripcion == 'null' || d.descripcion == null ? '' : d.descripcion; return d; });
+    this.establecerHeaders();
+    this.cargarHeaders();
+    this.cargarDatos(datos,);
+    this.generatePdf();
   }
 
-  private cargarDatos(datos: [], opcion_pdf: string, tipo: string) {
-    this.historico = false;
-    datos.forEach((d: any) => {
-      var row = new Array();
-      var anio = new Date(d.fecha).getFullYear() >= 2001;
+  private establecerHeaders() {
+    this.headers = header_abonos_y_cargos;
+    this.headers_historicos = header_abonos_y_cargos_historicos;
+    this.widths = ['auto', '*', 'auto', 'auto', 'auto'];
+    this.widths_historicos = ['auto', '*', 'auto', 'auto'];
+  }
 
-      !anio ? this.historico = true : null;
+  private cargarHeaders = () => {
+    this.body_historico = [];
+    this.body = [];
 
-      if (tipo === 'abonos_y_cargos') {
-        row.push({ text: d.fecha.toString(), fontSize: 10 });
-        row.push({ text: d.lugar.toString(), fontSize: 10 });
-        row.push({ text: d.motivo.toString(), fontSize: 10 });
-        row.push({ text: d.sector.toString(), fontSize: 10 });
-        row.push({ text: String(d.descripcion).toLowerCase(), fontSize: 10 });
-        if (d.estado_cuenta === 'cargo') {
-          row.push({ text: (Math.round(d.cantidad * 100) / 100).toFixed(2).concat(anio ? '' : ' S.'), alignment: 'right', fontSize: 10 });
-          row.push("");
-          anio ? row.push({ text: d.pendiente <= 0 ? 'pagado' : (Math.round(d.pendiente * 100) / 100).toFixed(2), alignment: 'right', fontSize: 10 }) : null;
-        } else {
-          row.push("");
-          row.push({ text: (Math.round(d.cantidad * 100) / 100).toFixed(2).concat(anio ? '' : ' S.'), alignment: 'right', fontSize: 10 });
-          anio ? row.push("") : null;
-        }
-      }
-
-      if (tipo === 'abono' || tipo === 'cargo') {
-        row.push({ text: d.fecha.toString(), fontSize: 10 });
-        row.push({ text: d.lugar.toString(), fontSize: 10 });
-        row.push({ text: d.motivo.toString(), fontSize: 10 });
-        row.push({ text: d.sector.toString(), fontSize: 10 });
-        row.push({ text: String(d.descripcion).toLowerCase(), fontSize: 10 });
-        row.push({ text: (Math.round(d.cantidad * 100) / 100).toFixed(2).concat(anio ? '' : ' S.'), alignment: 'right', fontSize: 10 });
-        if (tipo === 'cargo' && anio) {
-           row.push({ text: d.pendiente <= 0 ? 'pagado' : (Math.round(d.pendiente * 100) / 100).toFixed(2), alignment: 'right', fontSize: 10 });
-        }
-      }
-
-      if (tipo === 'sitio') {
-        row.push({ text: d.num.toString(), fontSize: 10});
-        row.push({ text: d.representante.toString(), fontSize: 10});
-        row.push({ text: d.cedula.toString(), fontSize: 10});
-        row.push({ text: d.lugar.toString(), fontSize: 10});
-        row.push({ text: d.motivo.toString(), fontSize: 10});
-        row.push({ text: d.sector.toString(), fontSize: 10});
-        row.push({ text: d.fecha.toString(), fontSize: 10});
-      }
-
-      if((tipo === 'abonos_y_cargos' || tipo === 'abono' || tipo === 'cargo') && (!anio)) {
-        this.body_historico.push(row);
-      } else {
+    for (var key in this.headers) {
+      if (this.headers.hasOwnProperty(key)) {
+        var header = this.headers[key];
+        var row = new Array();
+        header.col_1 ? row.push(header.col_1) : '';
+        header.col_2 ? row.push(header.col_2) : '';
+        header.col_3 ? row.push(header.col_3) : '';
+        header.col_4 ? row.push(header.col_4) : '';
+        header.col_5 ? row.push(header.col_5) : '';
         this.body.push(row);
       }
-    })
-
-    // total tabla
-    if (tipo === 'abonos_y_cargos') {
-      var row = new Array();
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: 'Total ', alignment: 'right', bold: true, margin: [0, 0, 0, 0], border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
-      row.push({ text: "$" + this.totalCantidadCargos(datos), alignment: 'right', bold: true, margin: [0, 0, 0, 0], border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
-      row.push({ text: "$" + this.totalCantidadAbonos(datos), alignment: 'right', bold: true, margin: [0, 0, 0, 0], border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
-      row.push({ text: "$" + this.totalCantidadSaldo(datos), alignment: 'right', bold: true, margin: [0, 0, 0, 0], border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
-      this.body.push(row);
     }
-    // totales tabla
-    if (tipo === 'abono' || tipo === 'cargo') {
-      var row = new Array();
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: "", border: [false, true, false, false], fillColor: '#eeeeee' });
-      row.push({ text: 'Total', alignment: 'right', bold: true, border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
-      row.push({ text: "$" + this.totalCantidad(datos), alignment: 'right', bold: true, border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
-      if (tipo === 'cargo') {
-        row.push({ text: "$" + this.totalPendiente(datos), alignment: 'right', bold: true, border: [false, true, false, false], fillColor: '#eeeeee', color: '#000000' });
+
+    for (var key in this.headers_historicos) {
+      if (this.headers_historicos.hasOwnProperty(key)) {
+        var header = this.headers_historicos[key];
+        var row = new Array();
+        header.col_1 ? row.push(header.col_1) : '';
+        header.col_2 ? row.push(header.col_2) : '';
+        header.col_3 ? row.push(header.col_3) : '';
+        header.col_4 ? row.push(header.col_4) : '';
+        this.body_historico.push(row);
       }
-      this.body.push(row);
     }
-
-    if(!this.historico) {
-      this.headers_historicos = [[]];
-      this.body_historico = [[]];
-      this.headersRows = 0;
-    }
-
-    this.generatePdf(opcion_pdf);
   }
 
-  private totalCantidad = (data: []): string => (Math
-    .round(data
-      .filter((x: any) => (new Date(x.fecha) >= new Date('2001/01/01')))
-      .map((x: any) => Number(x.cantidad))
-      .reduce((a, b) => a + b, 0) * 100) / 100)
-    .toFixed(2);
+  private getContent() {
 
-  private totalPendiente = (data: []): string => (Math
-    .round(data
-      .filter((x: any) => (new Date(x.fecha) >= new Date('2001/01/01')))
-      .map((x: any) => Number(x.pendiente))
-      .reduce((a, b) => a + b, 0) * 100) / 100)
-    .toFixed(2);
+    const espacio = {
+      text: '',
+      style: 'header'
+    };
+
+    let content: any = [];
+
+    content.push({
+      columns: [
+        this.getProfilePicObject(),
+        {
+          text: TITLE_REPORTE,
+          alignment: 'center',
+          fontSize: 16,
+        }],
+      columnGap: 10
+    });
+
+    content.push(espacio);
+
+    content.push({
+      columns: [
+        [{
+          text: 'Emitido por: Junta parroquial',
+          bold: true,
+        },
+        {
+          text: 'Representante: ' + this.cabecera.representante,
+        },
+        {
+          text: 'C.I./RUC: ' + this.cabecera.cedula,
+        },
+        {
+          text: 'Observaciones: ' + '',
+        }],
+        [{
+          text: 'Fecha emisión: ' + this.getDate(new Date()),
+        },
+        {
+          text: 'Tipo emisión: ' + this.cabecera.tipo,
+        },
+        {
+          text: 'Descripción: ' + this.cabecera.descripcion,
+        }]
+      ]
+    });
+
+    content.push(espacio);
+
+    content.push(...JSON.parse(JSON.stringify(this.content)));
+
+    content.push(espacio);
+
+    return content;
+  }
+
+  private cargarDatos(datos) {
+
+    const border = [false, true, false, false];
+    const margin = [0, 0, 0, 0];
+    const alignment = 'right';
+
+    datos = this.preprocesarDatos(datos);
+
+    this.historico = false;
+
+    datos.forEach((s, i: number) => {
+
+      let body = new Array(...this.body.map(c => c));
+      let body_h = new Array(...this.body_historico.map(c => c));
+      let h: any = [{ text: '' }, {}];
+
+      s.data.forEach(d => {
+        let row = new Array();
+        let anio = new Date(d.fecha).getFullYear() >= 2001;
+
+        !anio ? this.historico = true : null;
+
+        row.push({ text: d.fecha.toString(), style: 'tableContent' });
+        row.push({ text: String(d.descripcion).toLowerCase(), style: 'tableContent' });
+
+        if (d.estado_cuenta === 'cargo') {
+          row.push({ text: this.STRNumber(d.cantidad, anio), alignment, style: 'tableContent' });
+          row.push({ text: "", fillColor: '#eeffee' });
+          anio ? row.push({ text: this.STRNumber(d.pendiente, anio), alignment, style: 'tableContent' }) : null;
+
+        } else {
+          row.push("");
+          row.push({ text: this.STRNumber(d.cantidad, anio), alignment, style: 'tableContent', fillColor: '#eeffee' });
+          anio ? row.push("") : null;
+        }
+
+        if (!anio) {
+          body_h.push(row);
+        } else {
+          body.push(row);
+        }
+
+      });
+
+      if (this.historico) {
+        h = [
+          { text: 'Histórico: ', noWrap: true, bold, fillColor, color, margin: [0, 15, 0, 0] },
+          {
+            layout: { defaultBorder: false },
+            margin: [0, 15, 0, 0],
+            table: { widths: this.widths_historicos.map(c => c), body: body_h.map(h => h) }
+          }
+        ];
+      }
+
+      let row = new Array();
+      row.push({ text: "", border });
+      row.push({ text: 'Total ', alignment, bold, margin, border });
+      row.push({ text: "$" + this.totalCantidadCargos(s.data), alignment, bold, margin, border });
+      row.push({ text: "$" + this.totalCantidadAbonos(s.data), alignment, bold, margin, border, fillColor: '#eeffee' });
+      row.push({ text: "$" + this.totalCantidadSaldo(s.data), alignment, bold, margin, border });
+      body.push(row);
+
+      this.content.push(Object.assign({},{
+        style: 'tableContent',
+        layout: {
+          defaultBorder: false,
+        },
+        table: {
+          widths: ['auto', '*'],
+          body: [
+            [{ text: 'Sector: ', noWrap: true, bold, fillColor, color }, s.sector.toString().toUpperCase()],
+            [{ text: 'Servicio: ', noWrap: true, bold, fillColor, color }, s.motivo.toString().toUpperCase()],
+            [{ text: 'Tipo: ', noWrap: true, bold, fillColor, color }, s.lugar.toString().toUpperCase()],
+            [{ text: 'Observaciones: ', noWrap: true, bold, fillColor, color }, ''],
+            [{ text: 'Movimientos: ', noWrap: true, bold, fillColor, color }, {
+              layout: {
+                defaultBorder: false,
+              },
+              table: {
+                widths: Object.assign([], this.widths.map(c => c) ),
+                // headerRows: 1,
+                dontBreakRows: true,
+                body:  [...Object.assign([], body.map(c => c) )],
+              }
+            }],
+            h
+          ]
+        }
+      }));
+
+      this.content.push(new Object({
+        text: '',
+        style: 'header'
+      }));
+    })
+
+  }
+
+  private preprocesarDatos(data) {
+    var datos = [];
+    data.forEach(e => datos.find(d => d.sitio == e.sitio) ? null : datos.push({ sitio: e.sitio, motivo: e.motivo, lugar: e.lugar, sector: e.sector, data: [] }));
+
+    datos.forEach(s =>
+      data.forEach(d => {
+        if (s.sitio == d.sitio)
+          s.data.push({
+            cantidad: d.cantidad,
+            descripcion: d.descripcion,
+            estado_cuenta: d.estado_cuenta,
+            fecha: d.fecha,
+            pendiente: d.pendiente
+          });
+      })
+    )
+
+    return datos;
+  }
 
   private totalCantidadAbonos = (data: []): string => (Math
     .round(data
@@ -160,96 +275,12 @@ export class PDFClass  {
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);
 
-  private establecerHeaders(tipo) {
-
-    if (tipo === 'abonos_y_cargos') {
-      this.headers = header_abonos_y_cargos;
-      this.headers_historicos = header_abonos_y_cargos_historicos;
-      this.widths = ['auto', 'auto', 'auto', 'auto', '*', 'auto', 'auto', 'auto'];
-      this.widths_historicos = ['auto', 'auto', 'auto', 'auto', '*', 'auto', 'auto'];
-    }
-    if (tipo === 'abono') {
-      this.headers = header_abonos;
-      this.headers_historicos = header_abonos_historicos;
-      this.widths = ['auto', 'auto', 'auto', 'auto', '*', 'auto'];
-      this.widths_historicos = ['auto', 'auto', 'auto', 'auto', '*', 'auto'];
-    }
-    if (tipo === 'cargo') {
-      this.headers = header_cargos;
-      this.headers_historicos = header_cargos_historicos;
-      this.widths = ['auto', 'auto', 'auto', 'auto', '*', 'auto', 'auto'];
-      this.widths_historicos = ['auto', 'auto', 'auto', 'auto', '*', 'auto'];
-    }
-    if (tipo === 'representantes') {
-
-    }
-    if (tipo === 'sitios') {
-      this.headers = header_sitios;
-      this.widths = ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'];
-    }
-    if (tipo === 'comprobante') {
-
-    }
-
-  }
-
-  private cargarHeaders = (tipo: string) => {
-    this.body = [];
-    this.body_historico = [];
-
-    // headers tabla
-    for (var key in this.headers) {
-      if (this.headers.hasOwnProperty(key)) {
-        var header = this.headers[key];
-        var row = new Array();
-        header.col_1 ? row.push(header.col_1) : '';
-        header.col_2 ? row.push(header.col_2) : '';
-        header.col_3 ? row.push(header.col_3) : '';
-        header.col_4 ? row.push(header.col_4) : '';
-        header.col_5 ? row.push(header.col_5) : '';
-        header.col_6 ? row.push(header.col_6) : '';
-        if (tipo === 'abonos_y_cargos' || tipo === 'cargo' || tipo === 'sitios') {
-          header.col_7 ? row.push(header.col_7) : '';
-        }
-        if (tipo === 'abonos_y_cargos') {
-          header.col_8 ? row.push(header.col_8) : '';
-        }
-        this.body.push(row);
-      }
-    }
-
-    if(tipo !== 'sitios') {
-      for (var key in this.headers_historicos) {
-        if (this.headers_historicos.hasOwnProperty(key)) {
-          var header = this.headers_historicos[key];
-          var row = new Array();
-          header.col_1 ? row.push(header.col_1) : '';
-          header.col_2 ? row.push(header.col_2) : '';
-          header.col_3 ? row.push(header.col_3) : '';
-          header.col_4 ? row.push(header.col_4) : '';
-          header.col_5 ? row.push(header.col_5) : '';
-          header.col_6 ? row.push(header.col_6) : '';
-          if (tipo === 'abonos_y_cargos') {
-            header.col_7 ? row.push(header.col_7) : '';
-          }
-          this.body_historico.push(row);
-        }
-      }
-    }
-  }
-
-  private generatePdf(action = 'open') {
+  private generatePdf() {
     const documentDefinition = this.getDocumentDefinition();
-    switch (action) {
-      case 'open': pdfMake.createPdf(documentDefinition).open(); break;
-      case 'print': pdfMake.createPdf(documentDefinition).print(); break;
-      case 'download': pdfMake.createPdf(documentDefinition).download(); break;
-      default: pdfMake.createPdf(documentDefinition).open(); break;
-    }
+    pdfMake.createPdf(documentDefinition).open();
   }
 
   private getDocumentDefinition() {
-    //sessionStorage.setItem('resume', JSON.stringify(this.resume));
     return {
       header: function (currentPage, pageCount) {
         return [{
@@ -268,82 +299,7 @@ export class PDFClass  {
           [{ text: FOOTER_REPORTE_URL, alignment: 'center', fontSize: 8, margin: [8, 8] }],
         ]
       },
-      content: [
-        {
-          columns: [
-            this.getProfilePicObject(),
-            {
-              // width: 'auto',
-              text: TITLE_REPORTE,
-              alignment: 'center',
-              fontSize: 16,
-            }],
-          columnGap: 10
-        },
-        {
-          text: '',
-          style: 'header'
-        },
-        {
-          columns: [
-            [{
-              text: 'Emitido por: Junta parroquial',
-              bold: true,
-            },
-            {
-              text: 'Representante: ' + this.cabecera.representante,
-            },
-            {
-              text: 'C.I./RUC: ' + this.cabecera.cedula,
-            },
-            {
-              text: 'Observaciones: ' + '',
-            }],
-            [{
-              text: 'Fecha emisión: ' + this.getDate(new Date()),
-            },
-            {
-              text: 'Tipo emisión: ' + this.cabecera.tipo,
-            },
-            {
-              text: 'Descripción: ' + this.cabecera.descripcion,
-            }]
-          ]
-        },
-        {
-          text: '',
-          style: 'header'
-        },
-        {
-          layout: {
-            defaultBorder: false,
-          },
-          table: {
-            widths: this.widths,
-            headerRows: 2,
-            body: this.body,
-
-          }
-        },
-        {
-          text: '',
-          style: 'header'
-        },
-        {
-          layout: {
-            defaultBorder: false,
-          },
-          table: {
-            widths: this.widths_historicos,
-            headerRows: this.headersRows,
-            body: this.body_historico,
-          }
-        },
-        {
-          text: '',
-          style: 'header'
-        },
-      ],
+      content: this.getContent(),
       info: {
         title: 'Reporte_SICDMIN',
         author: "Grupo FELENIAH",
@@ -352,10 +308,10 @@ export class PDFClass  {
       },
       styles: {
         header: {
-          fontSize: 18,
-          bold: true,
-          margin: [0, 15, 0, 10],
-          decoration: 'underline'
+          margin: [0, 15, 0, 10]
+        },
+        tableContent: {
+          fontSize: 11,
         },
         name: {
           fontSize: 16,
@@ -364,7 +320,7 @@ export class PDFClass  {
         },
         tableHeader: {
           bold: true,
-
+          alignment: 'center',
         }
       }
     };
@@ -380,151 +336,30 @@ export class PDFClass  {
     return null;
   }
 
+  private STRNumber = (cantidad: number, anio: boolean): string => (Math.round(cantidad * 100) / 100).toFixed(2).concat(anio ? '' : ' S.')
+
   private getDate = (fecha: Date): string => {
     fecha = new Date(fecha);
-    return "" + fecha.getFullYear() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
+    return `${fecha.getFullYear()}-${(fecha.getMonth() + 1)}-${fecha.getDate()}`;
   }
 
 }
+
 const header_abonos_y_cargos = {
-  fila_0: {
-    col_1: { text: 'DETALLE DE MOVIMIENTOS', style: 'tableHeader', colSpan: 8, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-    col_7: {},
-    col_8: {}
-  },
   fila_1: {
-    col_1: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Descripción', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Cargos', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_7: { text: 'Abonos', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_8: { text: 'Saldo', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' }
-  }
-}
-
-const header_abonos = {
-  fila_0: {
-    col_1: { text: 'DETALLE DE MOVIMIENTOS', style: 'tableHeader', colSpan: 6, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-  },
-  fila_1: {
-    col_1: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Descripción', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Abono', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' }
-  }
-}
-
-const header_cargos = {
-  fila_0: {
-    col_1: { text: 'DETALLE DE MOVIMIENTOS', style: 'tableHeader', colSpan: 7, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-    col_7: {},
-  },
-  fila_1: {
-    col_1: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Descripción', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Cargo', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_7: { text: 'Saldo', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' }
+    col_1: { text: 'Fecha', style: 'tableHeader', border: [false, false, false, true] },
+    col_2: { text: 'Descripción', style: 'tableHeader', border: [false, false, false, true] },
+    col_3: { text: 'Cargos', style: 'tableHeader', border: [false, false, false, true] },
+    col_4: { text: 'Abonos', style: 'tableHeader', border: [false, false, false, true] },
+    col_5: { text: 'Saldo', style: 'tableHeader', border: [false, false, false, true] }
   }
 }
 
 const header_abonos_y_cargos_historicos = {
-  fila_0: {
-    col_1: { text: 'HISTÓRICO', style: 'tableHeader', colSpan: 7, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-    col_7: {}
-  },
   fila_1: {
-    col_1: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Descripción', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Cargos', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_7: { text: 'Abonos', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-  }
-}
-
-const header_abonos_historicos = {
-  fila_0: {
-    col_1: { text: 'HISTÓRICO', style: 'tableHeader', colSpan: 6, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-  },
-  fila_1: {
-    col_1: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Descripción', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Abono', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' }
-  }
-}
-
-const header_cargos_historicos = {
-  fila_0: {
-    col_1: { text: 'HISTÓRICO', style: 'tableHeader', colSpan: 6, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-  },
-  fila_1: {
-    col_1: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Descripción', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Cargo', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-  }
-}
-
-const header_sitios = {
-  fila_0: {
-    col_1: { text: 'INFORMACIÓN SITIOS REGISTRADOS', style: 'tableHeader', colSpan: 7, alignment: 'center', margin: [0, 8, 0, 0] },
-    col_2: {},
-    col_3: {},
-    col_4: {},
-    col_5: {},
-    col_6: {},
-    col_7: {},
-  },
-  fila_1: {
-    col_1: { text: '', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_2: { text: 'Representante', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_3: { text: 'Cédula', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_4: { text: 'Servicio', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_5: { text: 'Lugar', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_6: { text: 'Sector', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
-    col_7: { text: 'Fecha', style: 'tableHeader', alignment: 'center', border: [false, false, false, true], fillColor: '#eeeeee', color: '#000000' },
+    col_1: { text: 'Fecha', style: 'tableHeader', border: [false, false, false, true] },
+    col_2: { text: 'Descripción', style: 'tableHeader', border: [false, false, false, true] },
+    col_3: { text: 'Cargos', style: 'tableHeader', border: [false, false, false, true] },
+    col_4: { text: 'Abonos', style: 'tableHeader', border: [false, false, false, true] },
   }
 }

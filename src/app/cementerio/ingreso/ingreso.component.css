@@ -6,6 +6,12 @@
     height: 100%;
 }
 
+.card {
+    width: 420px;
+    padding: 3rem 1rem;
+    border-radius: 1rem;
+}
+
 .form-signin {
     width: 100%;
     max-width: 420px;
@@ -100,4 +106,16 @@
 
 img {
     border-radius: 100%;
+}
+
+button {
+    width: 100%;
+    padding: 0.3rem 0;
+    background-color: #111b34;
+    color: white;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-weight: bolder;
 }
