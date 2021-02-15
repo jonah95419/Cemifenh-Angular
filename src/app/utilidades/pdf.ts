@@ -36,7 +36,7 @@ export class PDFClass {
     datos = datos.map((d: any) => { d.descripcion = d.descripcion == 'null' || d.descripcion == null ? '' : d.descripcion; return d; });
     this.establecerHeaders();
     this.cargarHeaders();
-    this.cargarDatos(datos,);
+    this.cargarDatos(datos);
     this.generatePdf();
   }
 

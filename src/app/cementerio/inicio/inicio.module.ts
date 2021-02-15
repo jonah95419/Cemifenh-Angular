@@ -9,9 +9,11 @@ import { RepresentanteComponent } from './representante/representante.component'
 import { InicioRoutingModule } from './inicio-routing.module';
 import { AngularModule } from '../../angular.module';
 import { ActualizacionService } from '../admin/service/actualizacion.service';
+import { Inicio2Component } from './inicio2/inicio2.component';
+import { CallbackService } from '../../public/callback.service';
 
 @NgModule({
-  declarations: [InicioComponent, RepresentanteComponent, HistorialComponent, DialogActualizacion],
+  declarations: [InicioComponent, RepresentanteComponent, HistorialComponent, DialogActualizacion, Inicio2Component],
   imports: [
     InicioRoutingModule,
     CommonModule,
@@ -22,7 +24,8 @@ import { ActualizacionService } from '../admin/service/actualizacion.service';
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
   providers: [
-    ActualizacionService
+    ActualizacionService,
+    CallbackService
   ],
   entryComponents: [
     DialogActualizacion

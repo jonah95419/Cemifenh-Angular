@@ -10,12 +10,12 @@
         <mat-card-header>
             <mat-card-title>
                 <div style="display: flex;">
-                    <div style="margin: auto 0px;">Información del representante</div>
+                    <div class="title-contenedor-step">Información del representante</div>
                     <button mat-icon-button matTooltip="Representante que se asignó el registro del/los sitio(s)" style="margin-left: auto;"><mat-icon style="color: white;">help</mat-icon></button>
                 </div>
             </mat-card-title>
         </mat-card-header>
-        <mat-card-content style="margin-top: 36px; padding: 0px 16px;">
+        <mat-card-content>
             <label id="example-radio-group-label">Instructivo para búsqueda de representantes</label>
             <mat-radio-group class="example-radio-group" [(ngModel)]="condicion" (change)="cambioCondicion($event);">
                 <mat-radio-button value="1">RUC/CI</mat-radio-button>
@@ -41,13 +41,13 @@
         <mat-card-header>
             <mat-card-title>
                 <div style="display: flex;">
-                    <div style="margin: auto 0px;">Resultado de la búsqueda</div>
+                    <div class="title-contenedor-step">Resultado de la búsqueda</div>
                     <button mat-icon-button matTooltip="Registro(s) que coincide(n) con los parametros de la búsqueda" style="margin-left: auto;"><mat-icon style="color: white;">help</mat-icon></button>
                 </div>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            <table #table mat-table [dataSource]="representantes$ | async" style="margin-top: 12px; " matSort>
+            <table #table mat-table [dataSource]="representantes$ | async" style="margin-top: 1rem; " matSort>
                 <ng-container matColumnDef="nombre">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Representante </th>
                     <td mat-cell *matCellDef="let row"> {{row.nombre}} </td>
@@ -70,18 +70,18 @@
 </div>
 <div *ngIf="step == 2" class="contenedor-step">
     <h1>Consulta de Estado de Cuenta</h1>
-    <mat-card style="width: 840px;">
+    <mat-card>
         <mat-card-header>
             <mat-card-title>
                 <div style="display: flex;">
-                    <div style="margin: auto 0px;">{{representante.nombre}} - {{representante.cedula}}</div>
-                    <button (click)="comprobante();" mat-mini-fab style="margin-left: auto; background-color: white;" matTooltip="Imprimir"><mat-icon style="color: #111b34; font-size: x-large !important;">print</mat-icon></button>
+                    <div class="title-contenedor-step">{{representante.nombre}} - {{representante.cedula}}</div>
+                    <button (click)="comprobante();" mat-icon-button style="margin-left: auto;" matTooltip="Imprimir"><mat-icon style="color: white; font-size: x-large !important;">print</mat-icon></button>
                 </div>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
 
-            <table mat-table [dataSource]="estadoCuenta$ | async" style="margin-top: 12px; " matSort>
+            <table mat-table [dataSource]="estadoCuenta$ | async" style="margin-top: 1rem; " matSort>
                 <ng-container matColumnDef="fecha">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
                     <td mat-cell *matCellDef="let row">{{row.fecha | date : 'MMM d, y':undefined:locale}}
@@ -139,3 +139,14 @@
     <p>El <strong>GAD Parroquial Rural de San Pablo del Lago</strong> no se responsabiliza por el mal uso que se le pueda dar a esta información y se reserva <br> el derecho de cambios en los valores de mantenimiento y renovación de servicios que pudieran
         alterar el <strong>TOTAL.</strong></p>
 </div>
+<footer class="footer">
+    <div class="content-footer">
+        <p class="footer-departamento">
+            {{departamento}}
+        </p>
+        <span class="example-spacer"></span>
+        <p class="footer-administracion">{{administracion}}</p>
+        <span class="example-spacer"></span>
+        <p class="footer-contacto">{{contacto}}</p>
+    </div>
+</footer>

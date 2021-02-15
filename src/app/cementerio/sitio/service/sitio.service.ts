@@ -50,18 +50,6 @@ export class SitioService {
       .pipe(catchError(this.handleError));
   }
 
-  listarFechasSitios = () => {
-    this.httpClient
-      .get<FechasResponse>(`${AUTH_SERVER}/api/sitio/fechas/`)
-      .pipe(catchError(this.handleError))
-      .subscribe((data: FechasResponse) => {
-        if (data.ok) {
-          this.dataStore.fechas = data.data;
-          this._fechas.next(Object.assign({}, this.dataStore).fechas);
-        }
-      })
-  }
-
   listarSitios(representanteId: any): Observable<ResponseSitioI> {
     return this.httpClient
       .get<ResponseSitioI>(`${AUTH_SERVER}/api/sitio/representante/${representanteId}`, this.httpOptions)
@@ -74,7 +62,7 @@ export class SitioService {
       .pipe(catchError(this.handleError));
   }
 
-  obtenerEstadoCuenta(sitioId: string): Observable<ResponseEstadoCuentaSitioI> {
+  obtenerEstadoCuenta(sitioId: number): Observable<ResponseEstadoCuentaSitioI> {
     return this.httpClient
       .get<ResponseEstadoCuentaSitioI>(`${AUTH_SERVER}/api/sitio/estado-cuenta/${sitioId}`, this.httpOptions)
       .pipe(catchError(this.handleError));

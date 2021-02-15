@@ -1,14 +1,19 @@
 .indicador {
-    height: 2px;
-    background: #828282;
+    background-color: #111b34;
+    color: whitesmoke;
     width: auto;
-    /* margin-top: 3px; */
+    height: 100%;
 }
 
 .opcion {
-    margin: 3px 12px;
     font-size: medium;
     cursor: pointer;
+    padding: 1rem;
+}
+
+.mat-toolbar {
+    background-color: #fff;
+    border-bottom: 1px solid #111b341e;
 }
 
 img {

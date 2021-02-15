@@ -27,7 +27,7 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
   displayedColumnsEC: string[] = ['fecha', 'descripcion', 'cargos', 'abonos', 'pendientes', 'acciones'];
   dataSource: MatTableDataSource<EstadoCuentaI>;
 
-  id_sitio: string = "";
+  id_sitio: number = -1;
   locale: string;
 
   listaEstadoCuenta: EstadoCuentaI[] = [];
@@ -49,7 +49,7 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
     route.queryParamMap.pipe(
       tap((data: ParamMap) => {
         if (data.get("id")) {
-          const sitio = data.get("id");
+          const sitio = Number(data.get("id"));
           this.obtenerValores(sitio);
         }
       })).toPromise();
@@ -123,9 +123,9 @@ export class SitioDetallesEstadoCuentaComponent implements OnInit {
       });
   }
 
-  private obtenerValores(id_sitio: string) {
+  private obtenerValores(id_sitio: number) {
     this.id_sitio = id_sitio;
-    this.notsitio.emitIdSitioDetalleChange(Number(this.id_sitio));
+    this.notsitio.emitIdSitioDetalleChange(this.id_sitio);
     this._obtener_estado_cuenta = this.apiSitio.obtenerEstadoCuenta(this.id_sitio)
       .subscribe((data: ResponseEstadoCuentaSitioI) => {
         if (data.ok) {

@@ -14,13 +14,13 @@ export class CallbackService {
 
   constructor(private httpClient: HttpClient) { }
 
-  listarRepresentantesNombre = (nombre: string): Observable<any> => {
+  listarRepresentantesNombre = (nombre: string): Observable<RepresentantesResponse> => {
     return this.httpClient
       .get<RepresentantesResponse>(`${AUTH_SERVER}/api/public/representantes/nombre/${nombre}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
-  listarRepresentantesCI = (ci: string): Observable<any> => {
+  listarRepresentantesCI = (ci: string): Observable<RepresentantesResponse> => {
     return this.httpClient
       .get<RepresentantesResponse>(`${AUTH_SERVER}/api/public/representantes/ci/${ci}`, this.httpOptions)
       .pipe(catchError(this.handleError));

@@ -49,8 +49,8 @@ export class HistorialComponent implements OnInit, OnDestroy {
   representante: RepresentanteI;
 
   sitios: number = 0;
+  id: number;
 
-  id: string;
   locale: string;
   fecha: Date = new Date();
 
@@ -75,7 +75,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     route.paramMap.pipe(
       tap((data: ParamMap) => {
         const representante = data.get("id");
-        this.id = atob(representante);
+        this.id = Number(atob(representante));
         this.obtenerHistorial();
       })
     ).toPromise();
@@ -185,7 +185,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this.cargarRepresentante(this.id);
   }
 
-  private cargarRepresentante(id: string): void {
+  private cargarRepresentante(id: number): void {
     this._cargarRepresentante = this.apiRepresentante.obtenerRepresentante(id)
       .subscribe((data: RepresentantesResponse) => {
         if (data.ok) { this.representante = data.data[0]; }
@@ -193,7 +193,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
       });
   }
 
-  private cargarHistorial(id: string): void {
+  private cargarHistorial(id: number): void {
     this._cargarHistorial = this.apiRepresentante.obtenerEstadoCuentaRepresentante(id)
       .subscribe((data: any) => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }
@@ -201,7 +201,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
       });
   }
 
-  private cargarSitios(id: string): void {
+  private cargarSitios(id: number): void {
     this._cargosSitio = this.apiSitio.listarSitios(id)
       .subscribe((data: ResponseSitioI) => {
         if (data.ok) { this.sitios = data.cant; }

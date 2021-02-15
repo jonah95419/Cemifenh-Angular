@@ -1,24 +1,18 @@
-<mat-toolbar class="mat-elevation-z1" style="background-color: white;">
+<mat-toolbar class="container-fluid">
 
     <img (click)="apiAuth.logout();" class="mb-4 rounded-circle" [src]="logo" alt="logo" loading="lazy" /> {{title}}
 
-    <!-- <strong class="navigation-item" style="color: rgb(39, 39, 39); cursor: pointer;" routerLink="/inicio">{{title}}</strong> -->
     <span class="example-spacer"></span>
-    <a class="navigation-item opcion" routerLink="/inicio" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla.isActive}" routerLink="/inicio" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
         <label class="navigation-item-label">Inicio</label>
-        <div [ngClass]="{'indicador': rla.isActive}"></div>
     </a>
-    <a class="navigation-item opcion" routerLink="/representantes" mat-list-item routerLinkActive="active" routerLinkActive #rla1="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla1.isActive}" routerLink="/representantes" mat-list-item routerLinkActive="active" routerLinkActive #rla1="routerLinkActive">
         <label class="navigation-item-label">Representantes</label>
-        <div [ngClass]="{'indicador': rla1.isActive}"></div>
     </a>
-    <a class="navigation-item opcion" routerLink="/reportes" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla2.isActive}" routerLink="/reportes" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
         <label class="navigation-item-label">Reportes</label>
-        <div [ngClass]="{'indicador': rla2.isActive}"></div>
     </a>
-    <a class="navigation-item opcion" routerLink="/administracion" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla3.isActive}" routerLink="/administracion" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
         <label class="navigation-item-label">Administración</label>
-        <div [ngClass]="{'indicador': rla3.isActive}"></div>
     </a>
-    <!-- <span class="example-spacer"></span> -->
 </mat-toolbar>

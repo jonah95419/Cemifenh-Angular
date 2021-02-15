@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ReportesService } from '../service/reportes.service';
 import { FormBuilder } from '@angular/forms';
 import { startWith, switchMap, tap, map, catchError } from 'rxjs/operators';
@@ -25,7 +25,7 @@ import { ExcelService } from '../../../utilidades/excel';
     { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
   ],
 })
-export class ReportesComponent implements OnInit {
+export class ReportesComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

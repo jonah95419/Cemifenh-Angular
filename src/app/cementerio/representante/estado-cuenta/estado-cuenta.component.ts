@@ -46,7 +46,8 @@ export class EstadoCuentaComponent implements OnInit, OnDestroy {
   listaEstadoCuenta: EstadoCuentaH[] = [];
   representante: RepresentanteI;
 
-  id: string;
+  id: number;
+
   locale: string;
   fecha: Date = new Date();
 
@@ -185,7 +186,7 @@ export class EstadoCuentaComponent implements OnInit, OnDestroy {
     this.cargarRepresentante(this.id);
   }
 
-  private cargarRepresentante(id: string): void {
+  private cargarRepresentante(id: number): void {
     this._representante = this.apiRepresentante.obtenerRepresentante(id)
       .subscribe((data: RepresentantesResponse) => {
         if (data.ok) { this.representante = data.data[0]; }
@@ -193,7 +194,7 @@ export class EstadoCuentaComponent implements OnInit, OnDestroy {
       });
   }
 
-  private cargarHistorial(id: string): void {
+  private cargarHistorial(id: number): void {
     this._estado_cuenta = this.apiRepresentante.obtenerEstadoCuentaRepresentante(id)
       .subscribe((data: any) => {
         if (data.ok) { this.cargarValoresEstadoCuenta(data.data); }

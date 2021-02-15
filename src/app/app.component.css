@@ -2,22 +2,6 @@
     flex: 1 1 auto;
 }
 
-::ng-deep.item-seleccionado {
-    display: flex;
-    width: 100%;
-    color: #730603;
-}
-
-::ng-deep.indicador-seleccionado {
-    margin-left: auto;
-    width: 7px;
-    height: 7px;
-    background-color: #730603;
-    border-radius: 50%;
-    margin-top: 6px;
-    margin-right: 3px;
-}
-
 ::ng-deep a:link {
     color: #000000;
     background-color: transparent;
@@ -53,7 +37,8 @@
 }
 
 ::ng-deep table {
-    width: 100% !important;
+    width: 100%;
+    background-color: #fff !important;
 }
 
 ::ng-deep tr.mat-footer-row {
@@ -61,7 +46,7 @@
 }
 
 ::ng-deep tr:hover {
-    background-color: whitesmoke !important;
+    background-color: #111b3411 !important;
     cursor: pointer !important;
 }
 
@@ -71,6 +56,7 @@
 
 ::ng-deep th.mat-header-cell {
     border: none !important;
+    color: rgba(80, 80, 80, 0.479);
 }
 
 ::ng-deep mat-icon {

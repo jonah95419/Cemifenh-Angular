@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
-import { LocationStrategy, PathLocationStrategy, registerLocaleData } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, PathLocationStrategy, registerLocaleData } from '@angular/common';
 import localeES from '@angular/common/locales/es-EC';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -44,7 +44,9 @@ registerLocaleData(localeES, 'es');
     }),
   ],
   providers: [
+    // { provide: LocationStrategy, useClass: HashLocationStrategy  },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
+
   ],
   bootstrap: [AppComponent],
 

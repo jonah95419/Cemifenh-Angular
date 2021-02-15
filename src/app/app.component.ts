@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { SitioService } from './cementerio/sitio/service/sitio.service';
 import { RepresentanteService } from './cementerio/representante/service/representante.service';
 import { AuthenticationService } from './core/service/authentication.service';
 import { tap } from 'rxjs/operators';
@@ -15,7 +14,6 @@ export class AppComponent {
 
   constructor(
     public authenticationService: AuthenticationService,
-    private apiSitios: SitioService,
     private apiValores: ValoresService,
     private apiRepresentantes: RepresentanteService,
     private apiSectores: SectorService) {
@@ -23,7 +21,6 @@ export class AppComponent {
       tap((x: any) => {
         const accessToken = localStorage.getItem('access_token');
         if (x && accessToken) {
-          apiSitios.listarFechasSitios();
           apiSectores.listarSectores();
           apiValores.listarValores();
           apiRepresentantes.listarRepresentantesTodo();

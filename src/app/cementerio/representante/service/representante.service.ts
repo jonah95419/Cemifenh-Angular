@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -48,13 +48,21 @@ export class RepresentanteService {
       });
   }
 
-  obtenerEstadoCuentaRepresentante(id: string): Observable<ResponseDeudaRepresentanteI> {
+  listarRepresentantesNombre = (nombre: string, sort: string, page: number): Observable<ResponseDeudaRepresentanteI> => {
+    var httpO = this.httpOptions;
+    httpO.params = new HttpParams().set("nombre", nombre).set("sort", sort).set("page", page + "");
+    return this.httpClient
+      .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/api/public/representante`, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  obtenerEstadoCuentaRepresentante(id: number): Observable<ResponseDeudaRepresentanteI> {
     return this.httpClient
       .get<ResponseDeudaRepresentanteI>(`${AUTH_SERVER}/api/representante/estado-cuenta/${id}`, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
-  obtenerRepresentante(representanteId: string): Observable<RepresentantesResponse> {
+  obtenerRepresentante(representanteId: number): Observable<RepresentantesResponse> {
     return this.httpClient
       .get<RepresentantesResponse>(`${AUTH_SERVER}/api/representante/${representanteId}`, this.httpOptions)
       .pipe(catchError(this.handleError));
@@ -126,6 +134,7 @@ export class RepresentanteService {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
       'authorization': `Bearer ${localStorage.getItem('access_token')}`
-    })
+    }),
+    params: {}
   };
 }

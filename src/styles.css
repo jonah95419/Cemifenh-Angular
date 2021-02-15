@@ -7,12 +7,25 @@ body {
 
 body {
     margin: 0;
-    background-color: whitesmoke;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #F8F9FA;
+    font-family: sans-serif;
 }
 
 .my-class .mat-dialog-container {
     border-radius: 10px;
-    background: whitesmoke;
+    background: #F8F9FA;
     /* color: #039be5; */
 }
+
+
+/* @media (min-width: 768)
+{
+    body
+    {
+        font-size: 17px;
+    }
+    h1
+    {
+        font-size: 24px;
+    }
+} */
