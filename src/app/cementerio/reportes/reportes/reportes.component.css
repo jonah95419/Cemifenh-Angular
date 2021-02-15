@@ -13,7 +13,7 @@ span {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: whitesmoke;
+    background-color: #F8F9FA;
 }
 
 .container-detalles {
@@ -23,22 +23,6 @@ span {
     display: flex;
     flex-direction: column;
 }
-
-
-/* Structure */
-
-
-/* .example-container {
-    position: relative;
-    min-height: 200px;
-} */
-
-
-/* .example-table-container {
-    position: relative;
-    max-height: 400px;
-    overflow: auto;
-} */
 
 table {
     width: 100%;
@@ -62,15 +46,3 @@ table {
     max-width: 360px;
     text-align: center;
 }
-
-
-/* Column Widths
-
-.mat-column-number,
-.mat-column-state {
-    max-width: 64px;
-}
-
-.mat-column-created {
-    max-width: 124px;
-} */

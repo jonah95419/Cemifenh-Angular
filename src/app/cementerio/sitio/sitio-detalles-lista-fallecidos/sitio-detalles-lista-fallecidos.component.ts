@@ -124,6 +124,7 @@ export class SitioDetallesListaFallecidosComponent implements OnInit, OnDestroy 
   }
 
   editarInformacion(row: FallecidoI): void {
+    row.fecha = new Date(row.fecha);
     this.accordion2.openAll();
     this.fallecidoForm2.patchValue(row);
   }

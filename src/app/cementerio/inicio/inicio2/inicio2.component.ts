@@ -87,7 +87,7 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
     private cdRef: ChangeDetectorRef) {
     this.pdf = new PDFClass(http);
     notsitio.actualizarHistorial$.pipe(
-      tap((x: any) => this.sitios$.next(this.sitio.id))
+      tap((x: any) => this.estadoCuenta$.next(this.sitio.id))
     ).toPromise();
   }
 

@@ -108,7 +108,7 @@ export class SitioDetallesInformacionComponent implements OnInit {
       if(data.descripcion.toLowerCase() === 'lote propio') data.descripcion = 'Lote propio';
 
       if(data.descripcion.toLowerCase() === 'piso') data.descripcion = 'Piso';
-
+      data.adquisicion = new Date(data.adquisicion);
       this.sitioForm.patchValue(data);
     }
   }
