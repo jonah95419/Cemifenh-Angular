@@ -6,6 +6,12 @@
     height: calc(100% - 64px);
 }
 
+.mat-mini-fab {
+    background-color: white;
+    color: #111b34;
+    font-size: larger;
+}
+
 .container-fluid {
     height: 100%;
 }
@@ -18,14 +24,14 @@
     padding: 0.5rem;
 }
 
-button {
-    margin: 1rem;
-    border-radius: 1rem;
-    height: fit-content;
-}
-
 .mat-form-field {
     width: 40%;
+}
+
+.button-help {
+    background-color: white;
+    margin: 0.75rem 0.25rem 0 0.25rem;
+    font-size: medium;
 }
 
 .example-loading-shade {
@@ -35,7 +41,7 @@ button {
     bottom: 0;
     right: 0;
     background: #111b342d;
-    z-index: 1;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -51,9 +57,34 @@ button {
     background-color: #111b342d;
 }
 
-::ng-deep .mat-tab-list .mat-tab-labels .mat-tab-label-active {
-    color: white;
-    background-color: #111b34;
-    opacity: 1;
-    box-shadow: 0px 3px 10px #111b34;
+.mat-column-fecha,
+.mat-column-pago,
+.mat-column-abonos,
+.mat-column-cargos,
+.mat-column-pendientes,
+.mat-column-acciones {
+    min-width: fit-content;
+    padding: 0 0.5rem;
+}
+
+.mat-column-abonos,
+.mat-column-cargos,
+.mat-column-pendientes {
+    text-align: center;
+}
+
+.mat-icon-acciones {
+    color: #757575;
+    font-size: large;
+}
+
+.button-accion {
+    margin: 0;
+    padding: 0;
+}
+
+.container-opciones {
+    display: flex;
+    flex-direction: row;
+    margin: 0.5rem 1rem 0 auto;
 }

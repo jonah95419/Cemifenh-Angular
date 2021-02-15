@@ -6,7 +6,7 @@ import { LogoClass } from './logo.service';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
-const fillColor = '#eeeeee';
+const fillColor = '#F8F9FA';
 const color = '#000000';
 const bold = true;
 
@@ -32,6 +32,9 @@ export class PDFClass {
   }
 
   jojo = (datos, cabecera_data: any) => {
+    this.body = [];
+    this.body_historico = [];
+    this.content = [];
     this.cabecera = cabecera_data;
     datos = datos.map((d: any) => { d.descripcion = d.descripcion == 'null' || d.descripcion == null ? '' : d.descripcion; return d; });
     this.establecerHeaders();

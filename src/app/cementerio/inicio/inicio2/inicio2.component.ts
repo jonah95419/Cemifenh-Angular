@@ -1,17 +1,28 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ChangeDetectorRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ChangeDetectorRef, ViewChildren, QueryList, Inject } from '@angular/core';
 import { BehaviorSubject, merge, of } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { startWith, switchMap, map, catchError } from 'rxjs/operators';
+import { startWith, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { RepresentanteService } from '../../representante/service/representante.service';
 import { RepresentanteI } from '../../representante/model/representante';
 import { SitioI, ResponseSitioI, ResponseEstadoCuentaSitioI, EstadoCuentaI } from '../../sitio/model/sitio';
 import { SitioService } from '../../sitio/service/sitio.service';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { FallecidoService } from '../../fallecido/service/fallecido.service';
 import { FallecidoI, ResponseFallecidoI } from '../../fallecido/model/fallecido';
 import { ResponseDeudaRepresentanteI } from '../../representante/model/deuda';
 import { MatTableDataSource } from '@angular/material/table';
+import { DialogEstadoCuenta } from '../../sitio/dialog/editar-estado-cuenta/editar-estado-cuenta';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogRegistrarSitio } from '../../sitio/dialog/registrar-sitio/registrar-sitio';
+import { DialogRegistroDeuda } from '../../representante/dialog/registro-deuda/dialog-registro-deuda';
+import { DialogPagoExtra } from '../../representante/dialog/registro-pago-extra/dialog-pago-extra';
+import { PDFClass } from '../../../utilidades/pdf';
+import { HttpClient } from '@angular/common/http';
+import { ServiceC } from '../../sitio/service-c/sitio-serviceC';
+import { DialogRegistroRepresentante } from '../../representante/dialog/registro-representante/dialog-registro-representante';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { ActualizacionService } from '../../admin/service/actualizacion.service';
 
 @Component({
   selector: 'app-inicio2',
@@ -23,7 +34,12 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
   @ViewChild(MatSort) sort: MatSort;
 
-  resultsLength: number = 0;
+
+  resultsLength = 0;
+  isLoadingResults = true;
+  isRateLimitReached = false;
+
+  resultsLengthR: number = 0;
 
   isLoadingR: boolean = true;
   isLoadingS: boolean = true;
@@ -38,36 +54,44 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
   sitio: SitioI;
   fallecido: FallecidoI;
 
-  locale: string;
   filtro: string;
   columnsToDisplayR: string[] = ['nombre', 'cedula'];
   columnsToDisplayS: string[] = ['sector', 'tipo', 'descripcion', 'adquisicion'];
   columnsToDisplayF: string[] = ['nombre', 'cedula', 'fecha', 'observaciones'];
-  columnsToDisplayEC: string[] = ['fecha', 'pago', 'cargos', 'abonos', 'pendientes',];
+  columnsToDisplayEC: string[] = ['fecha', 'pago', 'cargos', 'abonos', 'pendientes', 'acciones',];
 
   representantes: RepresentanteI[] = [];
   sitios: SitioI[] = [];
   fallecidos: FallecidoI[] = [];
-  estadoCuentaEC: MatTableDataSource<EstadoCuentaI>;
+  estadoCuentaEC: MatTableDataSource<EstadoCuentaI> = new MatTableDataSource([]);
+
+  private pdf: PDFClass;
 
   private filtro$ = new BehaviorSubject("");
   private sitios$ = new BehaviorSubject(-1);
   private estadoCuenta$ = new BehaviorSubject(-1);
   private fallecidos$ = new BehaviorSubject(-1);
 
-  private _translate;
+  private _eliminar: any;
+  private _estado_cuenta: any;
 
   constructor(
+    private http: HttpClient,
     private apiRepresentante: RepresentanteService,
     private apiSitio: SitioService,
     private apiFallecido: FallecidoService,
-    private translate: TranslateService,
-    private cdRef: ChangeDetectorRef) { }
+    private dialog: MatDialog,
+    private notsitio: ServiceC,
+    private _snackBar: MatSnackBar,
+    private apiActualizacion: ActualizacionService,
+    private cdRef: ChangeDetectorRef) {
+    this.pdf = new PDFClass(http);
+    notsitio.actualizarHistorial$.pipe(
+      tap((x: any) => this.sitios$.next(this.sitio.id))
+    ).toPromise();
+  }
 
   ngOnInit(): void {
-    this.locale = this.translate.currentLang;
-    this._translate = this.translate.onLangChange
-      .subscribe((langChangeEvent: LangChangeEvent) => { this.locale = langChangeEvent.lang; })
   }
 
   ngAfterViewInit() {
@@ -75,14 +99,88 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
     this.obtenerSitiosRepresentante();
     this.obtenerEstadoCuentaSitio();
     this.obtenerFallecidosSitio();
+    this.actualizarCargos();
     this.cdRef.detectChanges();
   }
 
   ngOnDestroy(): void {
     try {
-      this._translate.unsubscribe();
+      this._eliminar.unsubscribe();
+      this._estado_cuenta.unsubscribe();
     } catch (error) { }
   }
+
+  nuevoRepresentante = (): void => {
+    const dialogRef = this.dialog.open(DialogRegistroRepresentante, { width: '600px', panelClass: "my-class" });
+    dialogRef.afterClosed().subscribe();
+  }
+
+  editar = (row: any): void => {
+    row.pago = String(row.pago).toLowerCase();
+    const dialogRef = this.dialog.open(DialogEstadoCuenta, { width: '350px', panelClass: "my-class", data: row });
+    dialogRef.afterClosed().subscribe();
+  }
+
+  eliminar = (row: any): void => {
+    this._eliminar = this.apiSitio.eliminarEstadoCuenta([row])
+      .subscribe((x: any) => {
+        if (x.ok) {
+          this.estadoCuenta$.next(this.sitio.id);
+          this.openSnackBar("Registros eliminados correctamente", "ok");
+        } else {
+          this.openSnackBar("A ocurrido un error, por favor inténtanlo nuevamente", "ok");
+        }
+      });
+  }
+
+  imprimirLista = (): void => {
+    this._estado_cuenta = this.apiRepresentante.obtenerEstadoCuentaRepresentante(this.representante.id)
+      .subscribe((data: ResponseDeudaRepresentanteI) => {
+        if (data.ok) {
+          this.pdf.jojo(this.procesarDatosImprimir(data.data), {
+            nombre: 'Jhonatan Stalin Salazar Hurtado',
+            representante: this.representante?.nombre,
+            cedula: this.representante?.cedula,
+            tipo: 'Comprobante',
+            descripcion: 'Estado de cuenta',
+            codigo: ''
+          })
+        }
+      })
+  }
+
+  agregarSitio = (): void => {
+    const dialogRef = this.dialog.open(DialogRegistrarSitio, { width: '500px', panelClass: "my-class", data: this.representante.id });
+    dialogRef.afterClosed().subscribe();
+  }
+
+  agregarDeuda(): void {
+    const dialogRef = this.dialog.open(DialogRegistroDeuda, { width: '500px', panelClass: "my-class", data: { id: this.representante.id } });
+    dialogRef.afterClosed().subscribe();
+  }
+
+  agregarPago(): void {
+    const dialogRef = this.dialog.open(DialogPagoExtra, { panelClass: "my-class", data: { id: this.representante.id } });
+    dialogRef.afterClosed().subscribe();
+  }
+
+  getDeudas = (): number => this.estadoCuentaEC.data
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'cargo' &&
+      (new Date(t.fecha) > new Date('2001/01/01')))
+    .reduce((a, b) => a + Number(b.cantidad), 0);
+
+  getPagos = (): number => this.estadoCuentaEC.data
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'abono' &&
+      (new Date(t.fecha) > new Date('2001/01/01')))
+    .reduce((a, b) => a + Number(b.cantidad), 0);
+
+  getPendiente = (): number => this.estadoCuentaEC.data
+    .filter(t =>
+      t.estado_cuenta.toLowerCase() === 'cargo' &&
+      (new Date(t.fecha) > new Date('2001/01/01')))
+    .reduce((a, b) => a + Number(b.pendiente), 0);
 
   filtrarRepresentante = (event: Event): void => {
     this.reiniciarValores();
@@ -118,7 +216,7 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
         map((data: ResponseDeudaRepresentanteI) => {
           this.isLoadingR = false;
           this.isRateLimitReachedR = false;
-          this.resultsLength = data?.cant ? data.cant : 0;
+          this.resultsLengthR = data?.cant ? data.cant : 0;
           return data ? data.data : [];
         }),
         catchError(() => {
@@ -173,6 +271,12 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
           return of([]);
         })
       ).subscribe((data: EstadoCuentaI[]) => {
+        data = data.map((value: EstadoCuentaI) => {
+          let nuevo: any = value;
+          nuevo.hovered = false;
+          nuevo.editar = false;
+          return nuevo;
+        });
         this.estadoCuentaEC = new MatTableDataSource(data);
         this.estadoCuentaEC.paginator = this.paginator.toArray()[1];
       });
@@ -184,7 +288,7 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
         startWith({}),
         switchMap(() => {
           this.fallecidos = [];
-          this.isLoadingF = this.sitio?.id ? true:false;
+          this.isLoadingF = this.sitio?.id ? true : false;
           return this.sitio ? this.apiFallecido.listarFallecidos(this.sitio.id + "") : [];
         }),
         map((data: ResponseFallecidoI) => {
@@ -200,6 +304,21 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
       ).subscribe((data: FallecidoI[]) => this.fallecidos = data);
   }
 
+  private procesarDatosImprimir = (data: EstadoCuentaI[]) =>
+    data.map((x: EstadoCuentaI) => {
+      return {
+        fecha: x.fecha,
+        lugar: x.tipo,
+        motivo: x.descripcion,
+        sector: x.sector,
+        descripcion: x.pago,
+        estado_cuenta: x.estado_cuenta,
+        cantidad: x.cantidad,
+        pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente,
+        sitio: x.sitio
+      }
+    })
+
   private reiniciarValores() {
     this.sitios = [];
     this.fallecidos = [];
@@ -207,4 +326,62 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
     this.sitio = null;
     this.representante = null;
   }
+
+  private actualizarCargos () {
+    merge()
+    .pipe(
+      startWith({}),
+      switchMap(() => {
+        this.isLoadingResults = true;
+        return this.apiActualizacion.listarActualizacion();
+      }),
+      map((data: any) => {
+        this.isLoadingResults = false;
+        this.isRateLimitReached = false;
+        this.resultsLength = data.cant;
+        return data.data;
+      }),
+      catchError(() => {
+        this.isLoadingResults = false;
+        this.isRateLimitReached = true;
+        return of([]);
+      })
+    ).subscribe((data: any) => {
+      if (data.length > 0)
+        this.dialog.open(DialogActualizacion, { disableClose: true, data });
+    });
+  }
+
+  private openSnackBar = (m: string, a: string) => this._snackBar.open(m, a, { duration: 5000 });
+
+}
+
+@Component({
+  selector: 'dialog-actualizacion',
+  templateUrl: './dialog-actualizacion.html',
+})
+export class DialogActualizacion implements OnInit {
+
+  columnasCargosNuevos: string[] = ['fecha', 'descripcion', 'cantidad'];
+  columnasCargosActuales: string[] = ['fecha', 'descripcion', 'cantidad', 'estado'];
+
+  locale: string;
+
+  private _translate: any;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public registros: any, private translate: TranslateService,) { }
+
+  ngOnInit() {
+    this.locale = this.translate.currentLang;
+    this._translate = this.translate.onLangChange
+      .subscribe((langChangeEvent: LangChangeEvent) => this.locale = langChangeEvent.lang)
+  }
+
+  ngOnDestroy(): void {
+    try {
+      this._translate.unsubscribe();
+    } catch (error) { }
+  }
+
+
 }

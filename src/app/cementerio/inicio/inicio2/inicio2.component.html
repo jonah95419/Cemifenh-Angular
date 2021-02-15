@@ -1,11 +1,53 @@
+<div class="example-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+        Se ha alcanzado el límite de la tasa API de SIC. Se restablecerá en un minuto.
+    </div>
+</div>
 <div class="container-fluid">
-    <div class="row col" style="height: 65px;">
-        <mat-form-field appearance="outline">
-            <mat-label>Buscar o filtrar por representante / fallecido</mat-label>
-            <input matInput (keyup)="filtrarRepresentante($event)" placeholder="Nombre completo">
-            <mat-icon matSuffix>person</mat-icon>
-        </mat-form-field>
-        <button mat-stroked-button> Buscar</button>
+    <div class="row" style="height: 65px;">
+        <div class="col" style="display: flex;">
+            <button mat-mini-fab (click)="nuevoRepresentante();" style="margin: 0.5rem;" matTooltip="Registrar nuevo representante"><mat-icon>person_add_alt_1</mat-icon></button>
+            <mat-form-field appearance="outline" style="margin-left: 0.5rem; width: 100%;">
+                <mat-label>Buscar o filtrar por nombre del representante / fallecido</mat-label>
+                <input matInput (keyup)="filtrarRepresentante($event)" placeholder="Nombre completo">
+                <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+            <button mat-icon-button matTooltip="Restringe los resultados de búsqueda. Modo de uso: Anteponer '&' seguido del parametro de búsqueda. Ejm: '&Juan &Hernandez'" class="button-help"><strong>&</strong></button>
+            <button mat-icon-button matTooltip="Indica que el parámetro puede o no estar en los resultados de búsqueda. Modo de uso: Anteponer '-' seguido del parametro de búsqueda. Ejm: 'Juan -Sandoval'" class="button-help"><strong>-</strong></button>
+        </div>
+        <div class="col"></div>
+        <div class="col">
+            <div class="container-opciones" *ngIf="representante">
+                <button mat-mini-fab [matMenuTriggerFor]="menu" aria-label="Acceso directo" style="margin-left: auto;">
+          <mat-icon style="font-size: x-large !important;">more_vert</mat-icon>
+        </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item [disabled]="sitios.length == 0" (click)="agregarPago();">
+            <span>Agregar abono</span>
+          </button>
+                    <button mat-menu-item [disabled]="sitios.length == 0" (click)="agregarDeuda();">
+            <span>Agregar cargo</span>
+          </button>
+                    <mat-divider style="margin: 6px;">
+                    </mat-divider>
+                    <button mat-menu-item [disabled]="representante == null" (click)="imprimirLista();">
+              <mat-icon >print</mat-icon>
+              <span>Imprimir estado de cuenta</span>
+            </button>
+                    <mat-divider style="margin: 6px;">
+                    </mat-divider>
+                    <button mat-menu-item (click)="agregarSitio();">
+            <mat-icon >add</mat-icon>
+            <span>Registar sitio</span>
+          </button>
+                    <a mat-menu-item [routerLink]="[ '/representantes/registro/'+ representante?.id +'/sitios' ]">
+                        <mat-icon>article</mat-icon>
+                        <span>Ver representante</span>
+                    </a>
+                </mat-menu>
+            </div>
+        </div>
 
     </div>
     <div class="row">
@@ -30,7 +72,7 @@
                     <tr mat-header-row *matHeaderRowDef="columnsToDisplayR"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnsToDisplayR;" (click)="verSitiosRepresentante(row);" [ngClass]="{'item-seleccionado': representante?.id === row.id}"></tr>
                 </table>
-                <mat-paginator [length]="resultsLength" [pageSize]="5"></mat-paginator>
+                <mat-paginator [length]="resultsLengthR" [pageSize]="5"></mat-paginator>
             </div>
         </div>
         <div class="col">
@@ -55,7 +97,7 @@
                 </ng-container>
                 <ng-container matColumnDef="adquisicion">
                     <th mat-header-cell *matHeaderCellDef> fecha </th>
-                    <td mat-cell *matCellDef="let element"> {{element.adquisicion | date : 'd MMM, y':undefined:locale}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.adquisicion}} </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="columnsToDisplayS"></tr>
@@ -74,15 +116,59 @@
                                 </div>
                             </div>
                             <table mat-table [dataSource]="estadoCuentaEC">
-                                <ng-container [matColumnDef]="column" *ngFor="let column of columnsToDisplayEC">
-                                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                                    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                                <ng-container matColumnDef="fecha">
+                                    <th mat-header-cell *matHeaderCellDef> fecha </th>
+                                    <td mat-cell *matCellDef="let row">{{row.fecha}} </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
                                 </ng-container>
-
+                                <ng-container matColumnDef="pago">
+                                    <th mat-header-cell *matHeaderCellDef> descripción </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.pago}} </td>
+                                    <td mat-footer-cell *matFooterCellDef> Total </td>
+                                </ng-container>
+                                <ng-container matColumnDef="cargos">
+                                    <th mat-header-cell *matHeaderCellDef> cargos </th>
+                                    <td mat-cell *matCellDef="let row">
+                                        {{ row.estado_cuenta === 'abono' ? '' : row.fecha >= '2001-01-01' ? (row.cantidad | currency) : (row.cantidad + 'S.')}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> {{getDeudas() | currency}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="abonos">
+                                    <th mat-header-cell *matHeaderCellDef> abonos </th>
+                                    <td mat-cell *matCellDef="let row" [style.color]="row.fecha
+                            < '2001-01-01' ? '#757575': 'green'">
+                                        {{ row.estado_cuenta === 'cargo' ? '' : row.fecha >= '2001-01-01' ? (row.cantidad | currency) : (row.cantidad + 'S.')}}
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> {{getPagos() | currency}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="pendientes">
+                                    <th mat-header-cell *matHeaderCellDef> saldo </th>
+                                    <td mat-cell *matCellDef="let row" [style.color]="row.fecha
+                              < '2001-01-01' ? '#757575': 'red'">
+                                        {{ row.estado_cuenta === 'abono' ? '' : row.fecha >= '2001-01-01' ? ( row.pendiente
+                                        <=0 ? 'pagado' : row.pendiente | currency) : ''}} </td>
+                                            <td mat-footer-cell *matFooterCellDef> {{getPendiente() | currency}} </td>
+                                </ng-container>
+                                <ng-container matColumnDef="acciones">
+                                    <th mat-header-cell *matHeaderCellDef> </th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <div style="display: flex; flex-direction: row; width: max-content;">
+                                            <button mat-icon-button matTooltip="Editar" class="button-accion" (click)="editar(row);">
+                                          <mat-icon [style.opacity]="row.hovered? '1':'0'" class="mat-icon-acciones">edit</mat-icon>
+                                          </button>
+                                            <button mat-icon-button matTooltip="Eliminar" class="button-accion" (click)="eliminar(row);">
+                                          <mat-icon [style.opacity]="row.hovered? '1':'0'" class="mat-icon-acciones">delete</mat-icon>
+                                          </button>
+                                        </div>
+                                    </td>
+                                    <td mat-footer-cell *matFooterCellDef> </td>
+                                </ng-container>
                                 <tr mat-header-row *matHeaderRowDef="columnsToDisplayEC"></tr>
-                                <tr mat-row *matRowDef="let row; columns: columnsToDisplayEC;"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnsToDisplayEC;" (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></tr>
+                                <tr mat-footer-row *matFooterRowDef="columnsToDisplayEC;"></tr>
+
                             </table>
-                            <mat-paginator [pageSizeOptions]="[5]" showFirstLastButtons></mat-paginator>
+                            <mat-paginator [pageSizeOptions]="[5,10,25]" showFirstLastButtons></mat-paginator>
                         </ng-template>
                     </mat-tab>
                     <mat-tab label="Registro de Fallecidos">
@@ -98,7 +184,6 @@
                                     <th mat-header-cell *matHeaderCellDef> {{column}} </th>
                                     <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
                                 </ng-container>
-
                                 <tr mat-header-row *matHeaderRowDef="columnsToDisplayF"></tr>
                                 <tr mat-row *matRowDef="let row; columns: columnsToDisplayF;"></tr>
                             </table>
