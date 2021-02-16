@@ -315,7 +315,8 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
         estado_cuenta: x.estado_cuenta,
         cantidad: x.cantidad,
         pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente,
-        sitio: x.sitio
+        sitio: x.sitio,
+        deuda: x.deuda
       }
     })
 

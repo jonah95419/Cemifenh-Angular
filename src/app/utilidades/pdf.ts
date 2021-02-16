@@ -80,6 +80,158 @@ export class PDFClass {
     }
   }
 
+  private cargarDatos(datos) {
+
+    const border = [false, true, false, false];
+    const margin = [0, 0, 0, 0];
+    const alignment = 'right';
+
+    datos = this.preprocesarDatos(datos);
+
+    this.historico = false;
+
+    datos.forEach((s, i: number) => {
+
+      let body = new Array(...this.body.map(c => c));
+      let body_h = new Array(...this.body_historico.map(c => c));
+      let h: any = [{ text: '' }, {}];
+
+      s.data.forEach(d => {
+        let row = new Array();
+        let anio = new Date(d.fecha).getFullYear() >= 2001;
+
+        !anio ? this.historico = true : null;
+
+        row.push({ text: d.fecha.toString(), style: 'tableContent' });
+        row.push({ text: String(d.descripcion).toLowerCase(), style: 'tableContent' });
+
+        row.push(d.cargo ? { text: this.STRNumber(d.cargo, anio), alignment, style: 'tableContent' } : "");
+        row.push({ text: d.abono ? this.STRNumber(d.abono, anio) : "", alignment, style: 'tableContent', fillColor: '#eeffee' });
+        anio ? row.push({ text: d.cargo ? this.STRNumber(d.pendiente, anio) : "", alignment, style: 'tableContent' }) : null;
+
+        if (!anio) {
+          body_h.push(row);
+        } else {
+          body.push(row);
+        }
+
+      });
+
+      if (this.historico) {
+        h = [
+          { text: 'Histórico: ', noWrap: true, bold, fillColor, color, margin: [0, 15, 0, 0] },
+          {
+            layout: { defaultBorder: false },
+            margin: [0, 15, 0, 0],
+            table: { widths: this.widths_historicos.map(c => c), body: body_h.map(h => h) }
+          }
+        ];
+      }
+
+      let row = new Array();
+      row.push({ text: "", border });
+      row.push({ text: 'Total ', alignment, bold, margin, border });
+      row.push({ text: "$" + this.totalCantidadCargos(s.data), alignment, bold, margin, border });
+      row.push({ text: "$" + this.totalCantidadAbonos(s.data), alignment, bold, margin, border, fillColor: '#eeffee' });
+      row.push({ text: "$" + this.totalCantidadSaldo(s.data), alignment, bold, margin, border });
+      body.push(row);
+
+      this.content.push(Object.assign({}, {
+        style: 'tableContent',
+        layout: {
+          defaultBorder: false,
+        },
+        table: {
+          widths: ['auto', '*'],
+          body: [
+            [{ text: 'Sector: ', noWrap: true, bold, fillColor, color }, s.sector.toString().toUpperCase()],
+            [{ text: 'Servicio: ', noWrap: true, bold, fillColor, color }, s.motivo.toString().toUpperCase()],
+            [{ text: 'Tipo: ', noWrap: true, bold, fillColor, color }, s.lugar.toString().toUpperCase()],
+            [{ text: 'Observaciones: ', noWrap: true, bold, fillColor, color }, ''],
+            [{ text: 'Movimientos: ', noWrap: true, bold, fillColor, color }, {
+              layout: {
+                defaultBorder: false,
+              },
+              table: {
+                widths: Object.assign([], this.widths.map(c => c)),
+                // headerRows: 1,
+                dontBreakRows: true,
+                body: [...Object.assign([], body.map(c => c))],
+              }
+            }],
+            h
+          ]
+        }
+      }));
+
+      this.content.push(new Object({
+        text: '',
+        style: 'header'
+      }));
+    })
+
+  }
+
+  private preprocesarDatos(data) {
+    var datos = [];
+
+    data.forEach(e => datos.find(d => d.sitio == e.sitio) ? null : datos.push({ sitio: e.sitio, motivo: e.motivo, lugar: e.lugar, sector: e.sector, data: [] }));
+
+    datos.forEach(s =>
+      data.forEach(d => {
+        if (s.sitio == d.sitio)
+          s.data.push({
+            cantidad: d.cantidad,
+            descripcion: d.descripcion,
+            estado_cuenta: d.estado_cuenta,
+            fecha: d.fecha,
+            pendiente: d.pendiente,
+            deuda: d.deuda
+          });
+      })
+    )
+
+    datos.forEach(s => {
+      var data = [];
+      for (var i = 1; i < s.data.length; i++) {
+
+        if (s.data[i].descripcion == s.data[i - 1].descripcion
+          && s.data[i].fecha == s.data[i - 1].fecha
+          && s.data[i].estado_cuenta != s.data[i - 1].estado_cuenta
+          && s.data[i].deuda == s.data[i - 1].deuda) {
+
+          var woman = data.find(d =>
+            d.descripcion == s.data[i].descripcion
+            && d.fecha == s.data[i].fecha
+            && d.deuda == s.data[i].deuda
+            && (d.cargo == 0 || d.abono == 0));
+
+          var index_woman = data.indexOf(woman);
+
+          if (data[index_woman].cargo == 0)
+            data[index_woman].cargo = s.data[i].cantidad;
+          else
+            data[index_woman].abono = s.data[i].cantidad;
+          if ((data[index_woman].pendiente == 0 || data[index_woman].pendiente == 0) && s.data[i].pendiente != 0)
+            data[index_woman].pendiente = s.data[i].pendiente;
+        } else {
+          data.push({
+            cargo: s.data[i].estado_cuenta == 'cargo' ? s.data[i].cantidad : 0,
+            abono: s.data[i].estado_cuenta == 'abono' ? s.data[i].cantidad : 0,
+            descripcion: s.data[i].descripcion,
+            fecha: s.data[i].fecha,
+            pendiente: s.data[i].pendiente,
+            deuda: s.data[i].deuda
+          });
+
+        }
+      }
+      s.data = data;
+    })
+
+    return datos;
+  }
+
   private getContent() {
 
     const espacio = {
@@ -136,125 +288,6 @@ export class PDFClass {
     content.push(espacio);
 
     return content;
-  }
-
-  private cargarDatos(datos) {
-
-    const border = [false, true, false, false];
-    const margin = [0, 0, 0, 0];
-    const alignment = 'right';
-
-    datos = this.preprocesarDatos(datos);
-
-    this.historico = false;
-
-    datos.forEach((s, i: number) => {
-
-      let body = new Array(...this.body.map(c => c));
-      let body_h = new Array(...this.body_historico.map(c => c));
-      let h: any = [{ text: '' }, {}];
-
-      s.data.forEach(d => {
-        let row = new Array();
-        let anio = new Date(d.fecha).getFullYear() >= 2001;
-
-        !anio ? this.historico = true : null;
-
-        row.push({ text: d.fecha.toString(), style: 'tableContent' });
-        row.push({ text: String(d.descripcion).toLowerCase(), style: 'tableContent' });
-
-        if (d.estado_cuenta === 'cargo') {
-          row.push({ text: this.STRNumber(d.cantidad, anio), alignment, style: 'tableContent' });
-          row.push({ text: "", fillColor: '#eeffee' });
-          anio ? row.push({ text: this.STRNumber(d.pendiente, anio), alignment, style: 'tableContent' }) : null;
-
-        } else {
-          row.push("");
-          row.push({ text: this.STRNumber(d.cantidad, anio), alignment, style: 'tableContent', fillColor: '#eeffee' });
-          anio ? row.push("") : null;
-        }
-
-        if (!anio) {
-          body_h.push(row);
-        } else {
-          body.push(row);
-        }
-
-      });
-
-      if (this.historico) {
-        h = [
-          { text: 'Histórico: ', noWrap: true, bold, fillColor, color, margin: [0, 15, 0, 0] },
-          {
-            layout: { defaultBorder: false },
-            margin: [0, 15, 0, 0],
-            table: { widths: this.widths_historicos.map(c => c), body: body_h.map(h => h) }
-          }
-        ];
-      }
-
-      let row = new Array();
-      row.push({ text: "", border });
-      row.push({ text: 'Total ', alignment, bold, margin, border });
-      row.push({ text: "$" + this.totalCantidadCargos(s.data), alignment, bold, margin, border });
-      row.push({ text: "$" + this.totalCantidadAbonos(s.data), alignment, bold, margin, border, fillColor: '#eeffee' });
-      row.push({ text: "$" + this.totalCantidadSaldo(s.data), alignment, bold, margin, border });
-      body.push(row);
-
-      this.content.push(Object.assign({},{
-        style: 'tableContent',
-        layout: {
-          defaultBorder: false,
-        },
-        table: {
-          widths: ['auto', '*'],
-          body: [
-            [{ text: 'Sector: ', noWrap: true, bold, fillColor, color }, s.sector.toString().toUpperCase()],
-            [{ text: 'Servicio: ', noWrap: true, bold, fillColor, color }, s.motivo.toString().toUpperCase()],
-            [{ text: 'Tipo: ', noWrap: true, bold, fillColor, color }, s.lugar.toString().toUpperCase()],
-            [{ text: 'Observaciones: ', noWrap: true, bold, fillColor, color }, ''],
-            [{ text: 'Movimientos: ', noWrap: true, bold, fillColor, color }, {
-              layout: {
-                defaultBorder: false,
-              },
-              table: {
-                widths: Object.assign([], this.widths.map(c => c) ),
-                // headerRows: 1,
-                dontBreakRows: true,
-                body:  [...Object.assign([], body.map(c => c) )],
-              }
-            }],
-            h
-          ]
-        }
-      }));
-
-      this.content.push(new Object({
-        text: '',
-        style: 'header'
-      }));
-    })
-
-  }
-
-  private preprocesarDatos(data) {
-    var datos = [];
-    data.forEach(e => datos.find(d => d.sitio == e.sitio) ? null : datos.push({ sitio: e.sitio, motivo: e.motivo, lugar: e.lugar, sector: e.sector, data: [] }));
-
-    datos.forEach(s =>
-      data.forEach(d => {
-        if (s.sitio == d.sitio)
-          s.data.push({
-            cantidad: d.cantidad,
-            descripcion: d.descripcion,
-            estado_cuenta: d.estado_cuenta,
-            fecha: d.fecha,
-            pendiente: d.pendiente
-          });
-      })
-    )
-
-    return datos;
   }
 
   private totalCantidadAbonos = (data: []): string => (Math

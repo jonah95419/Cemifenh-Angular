@@ -37,6 +37,7 @@ export interface EstadoCuentaH {
   pago?: string;
   sitio?: number;
   pendiente?: number;
+  deuda?: number;
 }
 
 

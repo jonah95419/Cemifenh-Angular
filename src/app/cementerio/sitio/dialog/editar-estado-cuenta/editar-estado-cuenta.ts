@@ -44,7 +44,7 @@ export class DialogEstadoCuenta implements OnInit, OnDestroy {
 
       if (this.data.estado_cuenta === "abono") {
         this.estadoForm = this.fb.group({
-          pago: new FormControl({value:'', disabled: true}),
+          pago: new FormControl({disabled: true}),
           fecha: new FormControl(this.data.fecha, ),
           cantidad: new FormControl('', Validators.min(0)),
         })
