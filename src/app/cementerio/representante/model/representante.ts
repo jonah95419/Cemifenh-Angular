@@ -6,6 +6,7 @@ export interface RepresentanteI {
   observaciones?: string;
   fecha?: string;
   estado?: boolean;
+  fallecido?: string;
 }
 
 export interface RepresentantesResponse {

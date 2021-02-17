@@ -62,7 +62,7 @@
                 <table #table mat-table [dataSource]="representantes" matSort matSortActive="nombre" matSortDisableClear matSortDirection="desc">
                     <ng-container matColumnDef="nombre">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> nombre </th>
-                        <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element.fallecido ? element.fallecido : element.nombre}} </td>
                     </ng-container>
                     <ng-container matColumnDef="cedula">
                         <th mat-header-cell *matHeaderCellDef> cédula </th>
