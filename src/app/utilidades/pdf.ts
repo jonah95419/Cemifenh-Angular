@@ -193,9 +193,10 @@ export class PDFClass {
 
     datos.forEach(s => {
       var data = [];
-      for (var i = 1; i < s.data.length; i++) {
 
-        if (s.data[i].descripcion == s.data[i - 1].descripcion
+      for (var i = 0; i < s.data.length; i++) {
+
+        if (i > 0 && s.data[i].descripcion == s.data[i - 1].descripcion
           && s.data[i].fecha == s.data[i - 1].fecha
           && s.data[i].estado_cuenta != s.data[i - 1].estado_cuenta
           && s.data[i].deuda == s.data[i - 1].deuda) {
@@ -212,8 +213,10 @@ export class PDFClass {
             data[index_woman].cargo = s.data[i].cantidad;
           else
             data[index_woman].abono = s.data[i].cantidad;
+
           if ((data[index_woman].pendiente == 0 || data[index_woman].pendiente == 0) && s.data[i].pendiente != 0)
             data[index_woman].pendiente = s.data[i].pendiente;
+
         } else {
           data.push({
             cargo: s.data[i].estado_cuenta == 'cargo' ? s.data[i].cantidad : 0,
@@ -223,7 +226,6 @@ export class PDFClass {
             pendiente: s.data[i].pendiente,
             deuda: s.data[i].deuda
           });
-
         }
       }
       s.data = data;
