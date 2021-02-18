@@ -196,36 +196,40 @@ export class PDFClass {
 
       for (var i = 0; i < s.data.length; i++) {
 
-        if (i > 0 && s.data[i].descripcion == s.data[i - 1].descripcion
-          && s.data[i].fecha == s.data[i - 1].fecha
-          && s.data[i].estado_cuenta != s.data[i - 1].estado_cuenta
-          && s.data[i].deuda == s.data[i - 1].deuda) {
+        try {
+          if (i > 0 && s.data[i].descripcion == s.data[i - 1].descripcion
+            && s.data[i].fecha == s.data[i - 1].fecha
+            && s.data[i].estado_cuenta != s.data[i - 1].estado_cuenta
+            && s.data[i].deuda == s.data[i - 1].deuda) {
 
-          var woman = data.find(d =>
-            d.descripcion == s.data[i].descripcion
-            && d.fecha == s.data[i].fecha
-            && d.deuda == s.data[i].deuda
-            && (d.cargo == 0 || d.abono == 0));
+            var woman = data.find(d =>
+              d.descripcion == s.data[i].descripcion
+              && d.fecha == s.data[i].fecha
+              && d.deuda == s.data[i].deuda
+              && (d.cargo == 0 || d.abono == 0));
 
-          var index_woman = data.indexOf(woman);
+            var index_woman = data.indexOf(woman);
 
-          if (data[index_woman].cargo == 0)
-            data[index_woman].cargo = s.data[i].cantidad;
-          else
-            data[index_woman].abono = s.data[i].cantidad;
+            if (data[index_woman].cargo == 0)
+              data[index_woman].cargo = s.data[i].cantidad;
+            else
+              data[index_woman].abono = s.data[i].cantidad;
 
-          if ((data[index_woman].pendiente == 0 || data[index_woman].pendiente == 0) && s.data[i].pendiente != 0)
-            data[index_woman].pendiente = s.data[i].pendiente;
+            if ((data[index_woman].pendiente == 0 || data[index_woman].pendiente == 0) && s.data[i].pendiente != 0)
+              data[index_woman].pendiente = s.data[i].pendiente;
 
-        } else {
-          data.push({
-            cargo: s.data[i].estado_cuenta == 'cargo' ? s.data[i].cantidad : 0,
-            abono: s.data[i].estado_cuenta == 'abono' ? s.data[i].cantidad : 0,
-            descripcion: s.data[i].descripcion,
-            fecha: s.data[i].fecha,
-            pendiente: s.data[i].pendiente,
-            deuda: s.data[i].deuda
-          });
+          } else {
+            data.push({
+              cargo: s.data[i].estado_cuenta == 'cargo' ? s.data[i].cantidad : 0,
+              abono: s.data[i].estado_cuenta == 'abono' ? s.data[i].cantidad : 0,
+              descripcion: s.data[i].descripcion,
+              fecha: s.data[i].fecha,
+              pendiente: s.data[i].pendiente,
+              deuda: s.data[i].deuda
+            });
+          }
+        } catch (error) {
+
         }
       }
       s.data = data;
