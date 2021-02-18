@@ -9,5 +9,5 @@ export const FOOTER_REPORTE_URL = "www.feleniah.com";
 export const LOGO =  '/assets/images/lion.jpg';
 export const LOGO_SVG =  '/assets/images/lion.svg';
 export const DEPARTAMENTO =  'Departamento de Desarrollo';
-export const ADMINISTRACION =  'Ultima Actualización: 01-02-2021';
+export const ADMINISTRACION =  'Ultima Actualización: 17-02-2021';
 export const CONTACTO =  'Contáctos: 0967267606';
