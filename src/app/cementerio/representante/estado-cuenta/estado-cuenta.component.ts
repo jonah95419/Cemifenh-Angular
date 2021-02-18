@@ -165,7 +165,8 @@ export class EstadoCuentaComponent implements OnInit, OnDestroy {
         cantidad: x.cantidad,
         pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente,
         sitio: x.sitio,
-        deuda: x.deuda
+        deuda: x.deuda,
+        observaciones: x.observaciones
       }
     })
 

@@ -136,7 +136,7 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
   imprimirLista = (): void => {
     this._estado_cuenta = this.apiRepresentante.obtenerEstadoCuentaRepresentante(this.representante.id)
       .subscribe((data: ResponseDeudaRepresentanteI) => {
-        if (data.ok) {
+        if (data.ok && data.data.length > 0) {
           this.pdf.jojo(this.procesarDatosImprimir(data.data), {
             nombre: 'Jhonatan Stalin Salazar Hurtado',
             representante: this.representante?.nombre,
@@ -260,7 +260,6 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
           return this.sitio ? this.apiSitio.obtenerEstadoCuenta(this.sitio.id) : [];
         }),
         map((data: ResponseEstadoCuentaSitioI) => {
-          console.log("estar enamorandonos, seguro es el mejor estado.. \nquiero!!! enamorarme de ti de nuevo, y volver a empezar!! \nquiero q el amor sea así.. como siempre lo soñamos");
           this.isLoadingEC = false;
           this.isRateLimitReachedEC = false;
           return data.data ? data.data : [];
@@ -316,7 +315,8 @@ export class Inicio2Component implements OnInit, AfterViewInit, OnDestroy {
         cantidad: x.cantidad,
         pendiente: x.estado_cuenta == 'abono' ? '' : x.pendiente,
         sitio: x.sitio,
-        deuda: x.deuda
+        deuda: x.deuda,
+        observaciones: x.observaciones
       }
     })
 

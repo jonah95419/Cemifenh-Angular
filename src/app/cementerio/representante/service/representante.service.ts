@@ -86,7 +86,7 @@ export class RepresentanteService {
 
   actualizarRepresentante(id, datos) {
     this.httpClient
-    .put<any>(`${AUTH_SERVER}api//representante/${id}`, JSON.stringify(datos), this.httpOptions)
+    .put<any>(`${AUTH_SERVER}/api/representante/${id}`, JSON.stringify(datos), this.httpOptions)
     .pipe(catchError(this.handleError))
     .subscribe((data: RepresentantesResponse) => {
       if (data.ok) {

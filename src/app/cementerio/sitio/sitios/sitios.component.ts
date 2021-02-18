@@ -33,7 +33,7 @@ export class SitiosComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  displayedColumns: string[] = ['sector', 'tipo', 'descripcion', 'estado', 'adquisicion', 'observaciones'];
+  displayedColumns: string[] = ['sector', 'tipo', 'descripcion', 'adquisicion', 'observaciones'];
   listaSitios: SitioI[] = [];
 
   sitioId: number;

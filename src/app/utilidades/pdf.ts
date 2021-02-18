@@ -88,13 +88,13 @@ export class PDFClass {
 
     datos = this.preprocesarDatos(datos);
 
-    this.historico = false;
-
     datos.forEach((s, i: number) => {
 
       let body = new Array(...this.body.map(c => c));
       let body_h = new Array(...this.body_historico.map(c => c));
       let h: any = [{ text: '' }, {}];
+
+      this.historico = false;
 
       s.data.forEach(d => {
         let row = new Array();
@@ -107,7 +107,7 @@ export class PDFClass {
 
         row.push(d.cargo ? { text: this.STRNumber(d.cargo, anio), alignment, style: 'tableContent' } : "");
         row.push({ text: d.abono ? this.STRNumber(d.abono, anio) : "", alignment, style: 'tableContent', fillColor: '#eeffee' });
-        anio ? row.push({ text: d.cargo ? this.STRNumber(d.pendiente, anio) : "", alignment, style: 'tableContent' }) : null;
+        anio ? row.push({ text: d.pendiente ? this.STRNumber(d.pendiente, anio) : "", alignment, style: 'tableContent' }) : null;
 
         if (!anio) {
           body_h.push(row);
@@ -147,7 +147,7 @@ export class PDFClass {
             [{ text: 'Sector: ', noWrap: true, bold, fillColor, color }, s.sector.toString().toUpperCase()],
             [{ text: 'Servicio: ', noWrap: true, bold, fillColor, color }, s.motivo.toString().toUpperCase()],
             [{ text: 'Tipo: ', noWrap: true, bold, fillColor, color }, s.lugar.toString().toUpperCase()],
-            [{ text: 'Observaciones: ', noWrap: true, bold, fillColor, color }, ''],
+            [{ text: 'Observaciones: ', noWrap: true, bold, fillColor, color }, s.observaciones.toString().toUpperCase()],
             [{ text: 'Movimientos: ', noWrap: true, bold, fillColor, color }, {
               layout: {
                 defaultBorder: false,
@@ -175,7 +175,7 @@ export class PDFClass {
   private preprocesarDatos(data) {
     var datos = [];
 
-    data.forEach(e => datos.find(d => d.sitio == e.sitio) ? null : datos.push({ sitio: e.sitio, motivo: e.motivo, lugar: e.lugar, sector: e.sector, data: [] }));
+    data.forEach(e => datos.find(d => d.sitio == e.sitio) ? null : datos.push({ sitio: e.sitio, motivo: e.motivo, lugar: e.lugar, sector: e.sector, observaciones: e.observaciones, data: [] }));
 
     datos.forEach(s =>
       data.forEach(d => {
@@ -294,21 +294,21 @@ export class PDFClass {
 
   private totalCantidadAbonos = (data: []): string => (Math
     .round(data
-      .filter((x: any) => x.estado_cuenta === 'abono' && (new Date(x.fecha) >= new Date('2001/01/01')))
-      .map((x: any) => Number(x.cantidad))
+      .filter((x: any) => new Date(x.fecha) >= new Date('2001/01/01'))
+      .map((x: any) => Number(x.abono))
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);
 
   private totalCantidadCargos = (data: []): string => (Math
     .round(data
-      .filter((x: any) => x.estado_cuenta === 'cargo' && (new Date(x.fecha) >= new Date('2001/01/01')))
-      .map((x: any) => Number(x.cantidad))
+      .filter((x: any) => new Date(x.fecha) >= new Date('2001/01/01'))
+      .map((x: any) => Number(x.cargo))
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);
 
   private totalCantidadSaldo = (data: []): string => (Math
     .round(data
-      .filter((x: any) => x.estado_cuenta === 'cargo' && (new Date(x.fecha) >= new Date('2001/01/01')))
+      .filter((x: any) => new Date(x.fecha) >= new Date('2001/01/01'))
       .map((x: any) => Number(x.pendiente))
       .reduce((a, b) => a + b, 0) * 100) / 100)
     .toFixed(2);

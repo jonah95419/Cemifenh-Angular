@@ -3,16 +3,16 @@
     <img (click)="apiAuth.logout();" class="mb-4 rounded-circle" [src]="logo" alt="logo" loading="lazy" /> {{title}}
 
     <span class="example-spacer"></span>
-    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla.isActive}" routerLink="/inicio" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z4': rla.isActive}" routerLink="/inicio" mat-list-item routerLinkActive="active" routerLinkActive #rla="routerLinkActive">
         <label class="navigation-item-label">Inicio</label>
     </a>
-    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla1.isActive}" routerLink="/representantes" mat-list-item routerLinkActive="active" routerLinkActive #rla1="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z4': rla1.isActive}" routerLink="/representantes" mat-list-item routerLinkActive="active" routerLinkActive #rla1="routerLinkActive">
         <label class="navigation-item-label">Representantes</label>
     </a>
-    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla2.isActive}" routerLink="/reportes" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z4': rla2.isActive}" routerLink="/reportes" mat-list-item routerLinkActive="active" routerLinkActive #rla2="routerLinkActive">
         <label class="navigation-item-label">Reportes</label>
     </a>
-    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z8': rla3.isActive}" routerLink="/administracion" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
+    <a class="navigation-item opcion" [ngClass]="{'indicador mat-elevation-z4': rla3.isActive}" routerLink="/administracion" mat-list-item routerLinkActive="active" routerLinkActive #rla3="routerLinkActive">
         <label class="navigation-item-label">Administración</label>
     </a>
 </mat-toolbar>

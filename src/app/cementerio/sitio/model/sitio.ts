@@ -44,6 +44,7 @@ export interface EstadoCuentaI {
   sitio?: number;
   pendiente?: number;
   deuda? : number;
+  observaciones?: string;
 }
 
 export interface ResponseEstadoCuentaSitioI {

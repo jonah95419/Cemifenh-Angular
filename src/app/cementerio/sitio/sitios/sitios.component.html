@@ -20,10 +20,6 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header> tipo </th>
             <td mat-cell *matCellDef="let row">{{row.descripcion}}</td>
         </ng-container>
-        <ng-container matColumnDef="estado">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> estado </th>
-            <td mat-cell *matCellDef="let row" [style.color]="row.estado == 'sin deudas' || row.estado == 0 ? 'green':'red' ">{{row.estado == 'sin deudas' || row.estado == 0 ? 'sin deudas' : row.estado| currency}}</td>
-        </ng-container>
         <ng-container matColumnDef="adquisicion">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> fecha adquisición </th>
             <td mat-cell *matCellDef="let row">{{row.adquisicion | date : 'MMM d, y':undefined:locale}}</td>
