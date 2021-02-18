@@ -22,15 +22,15 @@
                 <mat-radio-button value="2">Nombre</mat-radio-button>
             </mat-radio-group>
             <mat-form-field appearance="outline" style="width: 100%;" *ngIf="condicion == '2'">
-                <input type="text" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
+                <input type="text" matInput placeholder="Campo obligatorio *" [disabled]="true" [(ngModel)]="parametro">
             </mat-form-field>
             <mat-form-field appearance="outline" style="width: 100%;" *ngIf="condicion == '1'">
-                <input min="0" type="text" matInput placeholder="Campo obligatorio *" [(ngModel)]="parametro">
+                <input min="0" type="text" matInput placeholder="Campo obligatorio *" [disabled]="true" [(ngModel)]="parametro">
             </mat-form-field>
         </mat-card-content>
         <mat-card-actions align=end>
-            <button *ngIf="condicion == '1'" (click)="buscarRepresentante()" mat-stroked-button>Buscar</button>
-            <button *ngIf="condicion == '2'" (click)="buscarRepresentante()" mat-stroked-button>Buscar </button>
+            <button *ngIf="condicion == '10'" (click)="buscarRepresentante()" mat-stroked-button>Buscar</button>
+            <button *ngIf="condicion == '20'" (click)="buscarRepresentante()" mat-stroked-button>Buscar </button>
         </mat-card-actions>
     </mat-card>
 </div>
